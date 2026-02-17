@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: bronze_bookings
+    description: "Raw Airbnb bookings data loaded into the bronze layer."
+    config:
+      tags: ['bronze']
+
+  - name: bronze_hosts
+    description: "Raw Airbnb hosts data loaded into the bronze layer."
+    config:
+      tags: ['bronze']
+
+  - name: bronze_listings
+    description: "Raw Airbnb listings data loaded into the bronze layer."
+    config:
+      tags: ['bronze']

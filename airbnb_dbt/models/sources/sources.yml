@@ -1,9 +1,9 @@
 sources:
-  - name: staging 
+  - name: staging    # this matches the first argument in {{ source()}}
     database: AIRBNB
-    schema: staging
+    schema: staging  # this is the real schema
     tables:
-      - name: bookings
-      - name: listings
-      - name: hosts
+      - name: bookings  # this matches the second argument
+      - name: listings  # this matches the second argument
+      - name: hosts     # this matches the second argument
 

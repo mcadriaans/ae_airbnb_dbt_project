@@ -32,10 +32,6 @@ SELECT
     bedrooms,
     CAST(bathrooms AS NUMBER(38,2)) AS bathrooms,
     CAST(price_per_night AS NUMBER(38,2)) AS price_per_night,
-    {{ normalize_text(
-    define_tier('price_per_night', 'price_median', 'price_p75', 'low', 'high', 'very high')
-     ) }} AS price_tier,
-    {{ normalize_text(
-    define_tier('bedrooms', 'bedrooms_median', 'bedrooms_p75', 'small', 'medium', 'large')
-) }} AS bedroom_tier
+    {{ normalize_text(define_tier('price_per_night', 'price_median', 'price_p75', 'low', 'high', 'very high')) }} AS price_tier,
+    {{ normalize_text(size_tier('bedrooms', 'accommodates')) }} AS size_tier
 FROM base

@@ -3,6 +3,11 @@
     unique_key='booking_id'
 ) }}
 
+WITH base AS (
+    SELECT *
+    FROM {{ ref('bronze_bookings') }}
+)
+
 SELECT
     booking_id,
     listing_id,
@@ -15,4 +20,4 @@ SELECT
     created_at,
     CAST({{ add_columns(['booking_amount', 'cleaning_fee', 'service_fee']) }} as NUMBER(38,2)) as total_amount,
     CAST({{ divide_cols('booking_amount', 'nights_booked') }}  as NUMBER(38,2)) AS booking_amount_per_night
-FROM {{ ref('bronze_bookings') }}
+FROM BASE

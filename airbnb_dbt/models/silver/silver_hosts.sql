@@ -17,7 +17,7 @@ SELECT
     is_superhost,
     response_rate,
     created_at,
-    {{ date_diff("'year'", 'host_since', 'current_date') }} AS host_tenure_years,
+    {{ date_diff('year', 'host_since', 'current_date') }} AS host_tenure_years,
     CASE 
       WHEN response_rate >= 90 THEN 'high' 
       WHEN response_rate >= 70 THEN 'medium' 

@@ -2,7 +2,7 @@
     materialized='view',
 ) }}
 
-WITH BASE AS (
+WITH base AS (
     SELECT * FROM {{ ref('bronze_bookings') }}
 )
 
@@ -16,4 +16,4 @@ SELECT
     CAST(service_fee as number(38,2)) as service_fee,
     {{ normalize_text('booking_status') }} as booking_status,
     created_at
-FROM BASE
+FROM base

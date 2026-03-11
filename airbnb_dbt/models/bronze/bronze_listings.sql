@@ -1,6 +1,7 @@
 {{ config(
     materialized='incremental',
-    unique_key='LISTING_ID'
+    unique_key='LISTING_ID',
+    on_schema_change='sync_all_columns'
 ) }}
 
 SELECT *

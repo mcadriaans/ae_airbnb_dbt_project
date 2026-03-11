@@ -1,6 +1,7 @@
 {{ config(
     materialized='incremental',
-    unique_key='HOST_ID'
+    unique_key='HOST_ID',
+    on_schema_change='sync_all_columns'
 ) }}
 
 SELECT *

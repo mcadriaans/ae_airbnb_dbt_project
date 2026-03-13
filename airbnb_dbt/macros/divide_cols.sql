@@ -1,12 +1,16 @@
 {#
   Macro: divide_cols
-  Purpose: Divide one SQL column by another and round to 2 decimals.
-  Usage: {{ divide_cols('booking_amount', 'nights_booked') }}
+  Purpose: Safely divide two SQL columns while preventing divide-by-zero.
+  Parameters:
+    numerator: column representing the numerator
+    denominator: column representing the denominator
+    precision: rounding precision (default = 2)
 #}
 
-{% macro divide_cols(numerator, denominator) %}
-    round(
-        {{ numerator }} / nullif({{ denominator }}, 0),
-        2
+
+{% macro divide_cols(numerator, denominator, precision=2) %}
+    ROUND(
+        ({{ numerator }}::NUMBER) / NULLIF({{ denominator }}::NUMBER, 0),
+        {{ precision }}
     )
 {% endmacro %}

@@ -5,13 +5,31 @@ models:
     description: "Raw Airbnb bookings data loaded into the bronze layer."
     config:
       tags: ['bronze']
+    columns:
+      - name: booking_id
+        description: "Unique identifier for each booking."
+        tests:
+          - not_null
+          - unique
 
   - name: bronze_hosts
     description: "Raw Airbnb hosts data loaded into the bronze layer."
     config:
       tags: ['bronze']
+    columns:
+      - name: host_id
+        description: "Unique identifier for each host."
+        tests:
+          - not_null
+          - unique
 
   - name: bronze_listings
     description: "Raw Airbnb listings data loaded into the bronze layer."
     config:
       tags: ['bronze']
+    columns:
+      - name: listing_id
+        description: "Unique identifier for each listing."
+        tests:
+          - not_null
+          - unique

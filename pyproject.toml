@@ -1,11 +1,10 @@
 [project]
 name = "airbnb-dbt"
 version = "0.1.0"
-description = "Add your description here"
+description = "Analytics engineering project using dbt, Snowflake, and S3 to model Airbnb-style booking data."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "dbt-core>=1.11.5",
-    "dbt-databricks>=1.10.9",
     "dbt-snowflake>=1.11.2",
 ]

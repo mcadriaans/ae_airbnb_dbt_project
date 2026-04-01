@@ -5,11 +5,13 @@
 #}
 
 {% macro add_columns(col_list) %}
-   
-    {%- for col in col_list -%}
-            {{ col }}{{ " + " if not loop.last else "" }}
-    {%- endfor -%}
-  
-    
+ 
+ (
+  {%- for col in col_list -%}
+        COALESCE({{ col }}, 0){{ " + " if not loop.last else "" }}
+  {%- endfor -%}
+)      
 {% endmacro %}
+
+
 

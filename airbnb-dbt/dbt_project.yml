@@ -1,6 +1,6 @@
-name: 'airbnb_dbt'
+name: 'airbnb-dbt'
 version: '1.0.0'
-profile: 'airbnb_dbt'
+profile: 'airbnb-dbt'
 
 model-paths: ["models"]
 analysis-paths: ["analyses"]

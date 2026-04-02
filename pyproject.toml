@@ -1,5 +1,5 @@
 [project]
-name = "airbnb-dbt"
+name = "airbnb_dbt"
 version = "0.1.0"
 description = "Analytics engineering project using dbt, Snowflake, and S3 to model Airbnb-style booking data."
 readme = "README.md"

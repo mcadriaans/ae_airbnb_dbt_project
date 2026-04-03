@@ -4,6 +4,7 @@ models:
   - name: bronze_bookings
     description: "Raw Airbnb bookings data loaded into the bronze layer."
     config:
+      materialized: table
       tags: ['bronze']
     columns:
       - name: booking_id
@@ -15,6 +16,7 @@ models:
   - name: bronze_hosts
     description: "Raw Airbnb hosts data loaded into the bronze layer."
     config:
+      materialized: table
       tags: ['bronze']
     columns:
       - name: host_id
@@ -26,6 +28,7 @@ models:
   - name: bronze_listings
     description: "Raw Airbnb listings data loaded into the bronze layer."
     config:
+      materialized: table
       tags: ['bronze']
     columns:
       - name: listing_id

@@ -48,7 +48,8 @@ models:
         description: "Normalized booking status."
         tests:
           - accepted_values:
-              values: ['cancelled', 'completed', 'pending', 'confirmed']
+              arguments:
+                values: ['cancelled', 'completed', 'pending', 'confirmed']
 
   # ---------------------------------------------------------
   # SILVER: DEDUPED
@@ -87,10 +88,12 @@ models:
         description: "Boolean flag indicating whether the booking was cancelled."
         tests:
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
 
       - name: is_completed
         description: "Boolean flag indicating whether the booking was completed."
         tests:
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]

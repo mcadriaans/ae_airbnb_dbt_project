@@ -1,30 +1,29 @@
-{{ 
-  config(
+{{ config(
     materialized='incremental',
-    unique_key='host_id'
-  ) 
-}}
+    unique_key='host_id',
+    transient=true
+) }}
 
-WITH base AS (
-  SELECT *
-  FROM {{ ref('bronze_hosts')}}
-)
 
 SELECT 
-    host_id,
-    {{ normalize_name('host_name') }} AS host_name,
-    host_since,
-    is_superhost,
-    response_rate,
-    created_at,
-    {{ date_diff('year', 'host_since', 'current_date') }} AS host_tenure_years,
-    CASE 
-      WHEN response_rate >= 90 THEN 'high' 
-      WHEN response_rate >= 70 THEN 'medium' 
-      ELSE 'low' 
-    END AS response_rate_bucket, 
-    CASE 
-      WHEN is_superhost THEN 'superhost' 
-      ELSE 'standard' 
-    END AS host_type
-FROM base
+  host_id,
+  INITCAP(TRIM(host_name)) AS host_name,
+  host_since,
+  LOWER(TRIM(is_superhost)) AS is_superhost,
+  response_rate,
+  CAST(created_at AS timestamp_ntz) AS created_at,
+  CAST(current_timestamp() as timestamp_ntz) as ingested_at
+FROM {{ source('airbnb', 'bronze_hosts')}}
+
+{% if is_incremental() %}
+  -- Only pull new or updated rows
+  WHERE created_at >= (
+    SELECT COALESCE(MAX(created_at), '1900-01-01') 
+    FROM {{ this }}
+    )
+{% endif %}
+
+
+
+
+

@@ -2,9 +2,11 @@ version: 2
 
 models:
   - name: bronze_bookings
-    description: "Raw Airbnb bookings data loaded into the bronze layer."
+    description: >
+      Incremental bronze ingestion table for raw bookings data. Applies light
+      standardization, type casting, and ingestion metadata while preserving
+      source grain and capturing new or updated records.
     config:
-      materialized: table
       tags: ['bronze']
     columns:
       - name: booking_id
@@ -14,9 +16,11 @@ models:
           - unique
 
   - name: bronze_hosts
-    description: "Raw Airbnb hosts data loaded into the bronze layer."
+    description: >
+      Incremental bronze ingestion table for raw host data. Performs basic
+      formatting, timestamp casting, and adds ingestion metadata while
+      preserving the original host-level grain.
     config:
-      materialized: table
       tags: ['bronze']
     columns:
       - name: host_id
@@ -26,9 +30,11 @@ models:
           - unique
 
   - name: bronze_listings
-    description: "Raw Airbnb listings data loaded into the bronze layer."
+    description: >
+      Incremental bronze ingestion table for raw listing data. Normalizes text
+      fields, casts timestamps, and preserves the original listing grain while
+      capturing new or updated records.
     config:
-      materialized: table
       tags: ['bronze']
     columns:
       - name: listing_id
@@ -36,3 +42,4 @@ models:
         tests:
           - not_null
           - unique
+

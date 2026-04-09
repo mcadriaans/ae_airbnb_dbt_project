@@ -1,13 +1,13 @@
 version: 2
 
 sources:
-  - name: staging
+  - name: airbnb
     description: "Raw Airbnb data loaded into the warehouse before transformation."
     database: AIRBNB
-    schema: STAGING
+    schema: DEV_BRONZE
 
     tables:
-      - name: bookings
+      - name: bronze_bookings
         description: "Raw booking-level data including dates, fees, and booking status."
         columns:
           - name: booking_id
@@ -16,7 +16,7 @@ sources:
               - not_null
               - unique
 
-      - name: listings
+      - name: bronze_listings
         description: "Raw listing-level data including property details and pricing."
         columns:
           - name: listing_id
@@ -25,7 +25,7 @@ sources:
               - not_null
               - unique
 
-      - name: hosts
+      - name: bronze_hosts
         description: "Raw host-level data including host names and account metadata."
         columns:
           - name: host_id

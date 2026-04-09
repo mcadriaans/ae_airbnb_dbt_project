@@ -1,6 +1,8 @@
 {{ config(
     materialized='incremental',
-    unique_key='booking_id'
+    unique_key='booking_id',
+    incremental_strategy='merge',
+    transient=true
 ) }}
 
 SELECT
@@ -12,12 +14,15 @@ SELECT
   service_fee,
   LOWER(TRIM(booking_status)) AS booking_status,
   CAST(created_at AS timestamp_ntz) AS created_at,
-  CAST(current_timestamp() as timestamp_ntz) as ingested_at
+  current_timestamp() AS ingested_at
 FROM {{ source('staging', 'bookings') }}
 
 {% if is_incremental() %}
-  - Only pull new or updated rows
-  WHERE created_at > (SELECT MAX(created_at) FROM {{ this }})
+  -- Only pull new or updated rows
+  WHERE created_at >= (
+    SELECT COALESCE(MAX(created_at), '1900-01-01') 
+    FROM {{ this }}
+    )
 {% endif %}
 
 

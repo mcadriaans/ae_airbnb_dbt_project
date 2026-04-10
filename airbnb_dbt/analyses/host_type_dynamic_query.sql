@@ -9,7 +9,7 @@
         host_name,
         host_since,
         response_rate
-    FROM {{ ref('bronze_hosts') }}
+    FROM {{ ref('silver_hosts') }}
     WHERE is_superhost = TRUE
     ORDER BY response_rate DESC
 
@@ -20,7 +20,7 @@
         host_name,
         host_since,
         response_rate
-    FROM {{ ref('bronze_hosts') }}
+    FROM {{ ref('silver_hosts') }}
     WHERE is_superhost = FALSE
     ORDER BY response_rate DESC
 {% endif %}

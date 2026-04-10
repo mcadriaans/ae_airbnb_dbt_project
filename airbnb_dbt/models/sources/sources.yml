@@ -8,6 +8,7 @@ sources:
 
     tables:
       - name: bronze_bookings
+        identifier: BRONZE_BOOKINGS
         description: "Raw booking-level data including dates, fees, and booking status."
         columns:
           - name: booking_id
@@ -17,6 +18,7 @@ sources:
               - unique
 
       - name: bronze_listings
+        identifier: BRONZE_LISTINGS
         description: "Raw listing-level data including property details and pricing."
         columns:
           - name: listing_id
@@ -26,6 +28,7 @@ sources:
               - unique
 
       - name: bronze_hosts
+        identifier: BRONZE_HOSTS
         description: "Raw host-level data including host names and account metadata."
         columns:
           - name: host_id

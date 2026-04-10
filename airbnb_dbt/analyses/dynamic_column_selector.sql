@@ -2,4 +2,4 @@
 
 SELECT 
     {{ cols | join(', ') }} 
-FROM {{ ref('bronze_listings') }}
+FROM {{ ref('silver_listings') }}

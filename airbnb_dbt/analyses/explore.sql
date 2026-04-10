@@ -1,1 +1,1 @@
-SELECT * FROM {{ ref('bronze_hosts') }} LIMIT 5
+SELECT * FROM {{ ref('silver_hosts') }} LIMIT 5

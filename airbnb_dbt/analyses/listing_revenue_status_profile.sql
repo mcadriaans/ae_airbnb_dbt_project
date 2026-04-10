@@ -12,6 +12,6 @@ SELECT
             AS {{ booking_status }}_revenue,
     {% endfor %}
     SUM(booking_amount) AS total_revenue
-FROM {{ ref('bronze_bookings') }}
+FROM {{ ref('silver_bookings') }}
 GROUP BY 1
 ORDER BY cancelled_revenue DESC;

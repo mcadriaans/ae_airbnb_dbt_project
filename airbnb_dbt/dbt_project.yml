@@ -17,7 +17,7 @@ models:
   airbnb_dbt:
     silver:
       +schema: silver
-      +materialized: incremental
+      +materialized: view
     gold:
       +schema: gold
       +materialized: table

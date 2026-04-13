@@ -1,33 +1,36 @@
 version: 2
-models:
- - name: silver_bookings
-   description: >
-     Cleaned and enriched bookings data derived from the bronze layer.
-     This model standardizes data types, normalizes text fields, and adds
-     business logic such as revenue calculations and booking lead times.
-     It serves as the primary fact table for downstream analytics.
-   columns:
-     - name: booking_id
-       description: "Unique identifier for a booking."
-       tests:
-         - unique
-         - not_null
-     - name: booking_status
-       description: > 
-         Normalized status of the booking (lowercase and trimmed).
-         Indicates whether the booking is confirmed or cancelled.
-       tests:
-         - accepted_values:
-             values: ['confirmed', 'cancelled']
-     - name: total_revenue
-       description:  >
-         Total revenue generated from the booking, calculated as the sum of
-         booking amount, cleaning fee, and service fee.
-       tests:
-         - not_null
-     - name: lead_time_days
-       description: "Number of days between booking date and stay start date."
 
-     - name: stay_end_date
-       description: "Calculated end date of the stay based on nights booked."
-   
+models:
+  - name: silver_bookings
+    description: >
+      Cleaned and enriched bookings data derived from the bronze layer.
+      This model standardizes data types, normalizes text fields, and adds
+      business logic such as revenue calculations and booking lead times.
+      It serves as the primary fact table for downstream analytics.
+    columns:
+      - name: booking_id
+        description: "Unique identifier for a booking."
+        tests:
+          - unique
+          - not_null
+      - name: booking_status
+        description: >
+          Normalized status of the booking (lowercase and trimmed).
+          Indicates whether the booking is confirmed or cancelled.
+        tests:
+          - accepted_values:
+              values: ['confirmed', 'cancelled']
+      - name: total_revenue
+        description: >
+          Total revenue generated from the booking, calculated as the sum of
+          booking amount, cleaning fee, and service fee.
+        tests:
+          - not_null
+      - name: lead_time_days
+        description: "Number of days between booking date and stay start date."
+        tests:
+          - not_null
+      - name: stay_end_date
+        description: "Calculated end date of the stay based on nights booked."
+        tests:
+          - not_null

@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: fct_bookings
+  - name: dim_listings
+  - name: dim_hosts
+  - name: booking_trends
+  - name: host_performance
+  - name: superhost_analysis

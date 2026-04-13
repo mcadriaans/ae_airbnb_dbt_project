@@ -1,8 +1,3 @@
-{{ config(
-    materialized='incremental',
-    unique_key='listing_id',
-    transient=true
-) }}
 
 SELECT 
   listing_id,
@@ -19,13 +14,7 @@ SELECT
   CAST(current_timestamp() AS timestamp_ntz) AS ingested_at
 FROM {{ source('airbnb', 'bronze_listings') }}
 
-{% if is_incremental() %}
-  -- Only pull new or updated rows
-  WHERE created_at >= (
-    SELECT COALESCE(MAX(created_at), '1900-01-01') 
-    FROM {{ this }}
-    )
-{% endif %}
+
 
 
 

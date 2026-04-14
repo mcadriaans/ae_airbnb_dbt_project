@@ -2,8 +2,33 @@ version: 2
 
 models:
   - name: fct_bookings
+    description: >
+      Fact table containing one row per booking. Includes revenue metrics,
+      cancellation logic, host and listing attributes, and booking behavior KPIs.
+    columns:
+      - name: booking_id
+        description: "Primary key for the booking."
+      - name: net_revenue
+        description: "Total revenue minus cancellation fees."
+      - name: cancellation_fee
+        description: "Fee charged based on lead time and cancellation rules."
+
   - name: dim_listings
+    description: "Dimension table containing listing attributes used for slicing fact tables."
+    columns:
+      - name: listing_id
+        description: "Unique identifier for the listing."
+      - name: city
+        description: "City where the listing is located."
+      - name: property_type
+        description: "Type of property (entire home, private room, etc.)."
+
   - name: dim_hosts
-  - name: booking_trends
-  - name: host_performance
-  - name: superhost_analysis
+    description: "Dimension table containing host attributes and performance indicators."
+    columns:
+      - name: host_id
+        description: "Unique identifier for the host."
+      - name: is_superhost
+        description: "Indicates whether the host is a superhost."
+      - name: avg_host_rating
+        description: "Average rating across all listings owned by the host."

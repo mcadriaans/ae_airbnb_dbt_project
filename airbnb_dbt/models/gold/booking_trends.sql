@@ -1,6 +1,8 @@
 SELECT
-    DATE_TRUNC('month', booking_date) AS month,
+    EXTRACT(YEAR FROM booking_date) AS year,
+    EXTRACT(MONTH FROM booking_date) AS month_number,
     COUNT(*) AS bookings,
-    SUM(total_revenue) AS revenue
+    SUM(net_revenue) AS net_revenue
 FROM {{ ref('fct_bookings') }}
-GROUP BY month
+GROUP BY year,month_number
+ORDER BY net_revenue DESC

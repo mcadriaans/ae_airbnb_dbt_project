@@ -19,8 +19,10 @@ fact_bookings AS (
         b.booking_date,
         b.nights_booked,
         b.total_revenue,
+        b.booking_status,
+        b.lead_time_days,
         b.cancellation_fee,
-        (b.total_revenue - b.cancellation_fee) AS net_revenue,
+        {{ calc_net_revenue('booking_status', 'total_revenue', 'cancellation_fee') }} AS net_revenue,
 
         l.city,
         l.country,

@@ -32,3 +32,46 @@ models:
         description: "Indicates whether the host is a superhost."
       - name: avg_host_rating
         description: "Average rating across all listings owned by the host."
+
+
+  - name: cancellation_analysis
+    description: >
+      Aggregate model providing insights into booking cancellations across country,
+      city, and property_type. Includes cancellation rates, lead time behaviour, and 
+      cancellation fee revenue.
+    columns:
+      - name: country
+        description: "Country where the property is located."
+        tests:
+          - not_null
+      - name: city
+        description: "City of the property."
+        test:
+            - not_null
+      - name: property_type
+        description: >
+         High-level property category (e.g. apartment, house). Helps break down
+         booking patterns by type of inventory.
+        tests:
+          - not_null
+      - name: total_bookings
+        description: "Total number of bookings for the given group"
+        tests:
+          - not_null
+      - name: cancelled_bookings
+        description: "Number of bookings that were cancelled"
+      - name: avg_lead_time_cancelled
+        description: "Average lead time (in days) for cancelled bookings"
+      - name: avg_lead_time_completed
+        description: "Average lead time (in days) for non-cancelled bookings"
+        test:
+            - not_null
+      - name: cancellation_fee_revenue
+        description: "Total revenue collected from cancellation fees"
+      - name: cancellation_rate
+        description: "Proportion of bookings that were cancelled (0–1)"       
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1

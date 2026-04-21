@@ -11,8 +11,9 @@ WITH source_data AS (
     FROM {{ source('airbnb', 'bronze_bookings') }}
 
     {% if is_incremental() %}
+    -- This looks back 3 days from the current maximum date in the Silver table
     WHERE created_at >= (
-        SELECT COALESCE(MAX(created_at), '1900-01-01'::timestamp_ntz)
+        SELECT DATEADD(day, -3, COALESCE(MAX(created_at), '1900-01-01'::timestamp_ntz))
         FROM {{ this }}
     )
     {% endif %}

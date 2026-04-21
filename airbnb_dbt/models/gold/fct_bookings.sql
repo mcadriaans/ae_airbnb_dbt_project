@@ -1,4 +1,4 @@
-WITH cancellation_metrics AS(
+WITH cancellation_fee_allocated AS(
     SELECT 
         *,
         CAST(
@@ -15,14 +15,19 @@ WITH cancellation_metrics AS(
 
 fact_bookings AS (
     SELECT 
-        b.booking_id,
-        b.booking_date,
-        b.nights_booked,
-        b.total_revenue,
-        b.booking_status,
-        b.lead_time_days,
-        b.cancellation_fee,
+        f.booking_id,
+        f.booking_date,
+        f.nights_booked,
+        f.total_revenue,
+        f.booking_status,
+        f.lead_time_days,
+        f.cancellation_fee,
         {{ calc_net_revenue('booking_status', 'total_revenue', 'cancellation_fee') }} AS net_revenue,
+        CASE
+            WHEN booking_status = 'cancelled'
+                THEN total_revenue - cancellation_fee
+            ELSE 0
+        END AS revenue_loss,
 
         l.city,
         l.country,
@@ -31,9 +36,9 @@ fact_bookings AS (
         h.host_id,
         h.is_superhost,
         h.avg_host_rating
-    FROM cancellation_metrics AS b
+    FROM cancellation_fee_allocated AS f
     LEFT JOIN {{ ref('silver_listings') }} AS l
-        ON b.listing_id = l.listing_id
+        ON f.listing_id = l.listing_id
     LEFT JOIN {{ ref('silver_hosts') }} AS h
         ON l.host_id = h.host_id
 )

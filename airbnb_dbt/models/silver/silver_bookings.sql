@@ -40,7 +40,6 @@ silver_cleaned AS (
 ),
 
 silver_enriched AS (
-
     SELECT
         *,
         CAST(
@@ -56,5 +55,4 @@ silver_enriched AS (
 
 )
 
-
-SELECT * FROM silver_enriched ;
+SELECT * FROM silver_enriched 

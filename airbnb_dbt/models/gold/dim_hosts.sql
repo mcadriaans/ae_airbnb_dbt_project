@@ -1,3 +1,5 @@
+-- Host Profile and Performance Dimension
+
 WITH hosts AS(
     SELECT *
     FROM {{ ref('silver_hosts') }}

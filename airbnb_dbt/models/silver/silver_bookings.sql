@@ -1,27 +1,47 @@
 {{ config(
     materialized='incremental',
     unique_key='booking_id',
-    incremental_strategy='merge',
-    transient=true
+    incremental_strategy='merge'
 ) }}
 
+{% set relation = adapter.get_relation(
+    database=this.database,
+    schema=this.schema,
+    identifier=this.identifier
+) %}
+
 WITH source_data AS (
-    SELECT *
+
+    SELECT 
+        booking_id,
+        booking_date,
+        booking_status,
+        listing_id,
+        stay_start_date,
+        nights_booked,
+        booking_amount,
+        cleaning_fee,
+        service_fee,
+        cancellation_fee,
+        CAST(created_at AS timestamp_ntz) AS created_at,
+        CAST(updated_at AS timestamp_ntz) AS updated_at
     FROM {{ source('airbnb', 'bronze_bookings') }}
 
-    {% if is_incremental() %}
-        WHERE updated_at >= (
-            SELECT DATEADD(day, -3, MAX(updated_at))
-            FROM {{ this }} 
-        )
+    {% if relation is not none and not flags.FULL_REFRESH %}
+      WHERE updated_at >= (
+          SELECT DATEADD(
+              day, -3,
+              COALESCE(MAX(t.updated_at), '1900-01-01'::timestamp_ntz))
+          FROM {{ this }}
+          )
     {% endif %}
 ),
-silver_cleaned AS (
 
+silver_cleaned AS (
     SELECT
         LOWER(TRIM(booking_id)) AS booking_id,
         booking_date,
-        LOWER(TRIM(booking_status)) AS booking_status,
+        COALESCE(LOWER(TRIM(booking_status)), 'unknown') AS booking_status,
         listing_id,
         stay_start_date,
         nights_booked,
@@ -49,24 +69,15 @@ silver_enriched AS (
         service_fee,
         cancellation_fee,
         CAST(
-            {{ calc_total_revenue(
+            {{ calc_expected_revenue(
                 'booking_amount',
                 'cleaning_fee',
                 'service_fee'
-            ) }}
-        AS DECIMAL(10,2)) AS expected_revenue,
-        CAST(
-            {{ calc_actual_revenue(
-                'booking_status', 
-                'expected_revenue', 
-                'cancellation_fee'
-            ) }} AS DECIMAL(10,2)) AS actual_revenue,
-        expected_revenue - actual_revenue AS revenue_loss,
+            ) }} AS DECIMAL(18,2)) AS expected_revenue,
         created_at,
-        updated_at,  
+        updated_at,
+        CURRENT_TIMESTAMP() AS loaded_at
     FROM silver_cleaned
-
 )
 
-SELECT * FROM silver_enriched 
-SELECT * FROM {{ this }}
+SELECT * FROM silver_enriched;

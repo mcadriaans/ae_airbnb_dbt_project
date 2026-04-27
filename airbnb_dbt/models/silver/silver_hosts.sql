@@ -6,7 +6,8 @@ SELECT
   response_rate,
   avg_host_rating,
   CAST(created_at AS timestamp_ntz) AS created_at,
-  CAST(updated_at AS timestamp_ntz) AS updated_at
+  CAST(updated_at AS timestamp_ntz) AS updated_at,
+  CAST(current_timestamp() AS timestamp_ntz) AS ingested_at
 FROM {{ source('airbnb', 'bronze_hosts') }}
 
 

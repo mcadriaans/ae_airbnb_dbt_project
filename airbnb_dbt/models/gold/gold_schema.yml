@@ -53,15 +53,7 @@ models:
       - name: is_confirmed
         description: "Boolean indicating whether the booking was confirmed (not cancelled)."
 
-  - name: dim_listings
-    description: "Dimension table containing listing attributes used for slicing fact tables."
-    columns:
-      - name: listing_id
-        description: "Unique identifier for the listing."
-      - name: city
-        description: "City where the listing is located."
-      - name: property_type
-        description: "Type of property (entire home, private room, etc.)."
+
 
   - name: dim_hosts
     description: "Dimension table containing host attributes and performance indicators."
@@ -87,7 +79,15 @@ models:
       - name: host_profile_last_updated
         description: "Timestamp of the last update to the host's profile."
 
-
+  - name: dim_listings
+    description: "Dimension table containing listing attributes used for slicing fact tables."
+    columns:
+      - name: listing_id
+        description: "Unique identifier for the listing."
+      - name: city
+        description: "City where the listing is located."
+      - name: property_type
+        description: "Type of property (entire home, private room, etc.)."
   - name: cancellation_analysis
     description: >
       Aggregate model providing insights into booking cancellations across country,

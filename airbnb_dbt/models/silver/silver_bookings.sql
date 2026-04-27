@@ -6,53 +6,67 @@
 ) }}
 
 WITH source_data AS (
-
     SELECT *
     FROM {{ source('airbnb', 'bronze_bookings') }}
 
     {% if is_incremental() %}
-      WHERE created_at >= (
-          SELECT DATEADD(
-              day, -3,
-              COALESCE(MAX(created_at), '1900-01-01'::timestamp_ntz)
-          )
-          FROM {{ this }}
-      )
+        WHERE updated_at >= (
+            SELECT DATEADD(day, -3, MAX(updated_at))
+            FROM {{ this }} 
+        )
     {% endif %}
-
 ),
 silver_cleaned AS (
 
     SELECT
-        booking_id,
-        CAST(booking_date AS TIMESTAMP_NTZ) AS booking_date,
+        LOWER(TRIM(booking_id)) AS booking_id,
+        booking_date,
         LOWER(TRIM(booking_status)) AS booking_status,
         listing_id,
+        stay_start_date,
         nights_booked,
-        CAST(booking_amount AS DECIMAL(10,2)) AS booking_amount,
-        CAST(cleaning_fee AS DECIMAL(10, 2)) AS cleaning_fee,
-        CAST(service_fee AS DECIMAL(10,2)) AS service_fee,
-        CAST(cancellation_fee AS DECIMAL(10,2)) AS cancellation_fee,
-        CAST(created_at AS TIMESTAMP_NTZ) AS created_at,
-        CAST(stay_start_date AS TIMESTAMP_NTZ) AS stay_start_date
+        booking_amount,
+        cleaning_fee,
+        service_fee,
+        cancellation_fee,
+        created_at,
+        updated_at  
     FROM source_data
-
 ),
 
 silver_enriched AS (
     SELECT
-        *,
+        booking_id,
+        listing_id,
+        booking_status,
+        booking_date,
+        stay_start_date,
+        DATEDIFF(day, booking_date, stay_start_date) AS lead_time_days,
+        nights_booked,
+        DATEADD(day, nights_booked, stay_start_date) AS stay_end_date,
+        booking_amount,
+        cleaning_fee,
+        service_fee,
+        cancellation_fee,
         CAST(
             {{ calc_total_revenue(
                 'booking_amount',
                 'cleaning_fee',
                 'service_fee'
             ) }}
-        AS DECIMAL(10,2)) AS total_revenue,
-        DATEADD(day, nights_booked, stay_start_date) AS stay_end_date,
-        DATEDIFF(day, booking_date, stay_start_date) AS lead_time_days
+        AS DECIMAL(10,2)) AS expected_revenue,
+        CAST(
+            {{ calc_actual_revenue(
+                'booking_status', 
+                'expected_revenue', 
+                'cancellation_fee'
+            ) }} AS DECIMAL(10,2)) AS actual_revenue,
+        expected_revenue - actual_revenue AS revenue_loss,
+        created_at,
+        updated_at,  
     FROM silver_cleaned
 
 )
 
 SELECT * FROM silver_enriched 
+SELECT * FROM {{ this }}

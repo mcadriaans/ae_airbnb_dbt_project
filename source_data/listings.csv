@@ -1,501 +1,501 @@
-listing_id,host_id,property_type,room_type,city,country,accommodates,bedrooms,bathrooms,price_per_night,created_at
-1,455,Condo,Private room,Mumbai,India,2,1,1,80.75,2023-11-18 00:00:00
-2,84,Loft,Private room,Dublin,Ireland,1,1,1,214.5,2023-11-23 00:00:00
-3,257,House,Entire home,Toronto,Canada,3,1,1,256.0,2023-09-18 00:00:00
-4,208,Loft,Private room,Singapore,Singapore,2,1,1,231.0,2023-06-16 00:00:00
-5,373,House,Private room,Swakopmund,Namibia,1,1,1,70.0,2023-04-04 00:00:00
-6,304,House,Entire home,Krakow,Poland,9,4,3,280.0,2023-10-31 00:00:00
-7,173,Condo,Private room,Montego Bay,Jamaica,2,1,1,114.0,2023-03-24 00:00:00
-8,319,Apartment,Private room,Livingstone,Zambia,2,1,1,70.12,2023-11-24 00:00:00
-9,361,Apartment,Private room,Galway,Ireland,2,1,1,132.0,2023-10-15 00:00:00
-10,44,Boutique Hotel,Entire home,Kingston,Jamaica,7,3,2,256.0,2023-08-21 00:00:00
-11,470,Condo,Entire home,Windhoek,Namibia,5,2,2,123.5,2023-05-27 00:00:00
-12,158,Loft,Private room,Warsaw,Poland,1,1,1,121.0,2023-02-05 00:00:00
-13,155,House,Entire home,Rio de Janeiro,Brazil,8,3,2,204.0,2023-10-02 00:00:00
-14,200,Boutique Hotel,Entire home,Singapore,Singapore,4,1,1,504.0,2023-06-09 00:00:00
-15,404,Apartment,Entire home,New York,United States,8,4,3,563.5,2023-12-18 00:00:00
-16,246,House,Private room,Paris,France,2,1,1,185.0,2023-10-21 00:00:00
-17,325,Loft,Entire home,Madrid,Spain,11,5,4,476.0,2023-12-06 00:00:00
-18,151,Boutique Hotel,Private room,Singapore,Singapore,2,1,1,294.0,2023-07-30 00:00:00
-19,322,Apartment,Entire home,Krakow,Poland,8,3,2,205.0,2023-06-14 00:00:00
-20,444,Loft,Private room,New York,United States,2,1,1,253.0,2023-09-12 00:00:00
-21,4,Loft,Entire home,New Delhi,India,5,2,2,176.0,2023-02-01 00:00:00
-22,82,Boutique Hotel,Entire home,Goa,India,4,2,2,266.0,2023-08-21 00:00:00
-23,100,Apartment,Entire home,Montego Bay,Jamaica,5,2,2,198.0,2023-10-27 00:00:00
-24,353,Boutique Hotel,Private room,Cape Town,South Africa,2,1,1,126.0,2023-06-16 00:00:00
-25,458,Boutique Hotel,Entire home,Paris,France,12,5,4,740.0,2023-10-04 00:00:00
-26,150,Apartment,Private room,Buenos Aires,Argentina,2,1,1,57.75,2023-09-14 00:00:00
-27,464,Loft,Private room,New Delhi,India,1,1,1,88.0,2023-11-01 00:00:00
-28,152,Condo,Private room,Kingston,Jamaica,2,1,1,76.0,2023-04-08 00:00:00
-29,158,Condo,Entire home,Dublin,Ireland,2,1,1,292.5,2023-03-16 00:00:00
-30,250,Apartment,Entire home,Cape Town,South Africa,7,3,2,184.5,2023-10-22 00:00:00
-31,30,House,Entire home,Warsaw,Poland,3,1,1,176.0,2023-05-01 00:00:00
-32,26,Boutique Hotel,Private room,Toronto,Canada,2,1,1,224.0,2023-05-21 00:00:00
-33,78,House,Private room,Paris,France,1,1,1,185.0,2023-02-25 00:00:00
-34,403,Condo,Private room,New Delhi,India,1,1,1,76.0,2023-03-15 00:00:00
-35,243,Loft,Private room,Singapore,Singapore,1,1,1,231.0,2023-10-26 00:00:00
-36,92,Loft,Private room,Buenos Aires,Argentina,1,1,1,77.0,2023-02-12 00:00:00
-37,49,Boutique Hotel,Private room,McMurdo Station,Antarctica,2,1,1,420.0,2023-07-06 00:00:00
-38,315,Condo,Entire home,Tokyo,Japan,6,2,2,285.0,2023-11-11 00:00:00
-39,201,Apartment,Private room,Mumbai,India,2,1,1,70.12,2023-10-29 00:00:00
-40,22,House,Entire home,Warsaw,Poland,5,2,2,220.0,2023-08-25 00:00:00
-41,137,House,Entire home,Montego Bay,Jamaica,7,3,2,288.0,2023-10-01 00:00:00
-42,461,Condo,Private room,Madrid,Spain,1,1,1,133.0,2023-02-28 00:00:00
-43,223,Loft,Entire home,Warsaw,Poland,8,4,3,330.0,2023-02-20 00:00:00
-44,8,Apartment,Entire home,Madrid,Spain,4,1,1,175.0,2023-04-23 00:00:00
-45,216,Apartment,Entire home,Windhoek,Namibia,6,2,2,107.25,2023-03-26 00:00:00
-46,79,Boutique Hotel,Private room,Madrid,Spain,1,1,1,196.0,2023-05-31 00:00:00
-47,340,Boutique Hotel,Private room,Goa,India,2,1,1,133.0,2023-12-05 00:00:00
-48,312,Condo,Private room,Lusaka,Zambia,2,1,1,52.25,2023-01-27 00:00:00
-49,480,Condo,Entire home,Kingston,Jamaica,8,4,3,216.0,2023-02-09 00:00:00
-50,70,Apartment,Entire home,Sydney,Australia,8,4,3,428.75,2023-03-15 00:00:00
-51,425,Loft,Entire home,Toronto,Canada,8,3,2,416.0,2023-09-08 00:00:00
-52,294,Loft,Private room,Goa,India,1,1,1,104.5,2023-08-11 00:00:00
-53,487,Apartment,Entire home,Buenos Aires,Argentina,6,2,2,115.5,2023-10-19 00:00:00
-54,322,House,Private room,Lusaka,Zambia,2,1,1,55.0,2023-04-07 00:00:00
-55,462,House,Entire home,Livingstone,Zambia,3,1,1,136.0,2023-07-09 00:00:00
-56,466,Loft,Entire home,Dublin,Ireland,5,2,2,429.0,2023-04-01 00:00:00
-57,115,House,Entire home,Paris,France,5,2,2,370.0,2023-11-10 00:00:00
-58,319,Apartment,Entire home,Sydney,Australia,8,4,3,428.75,2023-06-05 00:00:00
-59,177,Condo,Entire home,Lusaka,Zambia,12,5,4,170.5,2023-06-19 00:00:00
-60,461,Apartment,Private room,Mumbai,India,2,1,1,70.12,2023-10-30 00:00:00
-61,26,Boutique Hotel,Private room,Barcelona,Spain,2,1,1,231.0,2023-02-18 00:00:00
-62,471,House,Private room,Toronto,Canada,2,1,1,160.0,2023-08-16 00:00:00
-63,434,Boutique Hotel,Private room,McMurdo Station,Antarctica,2,1,1,420.0,2023-04-22 00:00:00
-64,153,Condo,Private room,Auckland,New Zealand,2,1,1,147.25,2023-05-03 00:00:00
-65,412,Loft,Private room,Mumbai,India,1,1,1,93.5,2023-11-02 00:00:00
-66,59,Apartment,Entire home,Warsaw,Poland,12,5,4,313.5,2023-08-02 00:00:00
-67,92,Boutique Hotel,Entire home,Buenos Aires,Argentina,2,1,1,168.0,2023-09-29 00:00:00
-68,196,Loft,Private room,Madrid,Spain,2,1,1,154.0,2023-03-02 00:00:00
-69,32,Apartment,Private room,McMurdo Station,Antarctica,2,1,1,247.5,2023-03-02 00:00:00
-70,477,Boutique Hotel,Private room,New Delhi,India,1,1,1,112.0,2023-10-19 00:00:00
-71,375,Condo,Entire home,Mumbai,India,10,4,3,229.5,2023-03-14 00:00:00
-72,247,Loft,Entire home,Montego Bay,Jamaica,4,2,2,264.0,2023-08-21 00:00:00
-73,180,Condo,Private room,New Delhi,India,1,1,1,76.0,2023-12-29 00:00:00
-74,286,Boutique Hotel,Private room,Montego Bay,Jamaica,1,1,1,168.0,2023-04-18 00:00:00
-75,315,Condo,Private room,Montego Bay,Jamaica,1,1,1,114.0,2023-03-12 00:00:00
-76,480,Loft,Private room,Livingstone,Zambia,2,1,1,93.5,2023-04-03 00:00:00
-77,43,Loft,Private room,Sydney,Australia,2,1,1,192.5,2023-04-04 00:00:00
-78,347,Condo,Private room,New York,United States,1,1,1,218.5,2023-04-23 00:00:00
-79,476,Loft,Private room,Rio de Janeiro,Brazil,1,1,1,93.5,2023-05-16 00:00:00
-80,28,Condo,Entire home,Madrid,Spain,3,1,1,210.0,2023-09-15 00:00:00
-81,34,Loft,Private room,Kingston,Jamaica,2,1,1,88.0,2023-05-30 00:00:00
-82,46,Condo,Private room,New York,United States,1,1,1,218.5,2023-02-10 00:00:00
-83,386,Boutique Hotel,Entire home,Buenos Aires,Argentina,10,5,4,280.0,2023-12-10 00:00:00
-84,203,House,Entire home,Livingstone,Zambia,3,1,1,136.0,2023-11-03 00:00:00
-85,361,Boutique Hotel,Private room,Windhoek,Namibia,2,1,1,91.0,2023-12-21 00:00:00
-86,443,Condo,Private room,Swakopmund,Namibia,2,1,1,66.5,2023-10-28 00:00:00
-87,365,Loft,Private room,New Delhi,India,1,1,1,88.0,2023-11-06 00:00:00
-88,165,House,Private room,Kingston,Jamaica,1,1,1,80.0,2023-04-18 00:00:00
-89,54,Condo,Entire home,Auckland,New Zealand,8,3,2,356.5,2023-08-07 00:00:00
-90,81,Loft,Entire home,Krakow,Poland,3,1,1,180.0,2023-08-01 00:00:00
-91,137,Apartment,Private room,Swakopmund,Namibia,2,1,1,57.75,2023-12-09 00:00:00
-92,104,House,Entire home,Madrid,Spain,7,3,2,336.0,2023-07-07 00:00:00
-93,498,Boutique Hotel,Private room,Kingston,Jamaica,1,1,1,112.0,2023-06-09 00:00:00
-94,72,House,Entire home,Buenos Aires,Argentina,7,3,2,168.0,2023-01-03 00:00:00
-95,153,Apartment,Entire home,Toronto,Canada,5,2,2,264.0,2023-05-04 00:00:00
-96,235,Boutique Hotel,Private room,Cape Town,South Africa,1,1,1,126.0,2023-04-12 00:00:00
-97,180,Loft,Entire home,Livingstone,Zambia,10,4,3,255.0,2023-04-24 00:00:00
-98,126,Boutique Hotel,Private room,Auckland,New Zealand,1,1,1,217.0,2023-06-30 00:00:00
-99,244,Apartment,Private room,Krakow,Poland,2,1,1,82.5,2023-10-08 00:00:00
-100,288,Boutique Hotel,Private room,Paris,France,1,1,1,259.0,2023-08-01 00:00:00
-101,359,Loft,Entire home,Warsaw,Poland,11,5,4,374.0,2023-12-23 00:00:00
-102,267,House,Private room,Swakopmund,Namibia,1,1,1,70.0,2023-09-16 00:00:00
-103,159,House,Private room,Dublin,Ireland,1,1,1,195.0,2023-09-04 00:00:00
-104,392,Condo,Private room,Kingston,Jamaica,2,1,1,76.0,2023-01-24 00:00:00
-105,354,Condo,Private room,Windhoek,Namibia,1,1,1,61.75,2023-10-13 00:00:00
-106,420,Condo,Private room,Mumbai,India,1,1,1,80.75,2023-08-18 00:00:00
-107,471,Loft,Private room,Tokyo,Japan,2,1,1,165.0,2023-10-03 00:00:00
-108,99,Condo,Entire home,Cape Town,South Africa,12,5,4,279.0,2023-02-21 00:00:00
-109,41,Apartment,Entire home,Kingston,Jamaica,2,1,1,100.0,2023-08-28 00:00:00
-110,42,Condo,Entire home,Windhoek,Namibia,9,4,3,175.5,2023-03-19 00:00:00
-111,438,Loft,Entire home,Rio de Janeiro,Brazil,11,5,4,289.0,2023-10-05 00:00:00
-112,32,House,Entire home,McMurdo Station,Antarctica,10,5,4,960.0,2023-07-30 00:00:00
-113,187,Condo,Private room,Dublin,Ireland,1,1,1,185.25,2023-04-19 00:00:00
-114,52,House,Entire home,Goa,India,10,5,4,304.0,2023-05-09 00:00:00
-115,434,Loft,Private room,Windhoek,Namibia,2,1,1,71.5,2023-07-05 00:00:00
-116,250,Boutique Hotel,Entire home,Galway,Ireland,5,2,2,448.0,2023-08-17 00:00:00
-117,417,Apartment,Private room,Barcelona,Spain,1,1,1,136.12,2023-07-26 00:00:00
-118,252,Apartment,Entire home,Paris,France,2,1,1,231.25,2023-06-02 00:00:00
-119,491,House,Private room,New Delhi,India,2,1,1,80.0,2023-08-29 00:00:00
-120,213,Apartment,Private room,Warsaw,Poland,1,1,1,90.75,2023-10-05 00:00:00
-121,154,Condo,Entire home,Kingston,Jamaica,5,2,2,152.0,2023-03-23 00:00:00
-122,93,Condo,Private room,Lusaka,Zambia,1,1,1,52.25,2023-10-12 00:00:00
-123,181,Loft,Private room,Goa,India,2,1,1,104.5,2023-01-28 00:00:00
-124,411,House,Entire home,Rio de Janeiro,Brazil,7,3,2,204.0,2023-12-16 00:00:00
-125,294,Condo,Entire home,McMurdo Station,Antarctica,9,4,3,810.0,2023-12-03 00:00:00
-126,453,House,Entire home,Windhoek,Namibia,3,1,1,104.0,2023-01-26 00:00:00
-127,410,Apartment,Entire home,New Delhi,India,3,1,1,100.0,2023-04-08 00:00:00
-128,47,Boutique Hotel,Entire home,Singapore,Singapore,4,1,1,504.0,2023-01-06 00:00:00
-129,222,Boutique Hotel,Entire home,Rio de Janeiro,Brazil,8,4,3,306.0,2023-03-10 00:00:00
-130,111,Apartment,Private room,Sydney,Australia,1,1,1,144.38,2023-04-20 00:00:00
-131,286,Apartment,Private room,Sydney,Australia,1,1,1,144.38,2023-06-27 00:00:00
-132,164,Boutique Hotel,Entire home,Auckland,New Zealand,4,2,2,434.0,2023-11-06 00:00:00
-133,186,Condo,Entire home,Rio de Janeiro,Brazil,6,3,2,195.5,2023-10-04 00:00:00
-134,228,Condo,Entire home,Paris,France,2,1,1,277.5,2023-05-13 00:00:00
-135,313,House,Entire home,Montego Bay,Jamaica,4,1,1,192.0,2023-03-05 00:00:00
-136,374,House,Private room,New Delhi,India,1,1,1,80.0,2023-04-17 00:00:00
-137,495,Condo,Private room,Auckland,New Zealand,1,1,1,147.25,2023-06-10 00:00:00
-138,496,Loft,Private room,McMurdo Station,Antarctica,2,1,1,330.0,2023-07-09 00:00:00
-139,338,House,Private room,Livingstone,Zambia,1,1,1,85.0,2023-10-23 00:00:00
-140,9,Condo,Private room,Rio de Janeiro,Brazil,2,1,1,80.75,2023-11-10 00:00:00
-141,483,Boutique Hotel,Entire home,Cape Town,South Africa,8,3,2,288.0,2023-06-01 00:00:00
-142,248,Condo,Entire home,Kingston,Jamaica,8,3,2,184.0,2023-12-21 00:00:00
-143,261,Loft,Entire home,Singapore,Singapore,4,2,2,462.0,2023-06-08 00:00:00
-144,154,Condo,Entire home,Kingston,Jamaica,4,1,1,120.0,2023-10-29 00:00:00
-145,499,Condo,Private room,Paris,France,2,1,1,175.75,2023-05-14 00:00:00
-146,62,House,Private room,Windhoek,Namibia,2,1,1,65.0,2023-11-10 00:00:00
-147,364,Condo,Private room,Barcelona,Spain,1,1,1,156.75,2023-01-06 00:00:00
-148,166,Apartment,Entire home,Barcelona,Spain,10,4,3,404.25,2023-01-07 00:00:00
-149,442,Apartment,Private room,Buenos Aires,Argentina,1,1,1,57.75,2023-03-10 00:00:00
-150,451,House,Private room,Cape Town,South Africa,1,1,1,90.0,2023-03-30 00:00:00
-151,123,Loft,Entire home,Sydney,Australia,10,5,4,595.0,2023-12-16 00:00:00
-152,418,Condo,Private room,New York,United States,2,1,1,218.5,2023-12-18 00:00:00
-153,346,Apartment,Private room,New Delhi,India,1,1,1,66.0,2023-12-28 00:00:00
-154,326,Apartment,Entire home,Barcelona,Spain,8,4,3,404.25,2023-11-06 00:00:00
-155,63,Loft,Entire home,Lusaka,Zambia,4,1,1,99.0,2023-02-07 00:00:00
-156,369,Boutique Hotel,Entire home,Madrid,Spain,8,3,2,448.0,2023-11-01 00:00:00
-157,471,Loft,Private room,Auckland,New Zealand,1,1,1,170.5,2023-11-27 00:00:00
-158,324,Boutique Hotel,Private room,Montego Bay,Jamaica,1,1,1,168.0,2023-03-28 00:00:00
-159,257,Boutique Hotel,Entire home,Kingston,Jamaica,5,2,2,224.0,2023-10-15 00:00:00
-160,171,Apartment,Private room,Buenos Aires,Argentina,2,1,1,57.75,2023-10-29 00:00:00
-161,134,House,Private room,Livingstone,Zambia,1,1,1,85.0,2023-04-06 00:00:00
-162,498,Loft,Private room,Madrid,Spain,2,1,1,154.0,2023-05-12 00:00:00
-163,121,Loft,Entire home,New York,United States,2,1,1,414.0,2023-07-03 00:00:00
-164,247,Loft,Entire home,Montego Bay,Jamaica,7,3,2,312.0,2023-02-12 00:00:00
-165,364,House,Private room,Madrid,Spain,2,1,1,140.0,2023-02-07 00:00:00
-166,456,Apartment,Private room,Cape Town,South Africa,1,1,1,74.25,2023-08-21 00:00:00
-167,238,Apartment,Private room,Sydney,Australia,2,1,1,144.38,2023-11-15 00:00:00
-168,60,Condo,Private room,Barcelona,Spain,1,1,1,156.75,2023-04-06 00:00:00
-169,182,Loft,Entire home,Krakow,Poland,9,4,3,300.0,2023-07-26 00:00:00
-170,11,House,Entire home,Krakow,Poland,10,5,4,320.0,2023-02-19 00:00:00
-171,68,Apartment,Private room,Goa,India,1,1,1,78.38,2023-02-02 00:00:00
-172,242,Condo,Private room,Tokyo,Japan,2,1,1,142.5,2023-09-06 00:00:00
-173,420,Condo,Private room,Montego Bay,Jamaica,1,1,1,114.0,2023-05-08 00:00:00
-174,375,Condo,Private room,McMurdo Station,Antarctica,1,1,1,285.0,2023-05-07 00:00:00
-175,344,Apartment,Private room,Singapore,Singapore,2,1,1,173.25,2023-06-19 00:00:00
-176,70,Loft,Entire home,Barcelona,Spain,5,2,2,363.0,2023-04-28 00:00:00
-177,449,Apartment,Private room,Montego Bay,Jamaica,1,1,1,99.0,2023-01-25 00:00:00
-178,251,House,Entire home,Singapore,Singapore,10,5,4,672.0,2023-05-03 00:00:00
-179,159,Apartment,Entire home,Mumbai,India,3,1,1,106.25,2023-09-06 00:00:00
-180,329,Condo,Private room,Warsaw,Poland,2,1,1,104.5,2023-08-30 00:00:00
-181,242,House,Private room,Singapore,Singapore,2,1,1,210.0,2023-09-01 00:00:00
-182,409,Boutique Hotel,Entire home,Krakow,Poland,8,3,2,320.0,2023-08-28 00:00:00
-183,166,Apartment,Private room,Madrid,Spain,1,1,1,115.5,2023-11-22 00:00:00
-184,247,House,Private room,Barcelona,Spain,1,1,1,165.0,2023-02-14 00:00:00
-185,222,Apartment,Private room,Lusaka,Zambia,1,1,1,45.38,2023-09-07 00:00:00
-186,22,Boutique Hotel,Entire home,Montego Bay,Jamaica,11,5,4,480.0,2023-10-02 00:00:00
-187,315,Loft,Entire home,Buenos Aires,Argentina,2,1,1,126.0,2023-06-26 00:00:00
-188,110,Apartment,Private room,Auckland,New Zealand,2,1,1,127.88,2023-09-09 00:00:00
-189,92,Loft,Private room,New Delhi,India,2,1,1,88.0,2023-11-30 00:00:00
-190,341,Loft,Entire home,Mumbai,India,7,3,2,221.0,2023-07-16 00:00:00
-191,245,House,Entire home,Livingstone,Zambia,10,4,3,238.0,2023-11-20 00:00:00
-192,398,House,Entire home,Rio de Janeiro,Brazil,9,4,3,238.0,2023-02-18 00:00:00
-193,269,Loft,Entire home,Sydney,Australia,9,4,3,525.0,2023-08-15 00:00:00
-194,277,Loft,Private room,Dublin,Ireland,2,1,1,214.5,2023-10-28 00:00:00
-195,19,Boutique Hotel,Private room,Dublin,Ireland,2,1,1,273.0,2023-08-27 00:00:00
-196,390,Loft,Entire home,Galway,Ireland,2,1,1,288.0,2023-09-14 00:00:00
-197,446,House,Private room,Tokyo,Japan,1,1,1,150.0,2023-08-11 00:00:00
-198,469,Condo,Private room,Toronto,Canada,1,1,1,152.0,2023-10-01 00:00:00
-199,194,Condo,Entire home,Goa,India,6,3,2,218.5,2023-01-29 00:00:00
-200,238,House,Entire home,Rio de Janeiro,Brazil,11,5,4,272.0,2023-04-25 00:00:00
-201,163,Apartment,Private room,Warsaw,Poland,2,1,1,90.75,2023-12-05 00:00:00
-202,44,Loft,Entire home,Swakopmund,Namibia,11,5,4,238.0,2023-09-19 00:00:00
-203,36,Apartment,Entire home,Goa,India,12,5,4,270.75,2023-04-02 00:00:00
-204,35,Condo,Private room,Dublin,Ireland,1,1,1,185.25,2023-08-05 00:00:00
-205,361,Apartment,Private room,Buenos Aires,Argentina,2,1,1,57.75,2023-04-10 00:00:00
-206,284,House,Entire home,Rio de Janeiro,Brazil,5,2,2,170.0,2023-12-14 00:00:00
-207,392,Condo,Entire home,Lusaka,Zambia,10,4,3,148.5,2023-12-18 00:00:00
-208,391,Boutique Hotel,Private room,Buenos Aires,Argentina,1,1,1,98.0,2023-11-07 00:00:00
-209,113,Condo,Entire home,Swakopmund,Namibia,6,3,2,161.0,2023-05-22 00:00:00
-210,395,Boutique Hotel,Private room,Cape Town,South Africa,1,1,1,126.0,2023-02-25 00:00:00
-211,159,Boutique Hotel,Private room,Warsaw,Poland,1,1,1,154.0,2023-10-05 00:00:00
-212,350,Condo,Private room,Cape Town,South Africa,1,1,1,85.5,2023-08-08 00:00:00
-213,463,Apartment,Entire home,Sydney,Australia,9,4,3,428.75,2023-02-08 00:00:00
-214,376,Boutique Hotel,Entire home,Lusaka,Zambia,10,5,4,220.0,2023-07-23 00:00:00
-215,117,Loft,Private room,Dublin,Ireland,1,1,1,214.5,2023-11-30 00:00:00
-216,384,House,Entire home,Lusaka,Zambia,10,4,3,154.0,2023-05-18 00:00:00
-217,443,Boutique Hotel,Private room,Livingstone,Zambia,2,1,1,119.0,2023-08-23 00:00:00
-218,453,House,Entire home,Mumbai,India,6,2,2,170.0,2023-08-11 00:00:00
-219,373,Loft,Entire home,McMurdo Station,Antarctica,10,4,3,900.0,2023-01-17 00:00:00
-220,244,House,Private room,Singapore,Singapore,2,1,1,210.0,2023-04-02 00:00:00
-221,352,Boutique Hotel,Entire home,Toronto,Canada,8,4,3,576.0,2023-06-15 00:00:00
-222,56,Apartment,Entire home,Rio de Janeiro,Brazil,8,3,2,174.25,2023-06-08 00:00:00
-223,196,Loft,Private room,Galway,Ireland,1,1,1,176.0,2023-09-19 00:00:00
-224,8,Apartment,Entire home,New Delhi,India,9,4,3,196.0,2023-01-06 00:00:00
-225,247,Apartment,Entire home,Madrid,Spain,6,3,2,287.0,2023-02-18 00:00:00
-226,20,Condo,Private room,New Delhi,India,1,1,1,76.0,2023-04-01 00:00:00
-227,452,Boutique Hotel,Private room,Livingstone,Zambia,2,1,1,119.0,2023-03-16 00:00:00
-228,212,Condo,Private room,Tokyo,Japan,1,1,1,142.5,2023-08-30 00:00:00
-229,40,Condo,Private room,New Delhi,India,2,1,1,76.0,2023-04-27 00:00:00
-230,178,Loft,Entire home,McMurdo Station,Antarctica,2,1,1,540.0,2023-05-30 00:00:00
-231,326,Loft,Private room,Kingston,Jamaica,1,1,1,88.0,2023-06-15 00:00:00
-232,382,Condo,Private room,Toronto,Canada,1,1,1,152.0,2023-05-12 00:00:00
-233,60,House,Private room,Montego Bay,Jamaica,2,1,1,120.0,2023-10-20 00:00:00
-234,273,House,Private room,McMurdo Station,Antarctica,2,1,1,300.0,2023-05-30 00:00:00
-235,469,Condo,Entire home,Livingstone,Zambia,6,2,2,161.5,2023-12-28 00:00:00
-236,256,Condo,Private room,Buenos Aires,Argentina,1,1,1,66.5,2023-03-12 00:00:00
-237,364,Condo,Private room,Dublin,Ireland,1,1,1,185.25,2023-01-16 00:00:00
-238,265,Boutique Hotel,Private room,Sydney,Australia,1,1,1,245.0,2023-08-23 00:00:00
-239,450,House,Entire home,Dublin,Ireland,10,4,3,546.0,2023-10-09 00:00:00
-240,136,House,Private room,Goa,India,1,1,1,95.0,2023-03-06 00:00:00
-241,89,Boutique Hotel,Private room,Sydney,Australia,2,1,1,245.0,2023-09-15 00:00:00
-242,275,Apartment,Entire home,Singapore,Singapore,4,2,2,346.5,2023-12-13 00:00:00
-243,474,Condo,Entire home,Singapore,Singapore,10,4,3,567.0,2023-07-27 00:00:00
-244,439,Condo,Private room,Auckland,New Zealand,1,1,1,147.25,2023-03-04 00:00:00
-245,349,House,Private room,Montego Bay,Jamaica,2,1,1,120.0,2023-09-22 00:00:00
-246,267,House,Entire home,Galway,Ireland,2,1,1,256.0,2023-01-04 00:00:00
-247,307,Apartment,Private room,Singapore,Singapore,2,1,1,173.25,2023-11-30 00:00:00
-248,2,Boutique Hotel,Private room,Auckland,New Zealand,2,1,1,217.0,2023-06-07 00:00:00
-249,138,Condo,Private room,Montego Bay,Jamaica,1,1,1,114.0,2023-07-16 00:00:00
-250,60,House,Entire home,Kingston,Jamaica,10,5,4,256.0,2023-01-04 00:00:00
-251,122,Boutique Hotel,Entire home,Kingston,Jamaica,9,4,3,288.0,2023-02-18 00:00:00
-252,139,Loft,Private room,New Delhi,India,1,1,1,88.0,2023-10-10 00:00:00
-253,367,Boutique Hotel,Entire home,Kingston,Jamaica,8,3,2,256.0,2023-05-05 00:00:00
-254,331,Loft,Entire home,Goa,India,10,4,3,285.0,2023-04-30 00:00:00
-255,30,Loft,Entire home,Auckland,New Zealand,4,2,2,341.0,2023-08-27 00:00:00
-256,461,House,Private room,McMurdo Station,Antarctica,2,1,1,300.0,2023-11-26 00:00:00
-257,284,House,Private room,Krakow,Poland,1,1,1,100.0,2023-06-11 00:00:00
-258,297,Boutique Hotel,Private room,Kingston,Jamaica,1,1,1,112.0,2023-12-15 00:00:00
-259,209,Loft,Private room,New York,United States,2,1,1,253.0,2023-11-17 00:00:00
-260,270,Boutique Hotel,Private room,Goa,India,1,1,1,133.0,2023-09-21 00:00:00
-261,36,Condo,Entire home,Cape Town,South Africa,6,2,2,171.0,2023-01-27 00:00:00
-262,200,House,Private room,Montego Bay,Jamaica,2,1,1,120.0,2023-12-20 00:00:00
-263,284,Condo,Entire home,Toronto,Canada,9,4,3,432.0,2023-02-01 00:00:00
-264,479,Condo,Entire home,Kingston,Jamaica,10,4,3,216.0,2023-10-04 00:00:00
-265,195,House,Entire home,Livingstone,Zambia,9,4,3,238.0,2023-09-17 00:00:00
-266,470,House,Entire home,Madrid,Spain,4,1,1,224.0,2023-10-03 00:00:00
-267,393,Condo,Entire home,Galway,Ireland,6,2,2,304.0,2023-01-27 00:00:00
-268,493,Condo,Entire home,Galway,Ireland,10,5,4,496.0,2023-03-20 00:00:00
-269,253,Loft,Entire home,Kingston,Jamaica,12,5,4,272.0,2023-05-13 00:00:00
-270,443,Loft,Entire home,Goa,India,11,5,4,323.0,2023-03-25 00:00:00
-271,38,Condo,Entire home,Windhoek,Namibia,4,2,2,123.5,2023-02-12 00:00:00
-272,223,Boutique Hotel,Private room,Livingstone,Zambia,1,1,1,119.0,2023-11-17 00:00:00
-273,498,Apartment,Entire home,Cape Town,South Africa,9,4,3,220.5,2023-11-08 00:00:00
-274,417,House,Private room,New York,United States,2,1,1,230.0,2023-01-25 00:00:00
-275,467,House,Private room,Paris,France,2,1,1,185.0,2023-07-28 00:00:00
-276,469,Apartment,Entire home,New York,United States,9,4,3,563.5,2023-06-22 00:00:00
-277,174,House,Entire home,New Delhi,India,5,2,2,160.0,2023-10-22 00:00:00
-278,381,House,Entire home,Kingston,Jamaica,6,3,2,192.0,2023-02-20 00:00:00
-279,408,Boutique Hotel,Entire home,Warsaw,Poland,3,1,1,264.0,2023-08-18 00:00:00
-280,371,Apartment,Private room,McMurdo Station,Antarctica,1,1,1,247.5,2023-06-11 00:00:00
-281,16,Loft,Entire home,Madrid,Spain,7,3,2,364.0,2023-12-26 00:00:00
-282,33,Loft,Private room,Singapore,Singapore,2,1,1,231.0,2023-02-16 00:00:00
-283,228,Loft,Entire home,Cape Town,South Africa,8,4,3,270.0,2023-08-01 00:00:00
-284,61,Loft,Entire home,Livingstone,Zambia,6,3,2,221.0,2023-07-17 00:00:00
-285,438,Condo,Private room,Swakopmund,Namibia,1,1,1,66.5,2023-07-09 00:00:00
-286,281,Boutique Hotel,Entire home,Barcelona,Spain,8,4,3,594.0,2023-01-06 00:00:00
-287,473,Apartment,Entire home,Krakow,Poland,8,3,2,205.0,2023-01-19 00:00:00
-288,95,Condo,Entire home,Windhoek,Namibia,10,4,3,175.5,2023-10-03 00:00:00
-289,308,Apartment,Entire home,Cape Town,South Africa,11,5,4,256.5,2023-11-20 00:00:00
-290,274,Apartment,Private room,Cape Town,South Africa,2,1,1,74.25,2023-10-08 00:00:00
-291,366,Loft,Entire home,Barcelona,Spain,6,3,2,429.0,2023-01-27 00:00:00
-292,462,Loft,Private room,Cape Town,South Africa,1,1,1,99.0,2023-02-11 00:00:00
-293,178,Apartment,Private room,New York,United States,1,1,1,189.75,2023-07-17 00:00:00
-294,453,Loft,Entire home,Montego Bay,Jamaica,2,1,1,216.0,2023-12-08 00:00:00
-295,134,Boutique Hotel,Entire home,New York,United States,10,5,4,920.0,2023-05-22 00:00:00
-296,107,Condo,Private room,Swakopmund,Namibia,2,1,1,66.5,2023-12-26 00:00:00
-297,236,Condo,Private room,Montego Bay,Jamaica,1,1,1,114.0,2023-09-05 00:00:00
-298,36,Condo,Private room,Auckland,New Zealand,2,1,1,147.25,2023-01-09 00:00:00
-299,264,House,Private room,Lusaka,Zambia,1,1,1,55.0,2023-03-05 00:00:00
-300,298,Loft,Entire home,Dublin,Ireland,12,5,4,663.0,2023-12-01 00:00:00
-301,105,House,Private room,Sydney,Australia,1,1,1,175.0,2023-09-11 00:00:00
-302,250,Boutique Hotel,Private room,Auckland,New Zealand,1,1,1,217.0,2023-02-08 00:00:00
-303,188,Loft,Entire home,Galway,Ireland,7,3,2,416.0,2023-11-23 00:00:00
-304,475,House,Entire home,McMurdo Station,Antarctica,5,2,2,600.0,2023-02-13 00:00:00
-305,348,Boutique Hotel,Private room,Windhoek,Namibia,1,1,1,91.0,2023-10-25 00:00:00
-306,202,Loft,Private room,Auckland,New Zealand,1,1,1,170.5,2023-02-05 00:00:00
-307,2,Apartment,Private room,Singapore,Singapore,1,1,1,173.25,2023-04-09 00:00:00
-308,448,Boutique Hotel,Private room,Lusaka,Zambia,1,1,1,77.0,2023-10-08 00:00:00
-309,390,Loft,Entire home,Barcelona,Spain,3,1,1,297.0,2023-01-06 00:00:00
-310,101,Apartment,Private room,Montego Bay,Jamaica,1,1,1,99.0,2023-09-01 00:00:00
-311,445,House,Entire home,Livingstone,Zambia,8,3,2,204.0,2023-03-05 00:00:00
-312,383,Condo,Entire home,Sydney,Australia,12,5,4,542.5,2023-09-15 00:00:00
-313,74,House,Entire home,Auckland,New Zealand,3,1,1,248.0,2023-09-13 00:00:00
-314,99,House,Entire home,McMurdo Station,Antarctica,11,5,4,960.0,2023-09-24 00:00:00
-315,23,Loft,Entire home,Livingstone,Zambia,9,4,3,255.0,2023-04-05 00:00:00
-316,65,House,Entire home,Livingstone,Zambia,11,5,4,272.0,2023-03-26 00:00:00
-317,414,Apartment,Private room,Galway,Ireland,1,1,1,132.0,2023-04-04 00:00:00
-318,1,Condo,Entire home,Mumbai,India,9,4,3,229.5,2023-11-14 00:00:00
-319,338,Condo,Entire home,Auckland,New Zealand,8,4,3,418.5,2023-11-12 00:00:00
-320,190,House,Entire home,Auckland,New Zealand,12,5,4,496.0,2023-06-10 00:00:00
-321,379,Loft,Entire home,Auckland,New Zealand,4,1,1,279.0,2023-07-16 00:00:00
-322,11,Loft,Private room,Windhoek,Namibia,2,1,1,71.5,2023-05-31 00:00:00
-323,432,House,Entire home,New York,United States,3,1,1,368.0,2023-11-19 00:00:00
-324,293,House,Private room,Tokyo,Japan,2,1,1,150.0,2023-07-24 00:00:00
-325,77,Condo,Entire home,McMurdo Station,Antarctica,9,4,3,810.0,2023-11-29 00:00:00
-326,4,Condo,Entire home,Cape Town,South Africa,10,5,4,279.0,2023-12-22 00:00:00
-327,460,House,Entire home,Dublin,Ireland,7,3,2,468.0,2023-02-15 00:00:00
-328,433,Loft,Private room,Krakow,Poland,1,1,1,110.0,2023-08-15 00:00:00
-329,120,House,Entire home,Livingstone,Zambia,2,1,1,136.0,2023-08-31 00:00:00
-330,48,Apartment,Entire home,Windhoek,Namibia,6,3,2,133.25,2023-06-23 00:00:00
-331,270,Apartment,Private room,Warsaw,Poland,1,1,1,90.75,2023-06-14 00:00:00
-332,474,Apartment,Entire home,Singapore,Singapore,4,2,2,346.5,2023-09-06 00:00:00
-333,78,Apartment,Private room,Toronto,Canada,2,1,1,132.0,2023-12-10 00:00:00
-334,1,House,Entire home,Auckland,New Zealand,7,3,2,372.0,2023-11-23 00:00:00
-335,456,Boutique Hotel,Entire home,Sydney,Australia,10,5,4,700.0,2023-07-12 00:00:00
-336,77,Boutique Hotel,Entire home,Warsaw,Poland,6,2,2,308.0,2023-05-03 00:00:00
-337,484,House,Private room,Cape Town,South Africa,1,1,1,90.0,2023-10-21 00:00:00
-338,352,Boutique Hotel,Entire home,New Delhi,India,6,3,2,256.0,2023-08-11 00:00:00
-339,484,Loft,Private room,Toronto,Canada,1,1,1,176.0,2023-06-28 00:00:00
-340,203,Apartment,Private room,Kingston,Jamaica,2,1,1,66.0,2023-07-25 00:00:00
-341,232,Apartment,Private room,Singapore,Singapore,1,1,1,173.25,2023-05-24 00:00:00
-342,449,House,Private room,New Delhi,India,2,1,1,80.0,2023-04-14 00:00:00
-343,115,Apartment,Entire home,Lusaka,Zambia,8,3,2,112.75,2023-05-31 00:00:00
-344,332,Apartment,Private room,Auckland,New Zealand,2,1,1,127.88,2023-09-22 00:00:00
-345,470,Loft,Private room,Tokyo,Japan,1,1,1,165.0,2023-09-24 00:00:00
-346,147,Condo,Private room,Toronto,Canada,2,1,1,152.0,2023-02-08 00:00:00
-347,129,House,Private room,Warsaw,Poland,1,1,1,110.0,2023-11-01 00:00:00
-348,390,Condo,Entire home,New Delhi,India,11,5,4,248.0,2023-08-12 00:00:00
-349,143,Condo,Entire home,Sydney,Australia,8,3,2,402.5,2023-12-30 00:00:00
-350,93,Boutique Hotel,Private room,Cape Town,South Africa,1,1,1,126.0,2023-07-29 00:00:00
-351,407,House,Private room,Auckland,New Zealand,2,1,1,155.0,2023-12-31 00:00:00
-352,211,House,Entire home,Montego Bay,Jamaica,4,1,1,192.0,2023-05-06 00:00:00
-353,68,Loft,Private room,Madrid,Spain,2,1,1,154.0,2023-03-04 00:00:00
-354,16,House,Entire home,Krakow,Poland,11,5,4,320.0,2023-01-13 00:00:00
-355,413,Loft,Entire home,Cape Town,South Africa,10,5,4,306.0,2023-01-19 00:00:00
-356,422,Apartment,Entire home,Galway,Ireland,4,2,2,264.0,2023-07-11 00:00:00
-357,94,Apartment,Private room,Tokyo,Japan,2,1,1,123.75,2023-10-24 00:00:00
-358,427,Loft,Entire home,Cape Town,South Africa,12,5,4,306.0,2023-10-11 00:00:00
-359,414,House,Entire home,Buenos Aires,Argentina,6,3,2,168.0,2023-12-14 00:00:00
-360,456,Boutique Hotel,Private room,Cape Town,South Africa,2,1,1,126.0,2023-10-12 00:00:00
-361,374,House,Private room,Toronto,Canada,2,1,1,160.0,2023-09-25 00:00:00
-362,131,Boutique Hotel,Entire home,Tokyo,Japan,4,2,2,420.0,2023-08-21 00:00:00
-363,288,Loft,Private room,McMurdo Station,Antarctica,2,1,1,330.0,2023-03-08 00:00:00
-364,316,Apartment,Entire home,Galway,Ireland,2,1,1,200.0,2023-11-28 00:00:00
-365,141,Boutique Hotel,Private room,Cape Town,South Africa,1,1,1,126.0,2023-01-24 00:00:00
-366,57,Apartment,Private room,Auckland,New Zealand,2,1,1,127.88,2023-06-08 00:00:00
-367,217,House,Entire home,Montego Bay,Jamaica,10,5,4,384.0,2023-01-27 00:00:00
-368,475,House,Private room,Barcelona,Spain,2,1,1,165.0,2023-06-04 00:00:00
-369,80,Boutique Hotel,Entire home,Windhoek,Namibia,2,1,1,156.0,2023-11-03 00:00:00
-370,250,Apartment,Private room,Warsaw,Poland,1,1,1,90.75,2023-08-29 00:00:00
-371,134,House,Private room,Toronto,Canada,2,1,1,160.0,2023-12-01 00:00:00
-372,348,Boutique Hotel,Private room,Toronto,Canada,1,1,1,224.0,2023-09-11 00:00:00
-373,103,House,Private room,Livingstone,Zambia,2,1,1,85.0,2023-03-25 00:00:00
-374,146,Loft,Private room,Rio de Janeiro,Brazil,2,1,1,93.5,2023-07-01 00:00:00
-375,101,Boutique Hotel,Entire home,Goa,India,12,5,4,380.0,2023-10-25 00:00:00
-376,5,Loft,Entire home,Paris,France,10,5,4,629.0,2023-03-22 00:00:00
-377,476,Apartment,Entire home,Sydney,Australia,10,5,4,498.75,2023-01-17 00:00:00
-378,449,Condo,Private room,Kingston,Jamaica,1,1,1,76.0,2023-07-12 00:00:00
-379,89,Loft,Entire home,McMurdo Station,Antarctica,9,4,3,900.0,2023-03-04 00:00:00
-380,178,Loft,Private room,Sydney,Australia,2,1,1,192.5,2023-07-25 00:00:00
-381,378,Loft,Entire home,Singapore,Singapore,12,5,4,714.0,2023-07-17 00:00:00
-382,226,Boutique Hotel,Private room,New York,United States,1,1,1,322.0,2023-12-16 00:00:00
-383,62,Loft,Private room,New York,United States,1,1,1,253.0,2023-10-25 00:00:00
-384,126,Condo,Entire home,McMurdo Station,Antarctica,6,2,2,570.0,2023-02-18 00:00:00
-385,279,Apartment,Entire home,Swakopmund,Namibia,4,1,1,87.5,2023-09-10 00:00:00
-386,187,Condo,Entire home,Swakopmund,Namibia,10,4,3,189.0,2023-02-12 00:00:00
-387,127,Loft,Entire home,Swakopmund,Namibia,4,2,2,154.0,2023-10-15 00:00:00
-388,34,Loft,Private room,Buenos Aires,Argentina,2,1,1,77.0,2023-12-31 00:00:00
-389,135,Loft,Entire home,Paris,France,2,1,1,333.0,2023-06-15 00:00:00
-390,95,Boutique Hotel,Entire home,Warsaw,Poland,4,1,1,264.0,2023-01-29 00:00:00
-391,403,Boutique Hotel,Entire home,Livingstone,Zambia,3,1,1,204.0,2023-10-11 00:00:00
-392,25,Apartment,Private room,Sydney,Australia,1,1,1,144.38,2023-11-30 00:00:00
-393,347,Boutique Hotel,Entire home,Paris,France,4,2,2,518.0,2023-01-24 00:00:00
-394,36,Boutique Hotel,Private room,Rio de Janeiro,Brazil,2,1,1,119.0,2023-12-13 00:00:00
-395,266,Condo,Entire home,Auckland,New Zealand,11,5,4,480.5,2023-01-10 00:00:00
-396,459,House,Entire home,Madrid,Spain,6,2,2,280.0,2023-02-24 00:00:00
-397,261,Condo,Entire home,Toronto,Canada,8,3,2,368.0,2023-07-23 00:00:00
-398,263,House,Private room,Windhoek,Namibia,1,1,1,65.0,2023-06-29 00:00:00
-399,183,Condo,Entire home,Warsaw,Poland,3,1,1,165.0,2023-02-17 00:00:00
-400,178,Condo,Private room,Warsaw,Poland,2,1,1,104.5,2023-02-09 00:00:00
-401,88,Apartment,Entire home,Galway,Ireland,12,5,4,456.0,2023-05-10 00:00:00
-402,358,Loft,Entire home,Toronto,Canada,10,5,4,544.0,2023-03-25 00:00:00
-403,393,Boutique Hotel,Entire home,Rio de Janeiro,Brazil,12,5,4,340.0,2023-09-12 00:00:00
-404,456,House,Private room,Livingstone,Zambia,1,1,1,85.0,2023-07-30 00:00:00
-405,199,Boutique Hotel,Private room,Warsaw,Poland,1,1,1,154.0,2023-04-30 00:00:00
-406,202,Loft,Private room,New Delhi,India,2,1,1,88.0,2023-10-24 00:00:00
-407,385,Loft,Private room,Madrid,Spain,2,1,1,154.0,2023-09-29 00:00:00
-408,317,House,Private room,Montego Bay,Jamaica,1,1,1,120.0,2023-06-09 00:00:00
-409,11,Loft,Entire home,Lusaka,Zambia,8,3,2,143.0,2023-12-27 00:00:00
-410,407,House,Private room,Goa,India,2,1,1,95.0,2023-09-26 00:00:00
-411,251,Boutique Hotel,Entire home,New York,United States,4,1,1,552.0,2023-12-25 00:00:00
-412,46,Apartment,Entire home,Livingstone,Zambia,8,3,2,174.25,2023-09-06 00:00:00
-413,494,Condo,Entire home,Lusaka,Zambia,10,5,4,170.5,2023-08-17 00:00:00
-414,259,Boutique Hotel,Entire home,Krakow,Poland,4,1,1,240.0,2023-07-25 00:00:00
-415,108,Boutique Hotel,Entire home,Lusaka,Zambia,10,4,3,198.0,2023-09-21 00:00:00
-416,374,House,Private room,Krakow,Poland,2,1,1,100.0,2023-03-29 00:00:00
-417,235,Loft,Entire home,Windhoek,Namibia,9,4,3,195.0,2023-09-13 00:00:00
-418,21,Apartment,Private room,McMurdo Station,Antarctica,2,1,1,247.5,2023-08-01 00:00:00
-419,19,Loft,Entire home,Windhoek,Namibia,6,2,2,143.0,2023-03-03 00:00:00
-420,468,Condo,Private room,Rio de Janeiro,Brazil,1,1,1,80.75,2023-12-16 00:00:00
-421,186,Apartment,Entire home,Swakopmund,Namibia,8,4,3,171.5,2023-04-18 00:00:00
-422,3,Condo,Entire home,Kingston,Jamaica,6,2,2,152.0,2023-02-09 00:00:00
-423,107,Condo,Entire home,Montego Bay,Jamaica,10,4,3,324.0,2023-10-06 00:00:00
-424,102,House,Private room,Sydney,Australia,2,1,1,175.0,2023-06-21 00:00:00
-425,109,House,Private room,Livingstone,Zambia,2,1,1,85.0,2023-08-19 00:00:00
-426,256,Loft,Entire home,Singapore,Singapore,10,4,3,630.0,2023-01-17 00:00:00
-427,101,Condo,Private room,Cape Town,South Africa,2,1,1,85.5,2023-06-01 00:00:00
-428,123,Apartment,Entire home,Buenos Aires,Argentina,8,3,2,143.5,2023-08-21 00:00:00
-429,175,Boutique Hotel,Private room,Kingston,Jamaica,1,1,1,112.0,2023-12-12 00:00:00
-430,340,Loft,Private room,Windhoek,Namibia,1,1,1,71.5,2023-04-12 00:00:00
-431,140,House,Private room,Krakow,Poland,1,1,1,100.0,2023-05-20 00:00:00
-432,94,Boutique Hotel,Private room,Warsaw,Poland,1,1,1,154.0,2023-06-06 00:00:00
-433,76,Boutique Hotel,Private room,Krakow,Poland,2,1,1,140.0,2023-07-20 00:00:00
-434,59,Apartment,Entire home,Toronto,Canada,5,2,2,264.0,2023-04-03 00:00:00
-435,111,Boutique Hotel,Private room,Krakow,Poland,1,1,1,140.0,2023-03-16 00:00:00
-436,462,Boutique Hotel,Private room,Paris,France,1,1,1,259.0,2024-01-01 00:00:00
-437,169,Apartment,Entire home,Swakopmund,Namibia,3,1,1,87.5,2023-08-31 00:00:00
-438,307,Boutique Hotel,Entire home,Sydney,Australia,3,1,1,420.0,2023-06-24 00:00:00
-439,406,Apartment,Private room,Madrid,Spain,2,1,1,115.5,2023-10-23 00:00:00
-440,43,Apartment,Entire home,Galway,Ireland,11,5,4,456.0,2023-11-22 00:00:00
-441,44,Condo,Entire home,Cape Town,South Africa,8,4,3,243.0,2023-11-05 00:00:00
-442,70,Boutique Hotel,Private room,Auckland,New Zealand,2,1,1,217.0,2023-04-28 00:00:00
-443,109,Condo,Entire home,Sydney,Australia,11,5,4,542.5,2023-11-24 00:00:00
-444,334,Loft,Private room,Paris,France,1,1,1,203.5,2023-10-18 00:00:00
-445,173,Boutique Hotel,Entire home,Paris,France,10,4,3,666.0,2023-06-28 00:00:00
-446,441,Apartment,Private room,Warsaw,Poland,1,1,1,90.75,2023-02-15 00:00:00
-447,114,Condo,Entire home,Madrid,Spain,3,1,1,210.0,2023-07-15 00:00:00
-448,208,Apartment,Entire home,Cape Town,South Africa,7,3,2,184.5,2023-04-06 00:00:00
-449,196,Condo,Private room,Tokyo,Japan,2,1,1,142.5,2023-12-07 00:00:00
-450,204,Apartment,Entire home,Toronto,Canada,9,4,3,392.0,2023-01-06 00:00:00
-451,290,Apartment,Entire home,New York,United States,5,2,2,379.5,2023-06-22 00:00:00
-452,116,Loft,Entire home,Kingston,Jamaica,10,4,3,240.0,2023-08-20 00:00:00
-453,392,Apartment,Entire home,McMurdo Station,Antarctica,9,4,3,735.0,2023-06-28 00:00:00
-454,364,Loft,Private room,Lusaka,Zambia,2,1,1,60.5,2023-06-25 00:00:00
-455,440,Boutique Hotel,Private room,Mumbai,India,1,1,1,119.0,2023-09-27 00:00:00
-456,325,Loft,Entire home,Krakow,Poland,5,2,2,220.0,2023-06-03 00:00:00
-457,205,Condo,Entire home,Windhoek,Namibia,8,3,2,149.5,2023-10-21 00:00:00
-458,105,Boutique Hotel,Entire home,Goa,India,8,4,3,342.0,2023-01-20 00:00:00
-459,21,Condo,Entire home,Montego Bay,Jamaica,10,5,4,372.0,2023-09-10 00:00:00
-460,500,Boutique Hotel,Entire home,Livingstone,Zambia,12,5,4,340.0,2023-06-01 00:00:00
-461,418,Loft,Entire home,Kingston,Jamaica,2,1,1,144.0,2023-08-20 00:00:00
-462,435,Condo,Entire home,Paris,France,8,4,3,499.5,2023-08-18 00:00:00
-463,408,House,Private room,Singapore,Singapore,1,1,1,210.0,2023-09-28 00:00:00
-464,251,Loft,Private room,Paris,France,1,1,1,203.5,2023-07-20 00:00:00
-465,358,House,Entire home,Madrid,Spain,8,3,2,336.0,2023-01-12 00:00:00
-466,282,Condo,Private room,New York,United States,1,1,1,218.5,2023-10-20 00:00:00
-467,121,Boutique Hotel,Entire home,Toronto,Canada,2,1,1,384.0,2023-09-08 00:00:00
-468,463,Apartment,Private room,Buenos Aires,Argentina,1,1,1,57.75,2023-09-03 00:00:00
-469,270,House,Entire home,Montego Bay,Jamaica,10,5,4,384.0,2023-05-27 00:00:00
-470,474,Boutique Hotel,Private room,Goa,India,2,1,1,133.0,2023-12-01 00:00:00
-471,81,Condo,Entire home,Tokyo,Japan,6,2,2,285.0,2023-05-29 00:00:00
-472,236,House,Private room,Montego Bay,Jamaica,1,1,1,120.0,2023-03-23 00:00:00
-473,160,Apartment,Entire home,Buenos Aires,Argentina,9,4,3,171.5,2023-05-28 00:00:00
-474,113,Condo,Entire home,Cape Town,South Africa,4,1,1,135.0,2023-11-07 00:00:00
-475,452,Condo,Entire home,Singapore,Singapore,6,3,2,483.0,2023-03-11 00:00:00
-476,279,Boutique Hotel,Entire home,Mumbai,India,7,3,2,272.0,2023-12-28 00:00:00
-477,476,Boutique Hotel,Private room,Paris,France,1,1,1,259.0,2023-09-25 00:00:00
-478,73,Apartment,Entire home,Sydney,Australia,3,1,1,218.75,2023-01-13 00:00:00
-479,391,Condo,Private room,Madrid,Spain,2,1,1,133.0,2023-11-05 00:00:00
-480,49,Apartment,Private room,Goa,India,1,1,1,78.38,2023-08-20 00:00:00
-481,239,Apartment,Private room,New Delhi,India,2,1,1,66.0,2023-05-28 00:00:00
-482,435,Condo,Private room,Mumbai,India,1,1,1,80.75,2023-06-07 00:00:00
-483,402,Condo,Entire home,Cape Town,South Africa,10,4,3,243.0,2023-11-26 00:00:00
-484,115,Loft,Private room,Swakopmund,Namibia,1,1,1,77.0,2023-07-14 00:00:00
-485,206,Condo,Private room,Sydney,Australia,2,1,1,166.25,2023-02-06 00:00:00
-486,427,Loft,Entire home,Swakopmund,Namibia,10,4,3,210.0,2023-02-21 00:00:00
-487,443,Loft,Private room,Madrid,Spain,2,1,1,154.0,2023-09-29 00:00:00
-488,204,Loft,Private room,Krakow,Poland,1,1,1,110.0,2023-12-24 00:00:00
-489,246,Condo,Entire home,Barcelona,Spain,6,2,2,313.5,2023-11-05 00:00:00
-490,285,Loft,Entire home,Windhoek,Namibia,7,3,2,169.0,2023-03-08 00:00:00
-491,214,Condo,Entire home,New Delhi,India,9,4,3,216.0,2023-03-24 00:00:00
-492,319,Condo,Private room,Swakopmund,Namibia,1,1,1,66.5,2023-12-17 00:00:00
-493,226,Loft,Entire home,Madrid,Spain,4,2,2,308.0,2023-04-16 00:00:00
-494,148,Condo,Entire home,Tokyo,Japan,11,5,4,465.0,2023-04-12 00:00:00
-495,262,Apartment,Entire home,Windhoek,Namibia,7,3,2,133.25,2023-05-09 00:00:00
-496,249,Loft,Entire home,Kingston,Jamaica,10,4,3,240.0,2023-11-21 00:00:00
-497,61,Loft,Private room,Galway,Ireland,1,1,1,176.0,2023-11-29 00:00:00
-498,276,House,Entire home,Swakopmund,Namibia,4,2,2,140.0,2023-06-25 00:00:00
-499,472,Loft,Entire home,Swakopmund,Namibia,12,5,4,238.0,2023-05-22 00:00:00
-500,489,Apartment,Private room,Barcelona,Spain,1,1,1,136.12,2023-11-15 00:00:00
+listing_id,host_id,property_type,room_type,city,country,accommodates,bedrooms,bathrooms,price_per_night,created_at,updated_at
+1,459,Condo,Entire home,Cape Town,South Africa,6,2,2,171.0,2023-10-09 00:00:00,2024-08-23 00:00:00
+2,186,House,Private room,McMurdo Station,Antarctica,1,1,1,300.0,2023-03-30 00:00:00,2024-09-04 00:00:00
+3,361,Loft,Entire home,Singapore,Singapore,4,2,2,462.0,2023-05-26 00:00:00,2025-02-21 00:00:00
+4,92,Loft,Entire home,Goa,India,8,4,3,285.0,2023-10-12 00:00:00,2025-06-12 00:00:00
+5,311,House,Private room,Dublin,Ireland,2,1,1,195.0,2023-07-27 00:00:00,2024-04-12 00:00:00
+6,465,Loft,Entire home,Singapore,Singapore,4,1,1,378.0,2023-04-29 00:00:00,2024-05-23 00:00:00
+7,103,Loft,Private room,McMurdo Station,Antarctica,2,1,1,330.0,2023-11-17 00:00:00,2024-05-09 00:00:00
+8,370,Apartment,Private room,Warsaw,Poland,2,1,1,90.75,2023-01-14 00:00:00,2024-01-28 00:00:00
+9,476,Loft,Private room,Buenos Aires,Argentina,2,1,1,77.0,2023-01-06 00:00:00,2024-09-26 00:00:00
+10,59,Boutique Hotel,Entire home,Galway,Ireland,4,1,1,384.0,2023-12-14 00:00:00,2024-02-24 00:00:00
+11,316,House,Private room,Toronto,Canada,2,1,1,160.0,2023-11-05 00:00:00,2023-11-05 00:00:00
+12,2,Condo,Private room,Toronto,Canada,1,1,1,152.0,2023-10-23 00:00:00,2025-02-03 00:00:00
+13,393,Boutique Hotel,Private room,Galway,Ireland,2,1,1,224.0,2023-04-30 00:00:00,2024-09-24 00:00:00
+14,362,Apartment,Private room,Krakow,Poland,2,1,1,82.5,2023-10-06 00:00:00,2025-03-09 00:00:00
+15,262,Loft,Private room,Singapore,Singapore,1,1,1,231.0,2023-05-27 00:00:00,2024-04-04 00:00:00
+16,87,Boutique Hotel,Entire home,Goa,India,9,4,3,342.0,2023-02-21 00:00:00,2024-07-04 00:00:00
+17,478,Loft,Entire home,New Delhi,India,11,5,4,272.0,2023-01-07 00:00:00,2024-01-02 00:00:00
+18,188,Loft,Entire home,Auckland,New Zealand,5,2,2,341.0,2023-12-14 00:00:00,2025-08-11 00:00:00
+19,475,Loft,Private room,New Delhi,India,1,1,1,88.0,2023-04-13 00:00:00,2025-06-22 00:00:00
+20,127,Boutique Hotel,Private room,Goa,India,2,1,1,133.0,2023-01-27 00:00:00,2024-03-20 00:00:00
+21,356,Condo,Entire home,Auckland,New Zealand,5,2,2,294.5,2023-08-18 00:00:00,2024-08-19 00:00:00
+22,209,Condo,Private room,Windhoek,Namibia,2,1,1,61.75,2023-10-25 00:00:00,2025-05-28 00:00:00
+23,157,Boutique Hotel,Private room,Livingstone,Zambia,1,1,1,119.0,2023-07-13 00:00:00,2024-08-10 00:00:00
+24,476,Condo,Entire home,Montego Bay,Jamaica,4,1,1,180.0,2023-08-17 00:00:00,2024-04-16 00:00:00
+25,160,Apartment,Private room,Windhoek,Namibia,1,1,1,53.62,2023-05-29 00:00:00,2025-05-24 00:00:00
+26,423,House,Entire home,Montego Bay,Jamaica,6,2,2,240.0,2023-09-30 00:00:00,2024-11-11 00:00:00
+27,415,House,Entire home,Auckland,New Zealand,6,3,2,372.0,2023-12-26 00:00:00,2024-07-14 00:00:00
+28,59,House,Entire home,Buenos Aires,Argentina,12,5,4,224.0,2023-11-07 00:00:00,2025-03-15 00:00:00
+29,440,Condo,Entire home,Toronto,Canada,2,1,1,240.0,2023-03-19 00:00:00,2025-06-05 00:00:00
+30,290,Boutique Hotel,Private room,Barcelona,Spain,2,1,1,231.0,2023-08-25 00:00:00,2023-08-25 00:00:00
+31,452,House,Private room,Livingstone,Zambia,2,1,1,85.0,2023-02-07 00:00:00,2024-05-30 00:00:00
+32,222,Loft,Entire home,New York,United States,11,5,4,782.0,2023-09-18 00:00:00,2025-07-14 00:00:00
+33,197,House,Entire home,Mumbai,India,8,4,3,238.0,2023-01-19 00:00:00,2025-07-10 00:00:00
+34,150,Apartment,Entire home,New Delhi,India,10,5,4,228.0,2023-11-07 00:00:00,2024-07-11 00:00:00
+35,21,Boutique Hotel,Private room,Sydney,Australia,1,1,1,245.0,2023-09-14 00:00:00,2024-08-28 00:00:00
+36,409,House,Entire home,Livingstone,Zambia,10,5,4,272.0,2023-12-16 00:00:00,2024-01-20 00:00:00
+37,200,Apartment,Entire home,Montego Bay,Jamaica,8,4,3,294.0,2023-03-31 00:00:00,2024-08-21 00:00:00
+38,90,Loft,Private room,McMurdo Station,Antarctica,1,1,1,330.0,2023-01-03 00:00:00,2024-10-18 00:00:00
+39,227,Apartment,Private room,Galway,Ireland,2,1,1,132.0,2023-03-06 00:00:00,2023-03-06 00:00:00
+40,83,Boutique Hotel,Entire home,Lusaka,Zambia,8,4,3,198.0,2023-05-27 00:00:00,2025-04-20 00:00:00
+41,307,Condo,Private room,Livingstone,Zambia,2,1,1,80.75,2023-04-04 00:00:00,2024-01-23 00:00:00
+42,68,Condo,Entire home,Livingstone,Zambia,8,4,3,229.5,2023-01-25 00:00:00,2024-09-23 00:00:00
+43,437,Apartment,Private room,New Delhi,India,1,1,1,66.0,2023-07-27 00:00:00,2025-03-01 00:00:00
+44,191,Apartment,Private room,Kingston,Jamaica,1,1,1,66.0,2023-01-31 00:00:00,2024-02-28 00:00:00
+45,214,House,Entire home,Lusaka,Zambia,2,1,1,88.0,2023-04-09 00:00:00,2024-04-13 00:00:00
+46,465,Loft,Private room,Goa,India,2,1,1,104.5,2023-01-12 00:00:00,2023-01-12 00:00:00
+47,162,Condo,Private room,Mumbai,India,2,1,1,80.75,2023-07-03 00:00:00,2024-03-27 00:00:00
+48,88,Apartment,Private room,Montego Bay,Jamaica,2,1,1,99.0,2023-06-23 00:00:00,2025-02-08 00:00:00
+49,145,Boutique Hotel,Private room,Buenos Aires,Argentina,1,1,1,98.0,2023-02-14 00:00:00,2024-08-07 00:00:00
+50,370,Loft,Entire home,Swakopmund,Namibia,10,4,3,210.0,2023-12-01 00:00:00,2023-12-01 00:00:00
+51,105,Boutique Hotel,Private room,Barcelona,Spain,2,1,1,231.0,2023-02-11 00:00:00,2025-07-22 00:00:00
+52,474,Apartment,Entire home,Krakow,Poland,4,2,2,165.0,2023-07-13 00:00:00,2025-06-12 00:00:00
+53,270,Loft,Entire home,Buenos Aires,Argentina,11,5,4,238.0,2023-12-17 00:00:00,2024-05-26 00:00:00
+54,232,House,Entire home,Paris,France,7,3,2,444.0,2023-07-09 00:00:00,2025-08-20 00:00:00
+55,84,House,Private room,Auckland,New Zealand,1,1,1,155.0,2023-06-09 00:00:00,2025-06-11 00:00:00
+56,290,Boutique Hotel,Entire home,New Delhi,India,7,3,2,256.0,2023-03-17 00:00:00,2024-09-06 00:00:00
+57,96,Loft,Private room,Tokyo,Japan,1,1,1,165.0,2023-02-04 00:00:00,2023-02-04 00:00:00
+58,324,Condo,Entire home,Swakopmund,Namibia,12,5,4,217.0,2023-02-21 00:00:00,2025-02-24 00:00:00
+59,49,Condo,Private room,Sydney,Australia,2,1,1,166.25,2023-05-10 00:00:00,2025-09-05 00:00:00
+60,244,Apartment,Entire home,Kingston,Jamaica,5,2,2,132.0,2023-07-24 00:00:00,2025-07-15 00:00:00
+61,498,Apartment,Private room,Sydney,Australia,2,1,1,144.38,2023-07-30 00:00:00,2025-08-20 00:00:00
+62,305,House,Entire home,Swakopmund,Namibia,2,1,1,112.0,2023-05-28 00:00:00,2024-09-30 00:00:00
+63,80,Loft,Entire home,Warsaw,Poland,6,3,2,286.0,2023-01-26 00:00:00,2023-01-26 00:00:00
+64,348,Condo,Entire home,Toronto,Canada,12,5,4,496.0,2023-08-13 00:00:00,2025-09-14 00:00:00
+65,267,Loft,Entire home,Lusaka,Zambia,8,3,2,143.0,2023-08-30 00:00:00,2023-08-30 00:00:00
+66,162,Boutique Hotel,Entire home,Livingstone,Zambia,10,5,4,340.0,2023-07-04 00:00:00,2025-09-03 00:00:00
+67,409,House,Entire home,McMurdo Station,Antarctica,11,5,4,960.0,2023-07-20 00:00:00,2024-04-24 00:00:00
+68,192,Loft,Private room,Montego Bay,Jamaica,2,1,1,132.0,2023-10-20 00:00:00,2024-06-30 00:00:00
+69,369,Apartment,Entire home,Cape Town,South Africa,2,1,1,112.5,2023-06-26 00:00:00,2025-03-23 00:00:00
+70,154,House,Entire home,New Delhi,India,10,5,4,256.0,2023-04-20 00:00:00,2025-07-01 00:00:00
+71,381,House,Private room,Livingstone,Zambia,1,1,1,85.0,2023-07-28 00:00:00,2023-07-28 00:00:00
+72,236,Condo,Entire home,Krakow,Poland,9,4,3,270.0,2023-03-13 00:00:00,2024-10-25 00:00:00
+73,121,Apartment,Private room,New York,United States,2,1,1,189.75,2023-01-18 00:00:00,2024-05-03 00:00:00
+74,276,Apartment,Private room,Toronto,Canada,1,1,1,132.0,2023-11-09 00:00:00,2024-02-19 00:00:00
+75,291,Boutique Hotel,Private room,Krakow,Poland,1,1,1,140.0,2023-10-21 00:00:00,2024-12-31 00:00:00
+76,405,Boutique Hotel,Private room,Livingstone,Zambia,1,1,1,119.0,2023-11-12 00:00:00,2024-04-13 00:00:00
+77,100,House,Private room,Galway,Ireland,2,1,1,160.0,2023-07-30 00:00:00,2024-07-29 00:00:00
+78,487,Condo,Private room,Warsaw,Poland,1,1,1,104.5,2023-11-03 00:00:00,2023-11-03 00:00:00
+79,75,Apartment,Private room,Sydney,Australia,2,1,1,144.38,2023-02-15 00:00:00,2024-05-06 00:00:00
+80,193,Loft,Entire home,Tokyo,Japan,6,3,2,390.0,2023-12-18 00:00:00,2025-07-28 00:00:00
+81,357,Loft,Entire home,Lusaka,Zambia,8,3,2,143.0,2023-07-11 00:00:00,2025-03-24 00:00:00
+82,207,Boutique Hotel,Entire home,Paris,France,8,3,2,592.0,2023-04-23 00:00:00,2024-02-17 00:00:00
+83,202,Boutique Hotel,Entire home,Dublin,Ireland,8,3,2,624.0,2023-01-06 00:00:00,2025-08-27 00:00:00
+84,385,Apartment,Entire home,Swakopmund,Namibia,5,2,2,115.5,2023-06-22 00:00:00,2025-02-28 00:00:00
+85,146,Boutique Hotel,Private room,Warsaw,Poland,2,1,1,154.0,2023-06-10 00:00:00,2025-09-22 00:00:00
+86,498,Boutique Hotel,Entire home,Cape Town,South Africa,7,3,2,288.0,2023-06-22 00:00:00,2024-02-13 00:00:00
+87,274,House,Entire home,Dublin,Ireland,6,3,2,468.0,2023-12-25 00:00:00,2023-12-25 00:00:00
+88,161,Condo,Private room,New York,United States,2,1,1,218.5,2023-06-06 00:00:00,2024-12-23 00:00:00
+89,293,Condo,Private room,Cape Town,South Africa,2,1,1,85.5,2023-09-04 00:00:00,2025-02-15 00:00:00
+90,72,Loft,Entire home,Montego Bay,Jamaica,6,3,2,312.0,2023-02-02 00:00:00,2024-11-20 00:00:00
+91,147,Condo,Entire home,Kingston,Jamaica,6,2,2,152.0,2023-02-05 00:00:00,2025-06-06 00:00:00
+92,79,Condo,Private room,Swakopmund,Namibia,1,1,1,66.5,2023-12-10 00:00:00,2024-09-15 00:00:00
+93,316,Condo,Private room,Sydney,Australia,2,1,1,166.25,2023-12-17 00:00:00,2025-01-06 00:00:00
+94,384,Condo,Entire home,Rio de Janeiro,Brazil,6,2,2,161.5,2023-11-09 00:00:00,2024-05-28 00:00:00
+95,473,Condo,Entire home,Mumbai,India,4,1,1,127.5,2023-09-13 00:00:00,2025-03-18 00:00:00
+96,208,Boutique Hotel,Private room,Kingston,Jamaica,2,1,1,112.0,2023-08-09 00:00:00,2025-07-23 00:00:00
+97,336,Condo,Private room,Sydney,Australia,2,1,1,166.25,2023-02-05 00:00:00,2024-01-06 00:00:00
+98,341,Apartment,Entire home,Cape Town,South Africa,6,3,2,184.5,2023-11-05 00:00:00,2024-05-27 00:00:00
+99,42,Apartment,Entire home,Rio de Janeiro,Brazil,4,2,2,140.25,2023-07-13 00:00:00,2023-07-13 00:00:00
+100,253,Condo,Private room,Montego Bay,Jamaica,1,1,1,114.0,2023-12-05 00:00:00,2024-12-11 00:00:00
+101,453,Apartment,Private room,Mumbai,India,1,1,1,70.12,2023-12-11 00:00:00,2024-11-06 00:00:00
+102,459,Condo,Private room,Cape Town,South Africa,1,1,1,85.5,2023-11-24 00:00:00,2025-08-10 00:00:00
+103,302,House,Private room,Tokyo,Japan,2,1,1,150.0,2023-08-16 00:00:00,2024-12-29 00:00:00
+104,72,Boutique Hotel,Private room,Windhoek,Namibia,2,1,1,91.0,2023-04-14 00:00:00,2025-02-06 00:00:00
+105,52,Boutique Hotel,Private room,Lusaka,Zambia,1,1,1,77.0,2023-07-17 00:00:00,2023-07-17 00:00:00
+106,494,Apartment,Private room,Cape Town,South Africa,1,1,1,74.25,2023-06-04 00:00:00,2023-06-04 00:00:00
+107,322,Loft,Private room,Cape Town,South Africa,2,1,1,99.0,2023-09-06 00:00:00,2024-06-22 00:00:00
+108,239,Apartment,Private room,Lusaka,Zambia,2,1,1,45.38,2023-12-11 00:00:00,2024-03-26 00:00:00
+109,161,Boutique Hotel,Entire home,Sydney,Australia,8,4,3,630.0,2023-05-02 00:00:00,2024-04-27 00:00:00
+110,331,Condo,Entire home,Krakow,Poland,4,2,2,190.0,2023-10-10 00:00:00,2024-05-24 00:00:00
+111,198,Boutique Hotel,Entire home,Barcelona,Spain,6,3,2,528.0,2023-07-08 00:00:00,2025-06-21 00:00:00
+112,337,House,Entire home,Barcelona,Spain,6,3,2,396.0,2023-05-19 00:00:00,2024-11-07 00:00:00
+113,131,Condo,Entire home,Buenos Aires,Argentina,8,3,2,161.0,2023-01-01 00:00:00,2025-05-28 00:00:00
+114,133,House,Private room,Barcelona,Spain,2,1,1,165.0,2023-08-15 00:00:00,2025-05-08 00:00:00
+115,6,House,Entire home,Tokyo,Japan,9,4,3,420.0,2023-12-21 00:00:00,2025-03-29 00:00:00
+116,98,Apartment,Private room,Warsaw,Poland,2,1,1,90.75,2023-01-18 00:00:00,2024-08-08 00:00:00
+117,111,House,Private room,Toronto,Canada,2,1,1,160.0,2023-02-13 00:00:00,2025-07-21 00:00:00
+118,105,House,Entire home,Toronto,Canada,4,2,2,320.0,2023-11-09 00:00:00,2025-05-03 00:00:00
+119,302,Boutique Hotel,Private room,Rio de Janeiro,Brazil,2,1,1,119.0,2023-09-20 00:00:00,2024-10-19 00:00:00
+120,356,Condo,Private room,Buenos Aires,Argentina,1,1,1,66.5,2023-06-04 00:00:00,2024-01-07 00:00:00
+121,326,House,Private room,Goa,India,2,1,1,95.0,2023-01-05 00:00:00,2023-01-05 00:00:00
+122,380,Loft,Entire home,Tokyo,Japan,6,3,2,390.0,2023-11-22 00:00:00,2024-08-08 00:00:00
+123,212,Apartment,Entire home,Goa,India,8,3,2,194.75,2023-04-04 00:00:00,2024-05-25 00:00:00
+124,363,House,Entire home,Rio de Janeiro,Brazil,3,1,1,136.0,2023-03-08 00:00:00,2025-02-21 00:00:00
+125,118,House,Entire home,New Delhi,India,9,4,3,224.0,2023-03-30 00:00:00,2024-06-06 00:00:00
+126,481,Boutique Hotel,Private room,Rio de Janeiro,Brazil,1,1,1,119.0,2023-07-25 00:00:00,2024-02-20 00:00:00
+127,34,House,Private room,Buenos Aires,Argentina,1,1,1,70.0,2023-07-01 00:00:00,2025-07-09 00:00:00
+128,416,Condo,Private room,Buenos Aires,Argentina,2,1,1,66.5,2023-02-08 00:00:00,2025-05-25 00:00:00
+129,249,Apartment,Private room,Livingstone,Zambia,1,1,1,70.12,2023-03-30 00:00:00,2024-08-11 00:00:00
+130,173,Condo,Entire home,Toronto,Canada,2,1,1,240.0,2023-12-19 00:00:00,2025-05-07 00:00:00
+131,240,Boutique Hotel,Entire home,Kingston,Jamaica,12,5,4,320.0,2023-02-14 00:00:00,2024-03-20 00:00:00
+132,458,Loft,Private room,McMurdo Station,Antarctica,2,1,1,330.0,2023-09-18 00:00:00,2024-12-01 00:00:00
+133,188,Loft,Entire home,Dublin,Ireland,6,2,2,429.0,2023-08-23 00:00:00,2024-06-27 00:00:00
+134,184,Boutique Hotel,Entire home,Galway,Ireland,8,3,2,512.0,2023-09-12 00:00:00,2024-10-12 00:00:00
+135,466,House,Private room,Warsaw,Poland,2,1,1,110.0,2023-06-13 00:00:00,2024-06-25 00:00:00
+136,275,Condo,Private room,Auckland,New Zealand,1,1,1,147.25,2023-12-01 00:00:00,2024-10-08 00:00:00
+137,286,Boutique Hotel,Entire home,Goa,India,10,5,4,380.0,2023-02-02 00:00:00,2025-02-07 00:00:00
+138,358,Apartment,Private room,Auckland,New Zealand,1,1,1,127.88,2023-09-30 00:00:00,2024-02-07 00:00:00
+139,97,Condo,Private room,Madrid,Spain,1,1,1,133.0,2023-11-22 00:00:00,2024-07-25 00:00:00
+140,234,Apartment,Private room,Madrid,Spain,2,1,1,115.5,2023-10-24 00:00:00,2025-08-06 00:00:00
+141,74,Apartment,Private room,Tokyo,Japan,1,1,1,123.75,2023-01-27 00:00:00,2024-09-05 00:00:00
+142,396,Loft,Private room,Madrid,Spain,1,1,1,154.0,2023-01-22 00:00:00,2025-04-29 00:00:00
+143,347,House,Private room,Kingston,Jamaica,1,1,1,80.0,2023-06-22 00:00:00,2023-06-22 00:00:00
+144,316,House,Private room,Madrid,Spain,2,1,1,140.0,2023-10-17 00:00:00,2025-05-01 00:00:00
+145,92,Loft,Private room,Rio de Janeiro,Brazil,1,1,1,93.5,2023-04-12 00:00:00,2025-08-24 00:00:00
+146,416,Apartment,Entire home,Barcelona,Spain,9,4,3,404.25,2023-10-24 00:00:00,2025-09-19 00:00:00
+147,482,Loft,Private room,Goa,India,1,1,1,104.5,2023-07-12 00:00:00,2024-08-06 00:00:00
+148,377,Loft,Private room,Auckland,New Zealand,2,1,1,170.5,2023-10-09 00:00:00,2023-10-09 00:00:00
+149,146,Boutique Hotel,Entire home,Toronto,Canada,7,3,2,512.0,2023-02-27 00:00:00,2024-12-02 00:00:00
+150,323,Apartment,Entire home,Mumbai,India,4,2,2,140.25,2023-07-27 00:00:00,2024-12-14 00:00:00
+151,58,Apartment,Entire home,Madrid,Spain,8,3,2,287.0,2023-12-23 00:00:00,2024-05-25 00:00:00
+152,450,Condo,Entire home,Tokyo,Japan,8,4,3,405.0,2023-03-22 00:00:00,2023-03-22 00:00:00
+153,55,House,Private room,McMurdo Station,Antarctica,2,1,1,300.0,2023-12-24 00:00:00,2024-02-18 00:00:00
+154,258,House,Private room,Warsaw,Poland,1,1,1,110.0,2023-04-11 00:00:00,2024-08-05 00:00:00
+155,97,Loft,Entire home,Lusaka,Zambia,8,3,2,143.0,2023-05-17 00:00:00,2025-06-16 00:00:00
+156,73,Condo,Private room,Tokyo,Japan,2,1,1,142.5,2023-03-21 00:00:00,2024-10-06 00:00:00
+157,92,Boutique Hotel,Entire home,New York,United States,2,1,1,552.0,2023-12-25 00:00:00,2024-08-12 00:00:00
+158,171,Loft,Private room,Paris,France,2,1,1,203.5,2023-05-09 00:00:00,2024-12-11 00:00:00
+159,40,House,Private room,Toronto,Canada,2,1,1,160.0,2023-01-09 00:00:00,2025-01-02 00:00:00
+160,283,Loft,Entire home,Rio de Janeiro,Brazil,4,2,2,187.0,2023-06-12 00:00:00,2025-01-27 00:00:00
+161,44,House,Private room,New York,United States,2,1,1,230.0,2023-08-15 00:00:00,2024-10-31 00:00:00
+162,188,Apartment,Entire home,Cape Town,South Africa,3,1,1,112.5,2023-11-01 00:00:00,2023-11-01 00:00:00
+163,414,Loft,Entire home,New York,United States,9,4,3,690.0,2023-01-08 00:00:00,2024-10-14 00:00:00
+164,275,House,Private room,Mumbai,India,2,1,1,85.0,2023-11-05 00:00:00,2024-11-23 00:00:00
+165,45,Boutique Hotel,Private room,Galway,Ireland,1,1,1,224.0,2023-06-20 00:00:00,2025-01-09 00:00:00
+166,109,Condo,Entire home,Livingstone,Zambia,8,4,3,229.5,2023-05-21 00:00:00,2025-06-17 00:00:00
+167,123,Loft,Entire home,Dublin,Ireland,8,3,2,507.0,2023-01-07 00:00:00,2025-07-07 00:00:00
+168,310,House,Entire home,Tokyo,Japan,5,2,2,300.0,2023-11-25 00:00:00,2024-02-16 00:00:00
+169,72,Boutique Hotel,Entire home,Windhoek,Namibia,8,3,2,208.0,2023-06-07 00:00:00,2025-08-24 00:00:00
+170,410,Loft,Entire home,Windhoek,Namibia,2,1,1,117.0,2023-05-01 00:00:00,2025-04-27 00:00:00
+171,422,House,Private room,Lusaka,Zambia,2,1,1,55.0,2023-02-14 00:00:00,2024-02-15 00:00:00
+172,355,Loft,Private room,Cape Town,South Africa,1,1,1,99.0,2023-04-09 00:00:00,2024-05-27 00:00:00
+173,128,Boutique Hotel,Entire home,Auckland,New Zealand,3,1,1,372.0,2023-10-28 00:00:00,2025-05-05 00:00:00
+174,9,Boutique Hotel,Private room,Singapore,Singapore,1,1,1,294.0,2023-07-04 00:00:00,2024-05-27 00:00:00
+175,25,Condo,Private room,Krakow,Poland,2,1,1,95.0,2023-01-06 00:00:00,2025-08-03 00:00:00
+176,81,House,Private room,Barcelona,Spain,2,1,1,165.0,2023-12-16 00:00:00,2024-02-17 00:00:00
+177,319,Loft,Entire home,New York,United States,2,1,1,414.0,2023-07-08 00:00:00,2024-02-21 00:00:00
+178,73,Apartment,Entire home,Rio de Janeiro,Brazil,8,4,3,208.25,2023-11-14 00:00:00,2025-06-18 00:00:00
+179,477,House,Entire home,Galway,Ireland,10,5,4,512.0,2023-06-19 00:00:00,2025-06-09 00:00:00
+180,57,House,Entire home,Tokyo,Japan,12,5,4,480.0,2023-03-08 00:00:00,2024-08-12 00:00:00
+181,471,Loft,Entire home,Madrid,Spain,7,3,2,364.0,2023-01-13 00:00:00,2024-09-10 00:00:00
+182,92,Condo,Entire home,Krakow,Poland,8,3,2,230.0,2023-11-04 00:00:00,2024-05-27 00:00:00
+183,450,Boutique Hotel,Private room,Windhoek,Namibia,1,1,1,91.0,2023-09-15 00:00:00,2025-02-23 00:00:00
+184,443,Condo,Entire home,Mumbai,India,10,5,4,263.5,2023-03-13 00:00:00,2024-06-13 00:00:00
+185,170,House,Entire home,Buenos Aires,Argentina,2,1,1,112.0,2023-01-22 00:00:00,2024-07-03 00:00:00
+186,178,Apartment,Private room,Auckland,New Zealand,1,1,1,127.88,2023-09-02 00:00:00,2024-04-16 00:00:00
+187,112,Condo,Entire home,Dublin,Ireland,8,3,2,448.5,2023-08-01 00:00:00,2025-08-27 00:00:00
+188,389,Condo,Entire home,Madrid,Spain,8,3,2,322.0,2023-08-07 00:00:00,2025-06-05 00:00:00
+189,124,Apartment,Private room,Buenos Aires,Argentina,2,1,1,57.75,2023-11-08 00:00:00,2025-07-17 00:00:00
+190,85,House,Private room,Montego Bay,Jamaica,2,1,1,120.0,2023-04-04 00:00:00,2025-06-23 00:00:00
+191,473,Condo,Entire home,New York,United States,6,2,2,437.0,2023-11-19 00:00:00,2025-01-28 00:00:00
+192,357,Boutique Hotel,Private room,Warsaw,Poland,2,1,1,154.0,2023-02-02 00:00:00,2024-06-28 00:00:00
+193,294,Condo,Entire home,Mumbai,India,7,3,2,195.5,2023-09-29 00:00:00,2023-09-29 00:00:00
+194,427,Loft,Entire home,Auckland,New Zealand,3,1,1,279.0,2023-05-14 00:00:00,2024-04-20 00:00:00
+195,161,Condo,Private room,Buenos Aires,Argentina,1,1,1,66.5,2023-07-21 00:00:00,2023-07-21 00:00:00
+196,360,Apartment,Private room,New York,United States,1,1,1,189.75,2023-05-13 00:00:00,2023-05-13 00:00:00
+197,408,Condo,Entire home,Barcelona,Spain,5,2,2,313.5,2023-10-04 00:00:00,2024-10-12 00:00:00
+198,9,Boutique Hotel,Entire home,Madrid,Spain,7,3,2,448.0,2023-08-04 00:00:00,2024-09-28 00:00:00
+199,131,Loft,Private room,Mumbai,India,2,1,1,93.5,2023-02-24 00:00:00,2024-07-20 00:00:00
+200,165,Apartment,Entire home,Paris,France,5,2,2,305.25,2023-07-10 00:00:00,2025-04-30 00:00:00
+201,115,House,Entire home,Buenos Aires,Argentina,11,5,4,224.0,2023-04-29 00:00:00,2024-05-10 00:00:00
+202,153,House,Entire home,Singapore,Singapore,8,3,2,504.0,2023-05-13 00:00:00,2025-05-17 00:00:00
+203,352,Boutique Hotel,Private room,Livingstone,Zambia,2,1,1,119.0,2023-11-11 00:00:00,2025-08-01 00:00:00
+204,482,Loft,Entire home,Goa,India,10,4,3,285.0,2023-04-27 00:00:00,2024-06-11 00:00:00
+205,325,Condo,Private room,McMurdo Station,Antarctica,1,1,1,285.0,2023-12-14 00:00:00,2023-12-14 00:00:00
+206,113,Condo,Private room,New York,United States,2,1,1,218.5,2023-08-13 00:00:00,2025-07-18 00:00:00
+207,465,Condo,Private room,Montego Bay,Jamaica,2,1,1,114.0,2023-11-23 00:00:00,2025-01-05 00:00:00
+208,99,Apartment,Entire home,Madrid,Spain,10,5,4,399.0,2023-10-24 00:00:00,2024-12-25 00:00:00
+209,61,Apartment,Private room,Barcelona,Spain,1,1,1,136.12,2023-02-27 00:00:00,2024-07-26 00:00:00
+210,84,Condo,Entire home,Lusaka,Zambia,7,3,2,126.5,2023-10-20 00:00:00,2025-04-16 00:00:00
+211,324,Apartment,Entire home,Toronto,Canada,3,1,1,200.0,2023-09-07 00:00:00,2024-07-05 00:00:00
+212,177,Apartment,Private room,Windhoek,Namibia,2,1,1,53.62,2023-08-30 00:00:00,2024-01-05 00:00:00
+213,224,Loft,Private room,Buenos Aires,Argentina,2,1,1,77.0,2023-12-06 00:00:00,2025-03-04 00:00:00
+214,89,House,Entire home,Barcelona,Spain,6,2,2,330.0,2023-03-05 00:00:00,2025-05-10 00:00:00
+215,373,House,Private room,Tokyo,Japan,2,1,1,150.0,2023-02-06 00:00:00,2024-04-08 00:00:00
+216,252,Boutique Hotel,Entire home,Windhoek,Namibia,8,3,2,208.0,2023-07-24 00:00:00,2025-05-22 00:00:00
+217,178,Loft,Entire home,Goa,India,6,3,2,247.0,2023-01-31 00:00:00,2024-09-08 00:00:00
+218,274,Condo,Private room,Paris,France,2,1,1,175.75,2023-04-17 00:00:00,2024-08-08 00:00:00
+219,377,Condo,Private room,Montego Bay,Jamaica,2,1,1,114.0,2023-03-13 00:00:00,2024-04-27 00:00:00
+220,240,Apartment,Private room,Montego Bay,Jamaica,1,1,1,99.0,2023-10-20 00:00:00,2024-11-23 00:00:00
+221,124,Loft,Entire home,Kingston,Jamaica,10,4,3,240.0,2023-01-28 00:00:00,2024-03-26 00:00:00
+222,110,House,Private room,New York,United States,2,1,1,230.0,2023-04-21 00:00:00,2025-02-13 00:00:00
+223,274,House,Private room,Cape Town,South Africa,1,1,1,90.0,2023-09-29 00:00:00,2024-05-30 00:00:00
+224,281,Condo,Private room,Warsaw,Poland,1,1,1,104.5,2023-09-18 00:00:00,2024-01-10 00:00:00
+225,481,Condo,Entire home,Dublin,Ireland,5,2,2,370.5,2023-12-16 00:00:00,2024-05-23 00:00:00
+226,194,House,Entire home,Montego Bay,Jamaica,6,2,2,240.0,2023-05-07 00:00:00,2024-12-10 00:00:00
+227,339,House,Entire home,Mumbai,India,4,1,1,136.0,2023-08-23 00:00:00,2025-02-01 00:00:00
+228,422,Boutique Hotel,Private room,Barcelona,Spain,2,1,1,231.0,2023-06-26 00:00:00,2024-12-28 00:00:00
+229,39,Loft,Private room,Paris,France,2,1,1,203.5,2023-03-10 00:00:00,2024-10-11 00:00:00
+230,286,House,Entire home,New York,United States,10,4,3,644.0,2023-03-25 00:00:00,2024-02-11 00:00:00
+231,26,Apartment,Private room,Paris,France,1,1,1,152.62,2023-04-14 00:00:00,2024-05-23 00:00:00
+232,475,Boutique Hotel,Private room,Kingston,Jamaica,1,1,1,112.0,2023-06-30 00:00:00,2024-06-10 00:00:00
+233,228,Apartment,Private room,Buenos Aires,Argentina,2,1,1,57.75,2023-03-05 00:00:00,2025-06-14 00:00:00
+234,453,Condo,Private room,Lusaka,Zambia,2,1,1,52.25,2023-12-27 00:00:00,2024-10-13 00:00:00
+235,126,Loft,Entire home,Toronto,Canada,11,5,4,544.0,2023-03-11 00:00:00,2024-12-09 00:00:00
+236,459,Boutique Hotel,Entire home,Dublin,Ireland,4,2,2,546.0,2023-03-02 00:00:00,2025-03-16 00:00:00
+237,343,Boutique Hotel,Entire home,Krakow,Poland,7,3,2,320.0,2023-06-18 00:00:00,2024-06-27 00:00:00
+238,306,Boutique Hotel,Entire home,New York,United States,12,5,4,920.0,2023-11-12 00:00:00,2024-01-14 00:00:00
+239,225,Apartment,Private room,New Delhi,India,2,1,1,66.0,2023-05-14 00:00:00,2024-02-07 00:00:00
+240,20,House,Entire home,Warsaw,Poland,11,5,4,352.0,2023-12-28 00:00:00,2024-07-09 00:00:00
+241,264,Apartment,Private room,Toronto,Canada,1,1,1,132.0,2023-11-13 00:00:00,2024-08-13 00:00:00
+242,154,Loft,Private room,Toronto,Canada,1,1,1,176.0,2023-10-09 00:00:00,2024-07-19 00:00:00
+243,411,Loft,Private room,New Delhi,India,2,1,1,88.0,2023-10-04 00:00:00,2023-10-04 00:00:00
+244,36,House,Private room,Barcelona,Spain,2,1,1,165.0,2023-08-04 00:00:00,2025-02-10 00:00:00
+245,122,Condo,Entire home,Swakopmund,Namibia,9,4,3,189.0,2023-07-10 00:00:00,2024-09-26 00:00:00
+246,37,Condo,Entire home,Cape Town,South Africa,5,2,2,171.0,2023-12-16 00:00:00,2025-05-19 00:00:00
+247,308,Condo,Private room,Livingstone,Zambia,2,1,1,80.75,2023-08-27 00:00:00,2024-11-06 00:00:00
+248,324,House,Private room,McMurdo Station,Antarctica,1,1,1,300.0,2023-05-09 00:00:00,2024-07-17 00:00:00
+249,5,Condo,Private room,Warsaw,Poland,1,1,1,104.5,2023-05-21 00:00:00,2024-10-19 00:00:00
+250,270,Loft,Entire home,New Delhi,India,10,5,4,272.0,2023-08-30 00:00:00,2025-05-30 00:00:00
+251,451,Apartment,Private room,New York,United States,2,1,1,189.75,2023-08-30 00:00:00,2025-02-28 00:00:00
+252,151,Apartment,Entire home,Galway,Ireland,6,3,2,328.0,2023-07-25 00:00:00,2024-12-25 00:00:00
+253,43,Loft,Private room,Sydney,Australia,1,1,1,192.5,2023-04-15 00:00:00,2025-05-03 00:00:00
+254,226,Loft,Entire home,Tokyo,Japan,10,4,3,450.0,2023-10-10 00:00:00,2024-04-01 00:00:00
+255,471,Apartment,Entire home,Montego Bay,Jamaica,6,2,2,198.0,2023-05-11 00:00:00,2025-04-30 00:00:00
+256,67,Apartment,Private room,Windhoek,Namibia,2,1,1,53.62,2023-05-07 00:00:00,2024-08-13 00:00:00
+257,347,Loft,Private room,Goa,India,1,1,1,104.5,2023-12-23 00:00:00,2024-04-09 00:00:00
+258,107,Condo,Entire home,Paris,France,6,2,2,351.5,2023-03-24 00:00:00,2025-02-18 00:00:00
+259,211,Condo,Entire home,Swakopmund,Namibia,10,4,3,189.0,2023-10-29 00:00:00,2023-10-29 00:00:00
+260,301,Boutique Hotel,Private room,Goa,India,2,1,1,133.0,2023-03-22 00:00:00,2024-01-10 00:00:00
+261,461,Boutique Hotel,Entire home,Windhoek,Namibia,12,5,4,260.0,2023-04-15 00:00:00,2024-02-10 00:00:00
+262,470,House,Entire home,Singapore,Singapore,9,4,3,588.0,2023-01-29 00:00:00,2024-04-10 00:00:00
+263,420,Boutique Hotel,Private room,Warsaw,Poland,2,1,1,154.0,2023-01-09 00:00:00,2025-09-06 00:00:00
+264,361,Loft,Private room,Krakow,Poland,2,1,1,110.0,2023-01-03 00:00:00,2025-01-27 00:00:00
+265,10,Loft,Private room,McMurdo Station,Antarctica,1,1,1,330.0,2023-02-13 00:00:00,2025-03-13 00:00:00
+266,130,Condo,Entire home,Livingstone,Zambia,3,1,1,127.5,2023-05-30 00:00:00,2024-05-23 00:00:00
+267,278,Condo,Private room,Livingstone,Zambia,2,1,1,80.75,2023-10-06 00:00:00,2025-06-06 00:00:00
+268,100,Loft,Entire home,Goa,India,5,2,2,209.0,2023-08-12 00:00:00,2024-02-10 00:00:00
+269,224,Loft,Entire home,Livingstone,Zambia,8,3,2,221.0,2023-12-31 00:00:00,2024-09-04 00:00:00
+270,458,House,Entire home,Auckland,New Zealand,5,2,2,310.0,2023-09-19 00:00:00,2025-01-19 00:00:00
+271,357,Boutique Hotel,Private room,Galway,Ireland,1,1,1,224.0,2023-10-19 00:00:00,2024-04-15 00:00:00
+272,272,Apartment,Entire home,Singapore,Singapore,8,4,3,514.5,2023-04-06 00:00:00,2024-02-22 00:00:00
+273,11,House,Private room,Cape Town,South Africa,2,1,1,90.0,2023-05-10 00:00:00,2024-06-12 00:00:00
+274,266,Condo,Private room,Tokyo,Japan,1,1,1,142.5,2023-07-19 00:00:00,2023-07-19 00:00:00
+275,451,Apartment,Private room,Paris,France,1,1,1,152.62,2023-01-05 00:00:00,2024-03-23 00:00:00
+276,419,Condo,Private room,Tokyo,Japan,2,1,1,142.5,2023-07-09 00:00:00,2025-09-18 00:00:00
+277,16,Loft,Entire home,Buenos Aires,Argentina,11,5,4,238.0,2023-07-29 00:00:00,2024-03-24 00:00:00
+278,61,Boutique Hotel,Private room,Warsaw,Poland,1,1,1,154.0,2023-03-17 00:00:00,2025-07-14 00:00:00
+279,415,Loft,Entire home,Buenos Aires,Argentina,6,3,2,182.0,2023-02-25 00:00:00,2023-02-25 00:00:00
+280,378,House,Entire home,Barcelona,Spain,4,1,1,264.0,2023-07-29 00:00:00,2024-12-05 00:00:00
+281,476,Condo,Private room,Toronto,Canada,1,1,1,152.0,2023-10-28 00:00:00,2023-10-28 00:00:00
+282,108,Condo,Entire home,Toronto,Canada,7,3,2,368.0,2023-03-13 00:00:00,2025-09-09 00:00:00
+283,159,Loft,Entire home,Windhoek,Namibia,4,2,2,143.0,2023-10-26 00:00:00,2025-08-13 00:00:00
+284,126,Boutique Hotel,Entire home,Lusaka,Zambia,6,3,2,176.0,2023-11-09 00:00:00,2024-01-23 00:00:00
+285,265,Apartment,Private room,Tokyo,Japan,2,1,1,123.75,2023-08-12 00:00:00,2024-07-30 00:00:00
+286,460,Apartment,Private room,New York,United States,2,1,1,189.75,2023-04-16 00:00:00,2025-06-03 00:00:00
+287,308,House,Private room,Cape Town,South Africa,1,1,1,90.0,2023-10-24 00:00:00,2024-01-22 00:00:00
+288,185,House,Entire home,Swakopmund,Namibia,2,1,1,112.0,2023-01-17 00:00:00,2024-12-01 00:00:00
+289,427,Apartment,Entire home,Paris,France,6,2,2,305.25,2023-04-06 00:00:00,2024-06-03 00:00:00
+290,273,House,Private room,Madrid,Spain,2,1,1,140.0,2023-02-10 00:00:00,2024-07-19 00:00:00
+291,289,Boutique Hotel,Private room,Livingstone,Zambia,2,1,1,119.0,2023-05-17 00:00:00,2024-10-29 00:00:00
+292,145,Boutique Hotel,Entire home,Sydney,Australia,9,4,3,630.0,2023-07-05 00:00:00,2025-03-01 00:00:00
+293,327,Condo,Entire home,Auckland,New Zealand,4,2,2,294.5,2023-04-18 00:00:00,2025-08-03 00:00:00
+294,266,Condo,Private room,Auckland,New Zealand,1,1,1,147.25,2023-11-09 00:00:00,2024-03-02 00:00:00
+295,157,House,Private room,Buenos Aires,Argentina,1,1,1,70.0,2023-09-22 00:00:00,2024-12-31 00:00:00
+296,195,Loft,Private room,Windhoek,Namibia,1,1,1,71.5,2023-08-07 00:00:00,2025-09-06 00:00:00
+297,463,Loft,Private room,Sydney,Australia,2,1,1,192.5,2023-07-25 00:00:00,2025-06-25 00:00:00
+298,134,Boutique Hotel,Private room,New York,United States,1,1,1,322.0,2023-04-08 00:00:00,2025-03-25 00:00:00
+299,255,Apartment,Private room,Krakow,Poland,2,1,1,82.5,2023-05-06 00:00:00,2024-06-12 00:00:00
+300,446,Condo,Private room,Toronto,Canada,2,1,1,152.0,2023-12-22 00:00:00,2024-08-24 00:00:00
+301,354,Apartment,Private room,Mumbai,India,1,1,1,70.12,2023-12-09 00:00:00,2025-07-02 00:00:00
+302,146,Loft,Private room,Warsaw,Poland,2,1,1,121.0,2023-08-31 00:00:00,2024-06-02 00:00:00
+303,172,Condo,Private room,Toronto,Canada,1,1,1,152.0,2023-04-02 00:00:00,2023-04-02 00:00:00
+304,410,Loft,Private room,Krakow,Poland,1,1,1,110.0,2023-12-24 00:00:00,2025-06-18 00:00:00
+305,217,House,Entire home,Cape Town,South Africa,3,1,1,144.0,2023-07-16 00:00:00,2024-07-13 00:00:00
+306,438,Boutique Hotel,Private room,Cape Town,South Africa,1,1,1,126.0,2023-12-01 00:00:00,2024-06-30 00:00:00
+307,223,House,Entire home,Buenos Aires,Argentina,10,4,3,196.0,2023-11-26 00:00:00,2024-10-08 00:00:00
+308,408,Apartment,Entire home,Tokyo,Japan,4,2,2,247.5,2023-02-23 00:00:00,2024-03-20 00:00:00
+309,33,Apartment,Entire home,Lusaka,Zambia,11,5,4,156.75,2023-09-09 00:00:00,2024-04-18 00:00:00
+310,87,Loft,Private room,Montego Bay,Jamaica,1,1,1,132.0,2023-08-02 00:00:00,2024-10-27 00:00:00
+311,97,Loft,Private room,Barcelona,Spain,2,1,1,181.5,2023-09-24 00:00:00,2023-09-24 00:00:00
+312,381,Apartment,Entire home,Barcelona,Spain,3,1,1,206.25,2023-06-07 00:00:00,2025-04-19 00:00:00
+313,160,Loft,Entire home,Mumbai,India,11,5,4,289.0,2023-06-19 00:00:00,2024-05-20 00:00:00
+314,215,House,Entire home,Mumbai,India,7,3,2,204.0,2023-04-30 00:00:00,2025-05-04 00:00:00
+315,237,Boutique Hotel,Entire home,Dublin,Ireland,8,3,2,624.0,2023-07-20 00:00:00,2023-07-20 00:00:00
+316,406,House,Private room,McMurdo Station,Antarctica,1,1,1,300.0,2023-03-10 00:00:00,2023-03-10 00:00:00
+317,191,Boutique Hotel,Entire home,Swakopmund,Namibia,6,2,2,196.0,2023-11-09 00:00:00,2023-11-09 00:00:00
+318,237,House,Private room,Goa,India,2,1,1,95.0,2023-11-17 00:00:00,2024-08-06 00:00:00
+319,494,Apartment,Private room,Barcelona,Spain,1,1,1,136.12,2023-10-03 00:00:00,2023-10-03 00:00:00
+320,102,Boutique Hotel,Private room,Cape Town,South Africa,1,1,1,126.0,2023-05-01 00:00:00,2024-09-10 00:00:00
+321,297,Boutique Hotel,Entire home,Windhoek,Namibia,10,4,3,234.0,2023-07-22 00:00:00,2025-07-07 00:00:00
+322,490,Apartment,Private room,Rio de Janeiro,Brazil,2,1,1,70.12,2023-09-06 00:00:00,2024-10-20 00:00:00
+323,4,Loft,Private room,Tokyo,Japan,2,1,1,165.0,2023-06-29 00:00:00,2023-06-29 00:00:00
+324,215,Apartment,Entire home,Buenos Aires,Argentina,2,1,1,87.5,2023-08-08 00:00:00,2024-06-25 00:00:00
+325,295,Boutique Hotel,Entire home,New Delhi,India,10,4,3,288.0,2023-04-09 00:00:00,2024-12-11 00:00:00
+326,268,Apartment,Private room,Krakow,Poland,2,1,1,82.5,2023-07-28 00:00:00,2025-06-25 00:00:00
+327,445,Boutique Hotel,Entire home,Auckland,New Zealand,9,4,3,558.0,2023-09-08 00:00:00,2025-07-22 00:00:00
+328,110,Condo,Entire home,Madrid,Spain,4,2,2,266.0,2023-03-08 00:00:00,2023-03-08 00:00:00
+329,175,Apartment,Entire home,Sydney,Australia,2,1,1,218.75,2023-05-03 00:00:00,2025-08-11 00:00:00
+330,65,Boutique Hotel,Entire home,Auckland,New Zealand,5,2,2,434.0,2023-09-20 00:00:00,2025-04-29 00:00:00
+331,228,House,Private room,Mumbai,India,1,1,1,85.0,2023-07-07 00:00:00,2024-05-02 00:00:00
+332,496,Loft,Private room,New Delhi,India,2,1,1,88.0,2023-01-11 00:00:00,2025-09-16 00:00:00
+333,402,Boutique Hotel,Private room,New York,United States,1,1,1,322.0,2023-11-29 00:00:00,2024-02-03 00:00:00
+334,432,Condo,Private room,Goa,India,1,1,1,90.25,2023-06-10 00:00:00,2025-04-16 00:00:00
+335,101,Condo,Entire home,Mumbai,India,6,2,2,161.5,2023-04-21 00:00:00,2024-10-11 00:00:00
+336,22,Condo,Private room,Toronto,Canada,2,1,1,152.0,2023-10-09 00:00:00,2024-03-11 00:00:00
+337,336,Condo,Entire home,McMurdo Station,Antarctica,2,1,1,450.0,2023-08-04 00:00:00,2025-05-17 00:00:00
+338,215,Boutique Hotel,Private room,Montego Bay,Jamaica,1,1,1,168.0,2023-08-29 00:00:00,2025-06-11 00:00:00
+339,451,Boutique Hotel,Private room,Buenos Aires,Argentina,2,1,1,98.0,2023-06-30 00:00:00,2024-01-05 00:00:00
+340,114,Loft,Private room,Madrid,Spain,2,1,1,154.0,2023-06-22 00:00:00,2025-05-20 00:00:00
+341,133,Condo,Entire home,Lusaka,Zambia,3,1,1,82.5,2023-05-19 00:00:00,2025-04-16 00:00:00
+342,258,House,Private room,Cape Town,South Africa,1,1,1,90.0,2023-07-31 00:00:00,2025-09-16 00:00:00
+343,454,Boutique Hotel,Entire home,Windhoek,Namibia,7,3,2,208.0,2023-08-13 00:00:00,2024-07-08 00:00:00
+344,280,Boutique Hotel,Private room,Goa,India,1,1,1,133.0,2023-07-21 00:00:00,2025-01-07 00:00:00
+345,362,Boutique Hotel,Private room,Kingston,Jamaica,2,1,1,112.0,2023-05-03 00:00:00,2024-12-16 00:00:00
+346,400,House,Entire home,Krakow,Poland,3,1,1,160.0,2023-05-02 00:00:00,2024-06-10 00:00:00
+347,6,House,Entire home,Barcelona,Spain,11,5,4,528.0,2023-12-08 00:00:00,2025-09-06 00:00:00
+348,485,House,Private room,Lusaka,Zambia,2,1,1,55.0,2023-01-23 00:00:00,2024-12-27 00:00:00
+349,298,Loft,Private room,Swakopmund,Namibia,2,1,1,77.0,2023-01-04 00:00:00,2024-03-31 00:00:00
+350,445,Boutique Hotel,Private room,Galway,Ireland,2,1,1,224.0,2023-12-19 00:00:00,2023-12-19 00:00:00
+351,371,Boutique Hotel,Private room,Barcelona,Spain,1,1,1,231.0,2023-08-16 00:00:00,2025-07-31 00:00:00
+352,379,Loft,Private room,Dublin,Ireland,2,1,1,214.5,2023-07-07 00:00:00,2025-01-22 00:00:00
+353,370,Loft,Private room,Mumbai,India,1,1,1,93.5,2023-12-05 00:00:00,2025-03-31 00:00:00
+354,380,House,Entire home,Sydney,Australia,9,4,3,490.0,2023-02-23 00:00:00,2025-03-20 00:00:00
+355,98,Condo,Private room,McMurdo Station,Antarctica,2,1,1,285.0,2023-09-10 00:00:00,2024-08-08 00:00:00
+356,69,Loft,Entire home,Paris,France,4,1,1,333.0,2023-06-29 00:00:00,2025-06-03 00:00:00
+357,377,Condo,Private room,Toronto,Canada,2,1,1,152.0,2023-07-27 00:00:00,2024-04-21 00:00:00
+358,332,House,Private room,Montego Bay,Jamaica,2,1,1,120.0,2023-11-06 00:00:00,2023-11-06 00:00:00
+359,291,Apartment,Private room,Livingstone,Zambia,1,1,1,70.12,2023-11-10 00:00:00,2024-11-13 00:00:00
+360,57,Condo,Private room,Swakopmund,Namibia,1,1,1,66.5,2023-12-28 00:00:00,2024-11-02 00:00:00
+361,255,Apartment,Private room,Swakopmund,Namibia,1,1,1,57.75,2023-08-18 00:00:00,2024-06-25 00:00:00
+362,10,Loft,Private room,Auckland,New Zealand,1,1,1,170.5,2023-05-02 00:00:00,2024-02-14 00:00:00
+363,277,Condo,Entire home,Warsaw,Poland,4,2,2,209.0,2023-10-20 00:00:00,2025-06-29 00:00:00
+364,137,Apartment,Private room,Toronto,Canada,2,1,1,132.0,2023-09-01 00:00:00,2025-07-05 00:00:00
+365,14,Condo,Entire home,Kingston,Jamaica,5,2,2,152.0,2023-04-06 00:00:00,2024-09-08 00:00:00
+366,493,Condo,Entire home,Swakopmund,Namibia,7,3,2,161.0,2023-09-30 00:00:00,2025-08-06 00:00:00
+367,468,Condo,Entire home,Livingstone,Zambia,11,5,4,263.5,2023-10-04 00:00:00,2024-11-13 00:00:00
+368,52,House,Private room,Galway,Ireland,2,1,1,160.0,2023-07-30 00:00:00,2024-12-14 00:00:00
+369,281,Loft,Private room,Rio de Janeiro,Brazil,2,1,1,93.5,2023-08-01 00:00:00,2024-02-14 00:00:00
+370,65,Condo,Private room,Dublin,Ireland,1,1,1,185.25,2023-09-06 00:00:00,2024-11-15 00:00:00
+371,100,Boutique Hotel,Private room,New Delhi,India,1,1,1,112.0,2023-03-23 00:00:00,2025-06-13 00:00:00
+372,471,Loft,Private room,New Delhi,India,1,1,1,88.0,2023-08-24 00:00:00,2023-08-24 00:00:00
+373,70,Boutique Hotel,Private room,Madrid,Spain,1,1,1,196.0,2023-04-18 00:00:00,2024-03-25 00:00:00
+374,380,Boutique Hotel,Entire home,Kingston,Jamaica,7,3,2,256.0,2023-04-28 00:00:00,2025-01-26 00:00:00
+375,153,Apartment,Private room,Madrid,Spain,2,1,1,115.5,2023-06-25 00:00:00,2024-04-19 00:00:00
+376,231,Apartment,Private room,Galway,Ireland,1,1,1,132.0,2023-02-10 00:00:00,2025-05-11 00:00:00
+377,321,Apartment,Private room,Singapore,Singapore,2,1,1,173.25,2023-11-09 00:00:00,2024-10-07 00:00:00
+378,373,Boutique Hotel,Private room,Toronto,Canada,1,1,1,224.0,2023-03-22 00:00:00,2024-09-24 00:00:00
+379,203,House,Private room,Warsaw,Poland,1,1,1,110.0,2023-04-30 00:00:00,2025-08-14 00:00:00
+380,296,Condo,Entire home,New York,United States,10,4,3,621.0,2023-07-23 00:00:00,2025-08-21 00:00:00
+381,280,Boutique Hotel,Entire home,Warsaw,Poland,7,3,2,352.0,2023-02-25 00:00:00,2024-01-14 00:00:00
+382,429,Loft,Private room,New York,United States,1,1,1,253.0,2023-10-13 00:00:00,2023-10-13 00:00:00
+383,460,Boutique Hotel,Entire home,Warsaw,Poland,6,3,2,352.0,2023-11-19 00:00:00,2024-02-26 00:00:00
+384,135,House,Private room,Auckland,New Zealand,2,1,1,155.0,2023-04-06 00:00:00,2024-09-21 00:00:00
+385,496,Boutique Hotel,Entire home,New Delhi,India,5,2,2,224.0,2023-07-28 00:00:00,2024-12-19 00:00:00
+386,135,Condo,Private room,Livingstone,Zambia,2,1,1,80.75,2023-09-18 00:00:00,2024-01-31 00:00:00
+387,176,Condo,Private room,Montego Bay,Jamaica,1,1,1,114.0,2023-09-09 00:00:00,2024-01-19 00:00:00
+388,228,House,Entire home,Rio de Janeiro,Brazil,5,2,2,170.0,2023-04-06 00:00:00,2025-01-25 00:00:00
+389,116,Apartment,Private room,Singapore,Singapore,2,1,1,173.25,2023-02-13 00:00:00,2025-04-09 00:00:00
+390,160,House,Private room,Tokyo,Japan,2,1,1,150.0,2023-05-25 00:00:00,2024-01-04 00:00:00
+391,395,House,Private room,Montego Bay,Jamaica,2,1,1,120.0,2023-05-22 00:00:00,2024-06-12 00:00:00
+392,4,Boutique Hotel,Private room,New Delhi,India,2,1,1,112.0,2023-11-22 00:00:00,2024-06-21 00:00:00
+393,143,House,Private room,New York,United States,1,1,1,230.0,2023-12-15 00:00:00,2024-09-20 00:00:00
+394,293,Apartment,Private room,Swakopmund,Namibia,1,1,1,57.75,2023-05-13 00:00:00,2025-05-15 00:00:00
+395,37,Boutique Hotel,Entire home,Madrid,Spain,10,5,4,560.0,2023-10-17 00:00:00,2024-06-21 00:00:00
+396,74,Boutique Hotel,Private room,Barcelona,Spain,1,1,1,231.0,2023-11-11 00:00:00,2024-02-13 00:00:00
+397,56,Apartment,Private room,New York,United States,2,1,1,189.75,2023-09-18 00:00:00,2025-08-20 00:00:00
+398,152,House,Entire home,Rio de Janeiro,Brazil,3,1,1,136.0,2023-02-01 00:00:00,2024-10-05 00:00:00
+399,286,Apartment,Entire home,Rio de Janeiro,Brazil,10,4,3,208.25,2023-05-17 00:00:00,2023-05-17 00:00:00
+400,8,Apartment,Entire home,Lusaka,Zambia,8,4,3,134.75,2023-11-17 00:00:00,2023-11-17 00:00:00
+401,237,House,Entire home,Kingston,Jamaica,10,5,4,256.0,2023-01-21 00:00:00,2025-07-26 00:00:00
+402,293,Apartment,Private room,Livingstone,Zambia,2,1,1,70.12,2023-07-19 00:00:00,2024-10-30 00:00:00
+403,219,House,Private room,Swakopmund,Namibia,1,1,1,70.0,2023-11-19 00:00:00,2023-11-19 00:00:00
+404,105,Condo,Entire home,New Delhi,India,3,1,1,120.0,2023-01-06 00:00:00,2024-03-02 00:00:00
+405,249,Condo,Private room,Goa,India,2,1,1,90.25,2023-01-31 00:00:00,2025-01-27 00:00:00
+406,174,House,Entire home,Krakow,Poland,4,2,2,200.0,2023-06-03 00:00:00,2024-09-07 00:00:00
+407,464,Loft,Private room,Krakow,Poland,2,1,1,110.0,2023-01-02 00:00:00,2025-08-18 00:00:00
+408,208,Loft,Private room,Auckland,New Zealand,2,1,1,170.5,2023-12-20 00:00:00,2024-12-07 00:00:00
+409,82,Condo,Private room,Auckland,New Zealand,2,1,1,147.25,2023-09-26 00:00:00,2024-11-12 00:00:00
+410,468,Condo,Private room,Madrid,Spain,1,1,1,133.0,2023-12-16 00:00:00,2024-08-28 00:00:00
+411,492,Loft,Private room,Goa,India,1,1,1,104.5,2023-07-07 00:00:00,2024-10-11 00:00:00
+412,110,Condo,Private room,Krakow,Poland,1,1,1,95.0,2023-01-15 00:00:00,2025-04-12 00:00:00
+413,134,Condo,Private room,Kingston,Jamaica,1,1,1,76.0,2023-12-07 00:00:00,2024-12-19 00:00:00
+414,384,Loft,Private room,Cape Town,South Africa,2,1,1,99.0,2023-09-13 00:00:00,2024-05-19 00:00:00
+415,388,Loft,Entire home,New York,United States,12,5,4,782.0,2023-02-21 00:00:00,2023-02-21 00:00:00
+416,135,Loft,Private room,Buenos Aires,Argentina,1,1,1,77.0,2023-11-05 00:00:00,2025-02-13 00:00:00
+417,377,Boutique Hotel,Entire home,Buenos Aires,Argentina,12,5,4,280.0,2023-04-26 00:00:00,2025-07-20 00:00:00
+418,268,House,Private room,McMurdo Station,Antarctica,1,1,1,300.0,2023-12-22 00:00:00,2024-06-08 00:00:00
+419,412,Apartment,Private room,Krakow,Poland,1,1,1,82.5,2023-06-03 00:00:00,2025-02-17 00:00:00
+420,277,Boutique Hotel,Entire home,Barcelona,Spain,4,2,2,462.0,2023-04-22 00:00:00,2024-02-03 00:00:00
+421,39,Apartment,Entire home,McMurdo Station,Antarctica,7,3,2,615.0,2023-11-21 00:00:00,2025-07-21 00:00:00
+422,10,Condo,Entire home,Mumbai,India,8,4,3,229.5,2023-11-08 00:00:00,2025-02-11 00:00:00
+423,53,House,Private room,Singapore,Singapore,2,1,1,210.0,2023-09-23 00:00:00,2023-09-23 00:00:00
+424,101,Loft,Private room,Auckland,New Zealand,2,1,1,170.5,2023-03-11 00:00:00,2024-05-22 00:00:00
+425,58,Loft,Entire home,Rio de Janeiro,Brazil,8,3,2,221.0,2023-03-21 00:00:00,2024-08-08 00:00:00
+426,401,Apartment,Private room,Barcelona,Spain,2,1,1,136.12,2023-12-07 00:00:00,2024-06-28 00:00:00
+427,457,Condo,Private room,Kingston,Jamaica,2,1,1,76.0,2023-02-03 00:00:00,2023-02-03 00:00:00
+428,100,Condo,Entire home,Madrid,Spain,8,4,3,378.0,2023-09-17 00:00:00,2024-04-18 00:00:00
+429,107,Condo,Private room,Mumbai,India,1,1,1,80.75,2023-01-01 00:00:00,2025-07-08 00:00:00
+430,35,Condo,Entire home,New Delhi,India,8,3,2,184.0,2023-05-04 00:00:00,2025-02-20 00:00:00
+431,135,Loft,Private room,Windhoek,Namibia,2,1,1,71.5,2023-05-31 00:00:00,2025-06-16 00:00:00
+432,449,House,Entire home,Swakopmund,Namibia,11,5,4,224.0,2023-10-26 00:00:00,2024-11-20 00:00:00
+433,227,Apartment,Entire home,Barcelona,Spain,6,3,2,338.25,2023-05-16 00:00:00,2024-01-03 00:00:00
+434,203,Condo,Entire home,Paris,France,7,3,2,425.5,2023-08-06 00:00:00,2025-02-22 00:00:00
+435,8,Loft,Private room,Tokyo,Japan,1,1,1,165.0,2023-12-27 00:00:00,2024-12-31 00:00:00
+436,496,Condo,Entire home,Cape Town,South Africa,4,1,1,135.0,2023-12-05 00:00:00,2024-05-02 00:00:00
+437,161,Boutique Hotel,Entire home,Lusaka,Zambia,11,5,4,220.0,2023-12-24 00:00:00,2024-11-14 00:00:00
+438,427,House,Private room,Barcelona,Spain,2,1,1,165.0,2023-06-07 00:00:00,2023-06-07 00:00:00
+439,43,Condo,Entire home,New Delhi,India,7,3,2,184.0,2023-05-28 00:00:00,2024-05-27 00:00:00
+440,398,Boutique Hotel,Private room,Tokyo,Japan,2,1,1,210.0,2023-11-01 00:00:00,2023-11-01 00:00:00
+441,46,House,Private room,Paris,France,1,1,1,185.0,2023-04-18 00:00:00,2024-03-03 00:00:00
+442,192,House,Entire home,Warsaw,Poland,7,3,2,264.0,2023-09-12 00:00:00,2024-04-13 00:00:00
+443,488,Condo,Private room,Singapore,Singapore,2,1,1,199.5,2023-03-12 00:00:00,2024-12-24 00:00:00
+444,492,Loft,Entire home,New Delhi,India,11,5,4,272.0,2023-02-02 00:00:00,2024-06-17 00:00:00
+445,292,Loft,Private room,Galway,Ireland,2,1,1,176.0,2023-01-25 00:00:00,2024-10-06 00:00:00
+446,488,Apartment,Entire home,Windhoek,Namibia,10,4,3,159.25,2023-04-07 00:00:00,2023-04-07 00:00:00
+447,402,Boutique Hotel,Entire home,Mumbai,India,8,4,3,306.0,2023-04-30 00:00:00,2024-08-17 00:00:00
+448,281,Condo,Private room,Madrid,Spain,1,1,1,133.0,2023-05-07 00:00:00,2025-02-09 00:00:00
+449,140,Apartment,Private room,McMurdo Station,Antarctica,1,1,1,247.5,2023-05-15 00:00:00,2023-05-15 00:00:00
+450,322,Apartment,Private room,Galway,Ireland,2,1,1,132.0,2023-02-08 00:00:00,2025-07-08 00:00:00
+451,422,Boutique Hotel,Entire home,Dublin,Ireland,6,2,2,546.0,2023-10-17 00:00:00,2024-09-01 00:00:00
+452,489,Apartment,Private room,Swakopmund,Namibia,1,1,1,57.75,2023-02-03 00:00:00,2024-12-09 00:00:00
+453,364,Loft,Entire home,Cape Town,South Africa,9,4,3,270.0,2023-10-14 00:00:00,2024-12-24 00:00:00
+454,491,Loft,Entire home,Kingston,Jamaica,8,3,2,208.0,2023-12-22 00:00:00,2025-01-19 00:00:00
+455,462,Condo,Entire home,Buenos Aires,Argentina,10,4,3,189.0,2023-07-27 00:00:00,2025-08-06 00:00:00
+456,461,Apartment,Entire home,New York,United States,8,3,2,471.5,2023-01-26 00:00:00,2024-03-15 00:00:00
+457,69,Boutique Hotel,Entire home,Montego Bay,Jamaica,8,4,3,432.0,2023-04-18 00:00:00,2024-03-16 00:00:00
+458,482,Loft,Private room,New York,United States,2,1,1,253.0,2023-11-19 00:00:00,2024-02-07 00:00:00
+459,2,Loft,Entire home,New Delhi,India,11,5,4,272.0,2023-12-10 00:00:00,2024-04-16 00:00:00
+460,16,House,Entire home,New York,United States,6,3,2,552.0,2023-09-13 00:00:00,2023-09-13 00:00:00
+461,157,Boutique Hotel,Entire home,Toronto,Canada,11,5,4,640.0,2023-03-13 00:00:00,2024-10-05 00:00:00
+462,57,House,Private room,Singapore,Singapore,1,1,1,210.0,2023-02-24 00:00:00,2024-04-07 00:00:00
+463,194,Loft,Entire home,New Delhi,India,4,2,2,176.0,2023-09-12 00:00:00,2025-06-14 00:00:00
+464,287,House,Private room,Galway,Ireland,2,1,1,160.0,2023-01-20 00:00:00,2025-08-07 00:00:00
+465,83,Boutique Hotel,Private room,Goa,India,1,1,1,133.0,2023-09-10 00:00:00,2025-09-21 00:00:00
+466,62,Condo,Entire home,Buenos Aires,Argentina,8,3,2,161.0,2023-04-08 00:00:00,2025-01-05 00:00:00
+467,212,House,Entire home,Galway,Ireland,2,1,1,256.0,2023-06-05 00:00:00,2024-10-06 00:00:00
+468,181,Apartment,Private room,Lusaka,Zambia,1,1,1,45.38,2023-07-07 00:00:00,2024-01-01 00:00:00
+469,50,Condo,Entire home,Lusaka,Zambia,6,2,2,104.5,2023-04-13 00:00:00,2024-03-28 00:00:00
+470,468,Loft,Private room,New York,United States,2,1,1,253.0,2023-12-13 00:00:00,2025-03-02 00:00:00
+471,71,Loft,Entire home,Auckland,New Zealand,10,5,4,527.0,2023-07-21 00:00:00,2025-08-21 00:00:00
+472,441,House,Entire home,New York,United States,11,5,4,736.0,2023-07-26 00:00:00,2023-07-26 00:00:00
+473,453,Condo,Private room,McMurdo Station,Antarctica,2,1,1,285.0,2023-04-28 00:00:00,2024-10-31 00:00:00
+474,8,Condo,Entire home,New York,United States,3,1,1,345.0,2023-09-08 00:00:00,2023-09-08 00:00:00
+475,219,House,Private room,Krakow,Poland,2,1,1,100.0,2023-03-16 00:00:00,2024-02-05 00:00:00
+476,255,Apartment,Entire home,Mumbai,India,10,5,4,242.25,2023-05-16 00:00:00,2025-07-09 00:00:00
+477,101,Apartment,Entire home,Lusaka,Zambia,3,1,1,68.75,2023-10-19 00:00:00,2025-05-27 00:00:00
+478,311,Boutique Hotel,Entire home,Sydney,Australia,4,2,2,490.0,2023-04-04 00:00:00,2025-06-17 00:00:00
+479,251,Condo,Entire home,New York,United States,9,4,3,621.0,2023-09-12 00:00:00,2025-08-17 00:00:00
+480,127,Boutique Hotel,Private room,New Delhi,India,1,1,1,112.0,2023-06-04 00:00:00,2024-11-21 00:00:00
+481,494,House,Private room,Rio de Janeiro,Brazil,2,1,1,85.0,2023-05-11 00:00:00,2025-04-30 00:00:00
+482,470,House,Entire home,Barcelona,Spain,3,1,1,264.0,2023-10-09 00:00:00,2024-06-24 00:00:00
+483,476,Loft,Private room,Windhoek,Namibia,2,1,1,71.5,2023-05-17 00:00:00,2025-08-11 00:00:00
+484,355,House,Private room,Dublin,Ireland,2,1,1,195.0,2023-11-03 00:00:00,2025-04-10 00:00:00
+485,141,Condo,Entire home,Singapore,Singapore,6,2,2,399.0,2023-08-28 00:00:00,2024-05-08 00:00:00
+486,70,House,Entire home,Lusaka,Zambia,4,1,1,88.0,2023-03-19 00:00:00,2025-03-21 00:00:00
+487,276,Apartment,Private room,Cape Town,South Africa,1,1,1,74.25,2023-05-17 00:00:00,2024-01-12 00:00:00
+488,423,House,Entire home,Auckland,New Zealand,3,1,1,248.0,2023-05-18 00:00:00,2024-04-16 00:00:00
+489,65,Loft,Private room,Windhoek,Namibia,2,1,1,71.5,2023-07-14 00:00:00,2024-11-26 00:00:00
+490,308,House,Entire home,Goa,India,7,3,2,228.0,2024-01-01 00:00:00,2024-06-04 00:00:00
+491,216,Boutique Hotel,Entire home,Mumbai,India,4,2,2,238.0,2023-06-30 00:00:00,2024-01-21 00:00:00
+492,207,House,Entire home,New Delhi,India,10,4,3,224.0,2023-10-20 00:00:00,2025-01-06 00:00:00
+493,135,Loft,Private room,Sydney,Australia,1,1,1,192.5,2023-12-23 00:00:00,2024-02-16 00:00:00
+494,29,House,Entire home,Goa,India,12,5,4,304.0,2023-08-01 00:00:00,2024-03-14 00:00:00
+495,30,House,Private room,Tokyo,Japan,2,1,1,150.0,2023-10-05 00:00:00,2024-09-13 00:00:00
+496,450,Boutique Hotel,Entire home,Cape Town,South Africa,11,5,4,360.0,2023-08-31 00:00:00,2024-03-10 00:00:00
+497,422,Boutique Hotel,Private room,Toronto,Canada,1,1,1,224.0,2023-10-11 00:00:00,2025-08-30 00:00:00
+498,146,House,Private room,Madrid,Spain,1,1,1,140.0,2023-12-06 00:00:00,2024-05-24 00:00:00
+499,157,Loft,Private room,Kingston,Jamaica,1,1,1,88.0,2023-02-16 00:00:00,2025-07-23 00:00:00
+500,97,Condo,Entire home,Sydney,Australia,6,3,2,402.5,2023-02-27 00:00:00,2025-04-08 00:00:00

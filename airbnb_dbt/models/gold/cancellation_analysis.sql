@@ -26,7 +26,7 @@ SELECT
         / NULLIF(COUNT(*), 0),   -- NULLIF prevents division by zero errors
     2)AS cancellation_rate,
 
-FROM {{ ref('fct_bookings')}}
+FROM {{ ref('fact_bookings')}}
 GROUP BY 
     country,
     city,

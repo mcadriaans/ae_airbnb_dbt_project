@@ -1,0 +1,59 @@
+-- Drop stage (cleanup)
+DROP STAGE IF EXISTS DEV_BRONZE.SNOWSTAGE;
+
+-- Create storage integration
+CREATE OR REPLACE STORAGE INTEGRATION s3_integration
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = 'S3'
+  ENABLED = TRUE
+  STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::119539089247:role/snowflake_s3_access_role'
+  STORAGE_ALLOWED_LOCATIONS = ('s3://snowflake-bucket-adr/source/');
+
+-- Get IAM + External ID (IMPORTANT)
+DESC STORAGE INTEGRATION s3_integration;
+
+-- From this output, copy:
+-- + STORAGE_AWS_IAM_USER_ARN
+-- + STORAGE_AWS_EXTERNAL_ID
+
+-- Configure AWS (outside Snowflake) : Update your IAM Role trust policy with those values.
+
+-- Create file format
+CREATE OR REPLACE FILE FORMAT DEV_BRONZE.CSV_FORMAT
+  TYPE = 'CSV'
+  FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+  SKIP_HEADER = 1;
+
+-- Create stage
+CREATE OR REPLACE STAGE DEV_BRONZE.SNOWSTAGE
+  URL = 's3://snowflake-bucket-adr/source/'
+  STORAGE_INTEGRATION = s3_integration
+  FILE_FORMAT = (FORMAT_NAME = 'CSV_FORMAT');
+
+-- Verify stage
+DESCRIBE STAGE DEV_BRONZE.SNOWSTAGE;
+
+-- Test access (recommended)
+LIST @DEV_BRONZE.SNOWSTAGE;
+
+-- Load bookings
+COPY INTO DEV_BRONZE.BRONZE_BOOKINGS
+FROM @DEV_BRONZE.SNOWSTAGE
+FILE_FORMAT = (FORMAT_NAME = 'CSV_FORMAT')
+PATTERN = '.*bookings.*\\.csv'
+ON_ERROR = 'CONTINUE';
+
+-- Load hosts
+COPY INTO DEV_BRONZE.BRONZE_HOSTS
+FROM @DEV_BRONZE.SNOWSTAGE
+FILE_FORMAT = (FORMAT_NAME = 'CSV_FORMAT')
+PATTERN = '.*hosts.*\\.csv'
+ON_ERROR = 'CONTINUE';
+
+
+-- Load listings
+COPY INTO DEV_BRONZE.BRONZE_LISTINGS
+FROM @DEV_BRONZE.SNOWSTAGE
+FILE_FORMAT = (FORMAT_NAME = 'CSV_FORMAT')
+PATTERN = '.*listings.*\\.csv'
+ON_ERROR = 'CONTINUE';

@@ -27,7 +27,7 @@ models:
       - name: city
         description: "City where the property is located."
       - name: property_type
-        description: "Type of property (entire home, private room, etc.)."
+        description: "Type of property (loft, house, condo, boutique hotel, apartment)."
       - name: room_type
         description: "Type of room booked (e.g. entire home, private room)."
       - name: is_superhost
@@ -68,10 +68,24 @@ models:
     columns:
       - name: host_id
         description: "Unique identifier for the host."
+      - name: host_name
+        description: "Name of the host."
+      - name: host_since
+        description: "Date when the host joined Airbnb."
       - name: is_superhost
-        description: "Indicates whether the host is a superhost."
+        description: "Boolean indicating whether the host is a superhost."
+      - name: response_rate
+        description: "Host's response rate to booking inquiries."
       - name: avg_host_rating
         description: "Average rating across all listings owned by the host."
+      - name: total_listings
+        description: "Total number of listings owned by the host."
+      - name: host_portfolio_type
+        description: "Categorization of host based on number of listings (e.g. Single Listing, Multi-listing)."
+      - name: host_rating_category
+        description: "Categorization of host based on average rating (e.g. Premium, Moderate, Low)."
+      - name: host_profile_last_updated
+        description: "Timestamp of the last update to the host's profile."
 
 
   - name: cancellation_analysis

@@ -1,11 +1,85 @@
 version: 2
 
 models:
+  - name: silver_listings
+    description: >
+      Cleaned and enriched listing data for all Airbnb properties. This model standardizes raw listing information by normalizing property types and locations, 
+      calculating key metrics such as price per night and occupancy rates, and enriching the data with host information from the silver_hosts model. 
+      It is materialized incrementally to optimize processing performance.
+    columns:
+      - name: listing_id
+        description: Unique identifier for a listing.
+        tests:
+          - unique
+          - not_null
+      - name: host_id
+        description: Identifier for the host associated with the listing.
+        tests:
+          - not_null
+      - name: property_type
+        description: Type of property (e.g., apartment, house, etc.).
+        tests:
+          - not_null
+      - name: room_type
+        description: Type of room offered (e.g., entire home, private room, etc.).
+        tests:
+          - not_null
+      - name: city
+        description: City where the listing is located.
+        tests:
+          - not_null
+      - name: country
+        description: Country where the listing is located.
+      - name: accommodates
+        description: Number of guests the listing can accommodate
+        tests:
+          - not_null
+      - name: accommodates
+        description: Number of guests the listing can accommodate.
+        tests:
+          - not_null
+      - name: bedrooms
+        description: Number of bedrooms in the listing.
+        tests:
+          - not_null
+      - name: bathrooms
+        description: Number of bathrooms in the listing.
+        tests:
+          - not_null
+      - name: price_per_night
+        description: Price per night for the listing.
+        tests:
+          - not_null
+      - name: created_at
+        description: Timestamp when the record was first created.
+        tests:
+          - not_null
+      - name: updated_at
+        description: Timestamp when the record was last updated.
+        tests:
+          - not_null
+      - name: listing_size_category
+        description: >  
+          Categorization of listings based on the number of bedrooms and bathrooms, 
+          providing insights into the size and type of accommodation offered.
+        tests:
+          - not_null
+      - name: price_tier
+        description: >
+          Classification of listings into price tiers (e.g., budget, mid-range, luxury) based on the price per night, helping to 
+          segment listings for analysis and recommendations.
+        tests:
+          - not_null
+      - name: loaded_at
+        description: Timestamp when the record was loaded into the silver layer.
+        tests:
+          - not_null
   - name: silver_hosts
     description: >
-      Cleaned, transformed, and enriched host records derived from the bronze layer. 
-      This model standardizes raw host data and calculates key business metrics such as total listings and average response time. 
-      It is materialized incrementally to optimize processing performance.
+      Cleaned and enriched profile data for all Airbnb hosts. This model standardizes 
+      raw host information by normalizing names and locations, standardizing status flags as non-nullable Booleans, 
+      and calculating performance metrics. It enriches the data 
+      with host tenure (in years) and performance-based rating classifications.
     columns:
       - name: host_id
         description: Unique identifier for a host.
@@ -35,7 +109,7 @@ models:
         tests:
           - dbt_utils.accepted_range:
               min_value: 0
-              max_value: 100
+              max_value: 1
               inclusive: true 
       - name: avg_host_rating
         description: Average rating of the host.

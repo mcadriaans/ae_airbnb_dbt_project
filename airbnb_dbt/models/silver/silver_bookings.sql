@@ -37,17 +37,17 @@ WITH source_data AS (
 silver_bookings_cleaned AS (
     SELECT
         LOWER(TRIM(booking_id)) AS booking_id,
-        booking_date,
+        CAST(booking_date AS DATE) AS booking_date,
         LOWER(TRIM(booking_status)) AS booking_status,
-        listing_id,
-        stay_start_date,
-        nights_booked,
-        booking_amount,
-        cleaning_fee,
-        service_fee,
-        cancellation_fee,
-        created_at,
-        updated_at  
+        CAST(listing_id AS NUMERIC(38,0)) AS listing_id,
+        CAST(stay_start_date AS DATE) AS stay_start_date,
+        CAST(nights_booked AS INTEGER) AS nights_booked,
+        CAST(booking_amount AS DECIMAL(18,2)) AS booking_amount,
+        CAST(cleaning_fee AS DECIMAL(18,2)) AS cleaning_fee,
+        CAST(service_fee AS DECIMAL(18,2)) AS service_fee,
+        CAST(cancellation_fee AS DECIMAL(18,2)) AS cancellation_fee,
+        CAST(created_at AS timestamp_ntz) AS created_at,
+        CAST(updated_at AS timestamp_ntz) AS updated_at
     FROM source_data
 ),
 
@@ -58,13 +58,16 @@ silver_bookings_enriched AS (
         booking_status,
         booking_date,
         stay_start_date,
+        -- Calculate lead time in days between booking date and stay start date
         DATEDIFF(day, booking_date, stay_start_date) AS lead_time_days,
         nights_booked,
+        -- Calculate stay end date based on start date and nights booked
         DATEADD(day, nights_booked, stay_start_date) AS stay_end_date,
         booking_amount,
         cleaning_fee,
         service_fee,
         cancellation_fee,
+        -- Calculate expected revenue if there were no cancellations
         CAST(
             {{ calc_expected_revenue(
                 'booking_amount',
@@ -73,6 +76,7 @@ silver_bookings_enriched AS (
             ) }} AS DECIMAL(18,2)) AS expected_revenue,
         created_at,
         updated_at,
+         -- Metadata for tracking
         CAST(current_timestamp() AS timestamp_ntz) AS loaded_at
     FROM silver_bookings_cleaned
 )

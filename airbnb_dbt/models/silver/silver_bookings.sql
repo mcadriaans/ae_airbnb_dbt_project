@@ -1,14 +1,12 @@
-{{ config(
-    materialized='incremental',
-    unique_key='booking_id',
-    incremental_strategy='merge'
-) }}
+{{
+    config(
+        materialized='incremental',
+        unique_key='host_id',
+        incremental_strategy='merge',
+        transient= true
+    )
+}}
 
-{% set relation = adapter.get_relation(
-    database=this.database,
-    schema=this.schema,
-    identifier=this.identifier
-) %}
 
 WITH source_data AS (
 
@@ -27,21 +25,20 @@ WITH source_data AS (
         CAST(updated_at AS timestamp_ntz) AS updated_at
     FROM {{ source('airbnb', 'bronze_bookings') }}
 
-    {% if relation is not none and not flags.FULL_REFRESH %}
+    
+    {% if is_incremental() %}
+      -- This only runs on incremental runs, not on the first run or --full-refresh
       WHERE updated_at >= (
-          SELECT DATEADD(
-              day, -3,
-              COALESCE(MAX(t.updated_at), '1900-01-01'::timestamp_ntz))
+          SELECT DATEADD(day, -3, COALESCE(MAX(updated_at), '1900-01-01'::timestamp_ntz))
           FROM {{ this }}
-          )
+      )
     {% endif %}
 ),
-
-silver_cleaned AS (
+silver_bookings_cleaned AS (
     SELECT
         LOWER(TRIM(booking_id)) AS booking_id,
         booking_date,
-        COALESCE(LOWER(TRIM(booking_status)), 'unknown') AS booking_status,
+        LOWER(TRIM(booking_status)) AS booking_status,
         listing_id,
         stay_start_date,
         nights_booked,
@@ -54,7 +51,7 @@ silver_cleaned AS (
     FROM source_data
 ),
 
-silver_enriched AS (
+silver_bookings_enriched AS (
     SELECT
         booking_id,
         listing_id,
@@ -76,8 +73,8 @@ silver_enriched AS (
             ) }} AS DECIMAL(18,2)) AS expected_revenue,
         created_at,
         updated_at,
-        CURRENT_TIMESTAMP() AS loaded_at
-    FROM silver_cleaned
+        CAST(current_timestamp() AS timestamp_ntz) AS loaded_at
+    FROM silver_bookings_cleaned
 )
 
-SELECT * FROM silver_enriched;
+SELECT * FROM silver_bookings_enriched

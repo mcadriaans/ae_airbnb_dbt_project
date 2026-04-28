@@ -15,6 +15,7 @@ SELECT
     l.host_id,
     h.host_name,
     h.is_superhost,
+    h.host_rating_category,
 
     -- Descriptive attributes
     l.property_type,
@@ -26,26 +27,25 @@ SELECT
     l.accommodates,
     l.bedrooms,
     l.bathrooms,
+    l.listing_size_category,
 
     -- Financial attributes
     l.price_per_night,
+    l.price_tier,
 
-    -- Business Logic : Categorize listings by price tier
-    CASE
-        WHEN l.price_per_night > 300  THEN 'Luxury'
-        WHEN l.price_per_night >= 150 THEN 'Premium'
-        WHEN l.price_per_night >= 75  THEN 'Standard'
-        ELSE 'Budget'
-    END AS price_tier,
+    
+    ROUND(l.price_per_night / NULLIF(l.accommodates, 0), 2) AS price_per_guest,
 
     -- Business Logic: Categorize listings by capacity
     CASE
-        WHEN l.accommodates >= 6 THEN 'Large Group'
-        WHEN l.accommodates >= 3 THEN 'Small Group'
+        WHEN l.accommodates >= 6 THEN 'Large Group (6+)'
+        WHEN l.accommodates >= 3 THEN 'Small Group (3-5)'
         ELSE 'Solo/Pair'
     END AS capacity_type,
     l.created_at AS listing_created_at,
-    l.updated_at AS listing_last_updated
+    l.updated_at AS listing_last_updated,
+    -- Metadata for tracking
+    CAST(current_date AS timestamp_ntz) AS loaded_at
 FROM listings AS l
 LEFT JOIN hosts AS h
     ON l.host_id = h.host_id

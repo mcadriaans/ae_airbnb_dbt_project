@@ -18,12 +18,14 @@ SELECT
     b.listing_id,
     l.host_id,
 
-    -- Booking Metrics
+    -- Booking Details & Status
     b.booking_date,
-    b.booking_status,
+    EXTRACT(year FROM b.booking_date) AS booking_year,
+    EXTRACT(month FROM b.booking_date) AS booking_month,
+    b.lead_time_days,
     b.stay_start_date,
     b.stay_end_date,
-    b.lead_time_days,
+    b.booking_status,
 
     -- Geographic Dimensions
     l.country,
@@ -32,27 +34,30 @@ SELECT
     -- Property & Host Dimensions
     l.property_type,
     l.room_type,
+    l.listing_size_category,
+    l.price_tier,
     h.is_superhost,
+    h.host_rating_category,
 
     -- Revenue Metrics (Measures)
     b.nights_booked,
     b.booking_amount,
     b.cleaning_fee,
     b.service_fee,
-    b.total_revenue,    -- Potential revenue if not cancelled
+    b.expected_revenue,    -- Potential revenue if not cancelled
     b.cancellation_fee,
 
     -- Derived Business Logic
-    {{ calc_actual_revenue('booking_status', 'total_revenue', 'cancellation_fee') }} AS actual_revenue,
+    {{ calc_actual_revenue('b.booking_status', 'b.expected_revenue', 'b.cancellation_fee') }} AS actual_revenue,
     CASE
         WHEN b.booking_status = 'cancelled'
-            THEN b.total_revenue - b.cancellation_fee
+            THEN b.expected_revenue - b.cancellation_fee
         ELSE 0
     END AS revenue_loss,
 
     -- Boolean Flags for easier compuation
-    CASE WHEN b.booking_status = 'cancelled' THEN 1 ELSE 0 END AS is_cancelled,
-    CASE WHEN b.booking_status = 'confirmed' THEN 1 ELSE 0 END AS is_confirmed
+    CASE WHEN b.booking_status = 'cancelled' THEN 1 ELSE 0 END AS cancellation_flag,
+    CASE WHEN b.booking_status = 'confirmed' THEN 1 ELSE 0 END AS confirmation_flag
         
 FROM bookings AS b
 LEFT JOIN listings AS l

@@ -5,53 +5,7 @@ models:
     description: >
       Fact table containing one row per booking. Includes revenue metrics,
       cancellation logic, host and listing attributes, and booking behavior KPIs.
-    columns:
-      - name: booking_id
-        description: "Primary key for the booking."
-      - name: listing_id
-        description: "Foreign key to the dim_listings table."
-      - name: host_id
-        description: "Foreign key to the dim_hosts table."
-      - name: booking_date
-        description: "Date when the booking was made."
-      - name: booking_status
-        description: "Status of the booking (e.g. confirmed, cancelled)."
-      - name: stay_start_date
-        description: "Start date of the stay."
-      - name: stay_end_date
-        description: "End date of the stay."
-      - name: lead_time_days
-        description: "Number of days between booking date and stay start date."
-      - name: country
-        description: "Country where the property is located."
-      - name: city
-        description: "City where the property is located."
-      - name: property_type
-        description: "Type of property (loft, house, condo, boutique hotel, apartment)."
-      - name: room_type
-        description: "Type of room booked (e.g. entire home, private room)."
-      - name: is_superhost
-        description: "Indicates whether the host is a superhost."
-      - name: nights_booked
-        description: "Number of nights booked for the stay."
-      - name: booking_amount
-        description: "Total amount paid for the booking."
-      - name: cleaning_fee
-        description: "Cleaning fee charged for the booking."
-      - name: service_fee
-        description: "Service fee charged for the booking."
-      - name: total_revenue
-        description: "Total revenue from the booking (booking_amount + cleaning_fee + service_fee)."
-      - name: cancellation_fee 
-        description: "Fee charged based on lead time and cancellation rules."
-      - name: actual_revenue
-        description: "Revenue from the booking after accounting for cancellations (total_revenue - cancellation_fee)."
-      - name: revenue_loss
-        description: "Revenue lost due to cancellations (total_revenue - cancellation_fee)."
-      - name: is_cancelled
-        description: "Boolean indicating whether the booking was cancelled."
-      - name: is_confirmed
-        description: "Boolean indicating whether the booking was confirmed (not cancelled)."
+ 
 
 
 

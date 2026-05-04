@@ -10,65 +10,121 @@ models:
     columns:
       - name: booking_id  
         description: "Unique identifier for the booking."
+        tests:
+          - unique
+          - not_null
       - name: listing_id
         description: "Foreign key linking to the listing dimension."
+        tests:
+          - not_null
       - name: host_id
         description: "Foreign key linking to the host dimension."
+        tests:
+          - not_null
       - name: booking_date
         description: "Date when the booking was made."
+        tests:
+          - not_null  
       - name: booking_year
         description: "Year of the booking (2023-2025). Used for time-based analysis."
+        tests:
+          - not_null
       - name: booking_month
         description: "Month of the booking, used for time-based analysis."
+        tests:
+          - not_null
       - name: lead_time_days
         description: "Number of days between booking date and check-in date."
+        tests:
+          - not_null
       - name: stay_start_date
         description: "Check-in date for the booking."
+        tests:
+          - not_null
       - name: stay_end_date
         description: "Check-out date for the booking."
+        tests:
+          - not_null
       - name: booking_status
         description: "Status of the booking (e.g. confirmed, cancelled)."
+        tests:
+          - not_null
       - name: country
         description: "Country where the listing is located.There are 18 unique countries in the dataset."
+        tests:
+          - not_null
       - name: city
         description: "City where the listing is located. There are 26 unique cities in the dataset."
+        tests:
+          - not_null
       - name: property_type
         description: "Type of property booked (e.g. boutique hotel, apartment, house, loft, condo)."
+        tests:
+          - not_null
       - name: room_type
         description: "Type of room booked (e.g. entire home, private room)."
+        tests:
+          - not_null    
       - name: listing_size_category
         description: > 
-          Categorization of listing size based on number of guests (e.g. 1 Bedroom, Medium(2-3 bedrooms), Large(4+ bedrooms)).
+          Categorization of listing size based on number of guests (e.g. 1 Bedroom, Medium(2-3 bedrooms), 
+          Large(4+ bedrooms)).
+        tests:
+          - not_null
       - name: price_tier
         description: "Categorization of listing price (e.g. Budget, Mid-range, Luxury)."
+        tests:
+          - not_null
       - name: is_superhost
         description: "Boolean indicating whether the host is a superhost."
+        tests:
+          - not_null
       - name: host_rating_category
         description: "Categorization of host based on average rating (e.g. Average, Good, Excellent)."
+        tests:
+          - not_null
       - name: nights_booked
         description: "Number of nights booked for the stay."
+        tests:
+          - not_null
       - name: booking_amount
         description: "Total amount paid for the booking."
+        tests:
+          - not_null
       - name: cleaning_fee
         description: "Cleaning fee charged for the booking, if applicable."
+        tests:
+          - not_null
       - name: service_fee
         description: "Service fee charged for the booking, if applicable."
       - name: expected_revenue
         description: "Expected revenue from the booking, calculated as booking_amount minus any cancellation fees."
+        tests:
+          - not_null
       - name: cancellation_fee
         description: "Cancellation fee charged for the booking, if applicable."
+        tests:
+          - not_null
       - name: actual_revenue
         description: >
          Actual revenue from the booking, calculated as expected_revenue minus cancellation_fee 
          if the booking was cancelled. Otherwise, it is equal to expected_revenue.
+         tests:
+          - not_null
       - name: revenue_loss 
         description: >
           Revenue lost due to cancellation, calculated as expected_revenue if the booking
           was cancelled, otherwise 0."
+        tests:
+          - not_null
       - name: cancellation_flag
         description: "Boolean indicating whether the booking was cancelled."
+        tests:
+          - not_null
       - name: confirmation_flag
         description: "Boolean indicating whether the booking was confirmed (not cancelled)."
+        tests:
+          - not_null
 
 
   - name: dim_hosts
@@ -76,35 +132,67 @@ models:
     columns:
       - name: host_id
         description: "Unique identifier for the host."
+        tests:
+          - unique
+          - not_null
       - name: host_name
         description: "Name of the host."
+        tests:
+          - not_null
       - name: host_since
         description: "Date when the host joined Airbnb."
+        tests:
+          - not_null
       - name: is_superhost
         description: "Boolean indicating whether the host is a superhost."
+        tests:
+          - not_null
       - name: response_rate
         description: "Host's response rate to booking inquiries."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
       - name: avg_host_rating
         description: "Average rating across all listings owned by the host."
+        tests:
+          - not_null
       - name: total_listings
         description: "Total number of listings owned by the host."
+        tests:
+          - not_null
       - name: host_portfolio_type
         description: "Categorization of host based on number of listings (e.g. Single Listing, Multi-listing)."
+        tests:
+          - not_null
       - name: host_rating_category
         description: "Categorization of host based on average rating (e.g. Premium, Moderate, Low)."
+        tests:
+          - not_null
       - name: host_profile_last_updated
         description: "Timestamp of the last update to the host's profile."
+        tests:
+          - not_null
 
   - name: dim_listings
     description: "Dimension table containing listing attributes used for slicing fact tables."
     columns:
       - name: listing_id
         description: "Unique identifier for the listing."
+        tests:
+          - unique
+          - not_null
       - name: city
         description: "City where the listing is located."
+        tests:
+          - not_null
       - name: property_type
         description: "Type of property (entire home, private room, etc.)."
-  - name: cancellation_analysis
+        tests:
+          - not_null
+  - name: mart_cancellation_analysis
     description: >
       Aggregate model providing insights into booking cancellations across country,
       city, and property_type. Includes cancellation rates, lead time behaviour, and 
@@ -116,12 +204,16 @@ models:
           - not_null
       - name: city
         description: "City of the property."
-        test:
-            - not_null
+        tests:
+          - not_null
       - name: property_type
         description: >
-         High-level property category (e.g. apartment, house). Helps break down
+         High-level property category (e.g. loft, boutique hotel, condo, house, apartment). Helps break down
          booking patterns by type of inventory.
+        tests:
+          - not_null
+      - name: price_tier
+        description: "Economic classification of the listing (Budget, Mid-range, Luxury)."
         tests:
           - not_null
       - name: total_bookings
@@ -130,48 +222,37 @@ models:
           - not_null
       - name: cancelled_bookings
         description: "Number of bookings that were cancelled"
-      - name: avg_lead_time_cancelled
-        description: "Average lead time (in days) for cancelled bookings"
-      - name: avg_lead_time_completed
-        description: "Average lead time (in days) for non-cancelled bookings"
-        test:
-            - not_null
-      - name: cancellation_fee_revenue
-        description: "Total revenue collected from cancellation fees"
+        tests:
+          - not_null
       - name: cancellation_rate
-        description: "Proportion of bookings that were cancelled (0–1)"       
+        description: "Proportion of bookings that were cancelled (0-1)"
         tests:
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 1
-  - name: mart_cancellation_analysis
-    description: >
-      A summary mart used to analyze booking cancellation trends and their financial 
-      impact. Aggregated by geography, property type, and price tier to identify 
-      high-risk segments and revenue leakage.
-    columns:
-      - name: country
-        description: "The country where the listings are located."
-      - name: city
-        description: "The city where the listings are located."
-      - name: property_type
-        description: "The category of the property (e.g., Apartment, House)."
-      - name: price_tier
-        description: "Economic classification of the listing (Budget, Mid-range, Luxury)."
-      - name: total_bookings
-        description: "Total count of all booking attempts (confirmed + cancelled)."
-      - name: cancelled_bookings
-        description: "Total count of bookings that were cancelled."
-      - name: cancellation_rate
-        description: "Percentage of total bookings that were cancelled (Cancelled / Total)."
+              arguments:
+                min_value: 0
+                max_value: 1
       - name: avg_lead_time_cancelled
-        description: "The average number of days between booking and check-in for cancelled trips."
+        description: "Average lead time (in days) for cancelled bookings"
+        tests:
+          - not_null
       - name: avg_lead_time_completed
-        description: "The average number of days between booking and check-in for completed trips."
+        description: "Average lead time (in days) for non-cancelled bookings"
+        tests:
+          - not_null
       - name: actual_revenue
-        description: "The total realized revenue (Confirmed booking amounts + cancellation fees)."
+        description: "Total revenue realized from completed bookings (after cancellations)"
+        tests:
+          - not_null
       - name: cancellation_fee_revenue
-        description: "Total revenue generated specifically from cancellation penalties."
+        description: "Total revenue collected from cancellation fees"
+        tests:
+          - not_null
       - name: revenue_lost
-        description: "Total potential revenue lost due to cancellations (Expected Revenue - Actual Revenue)."
+        description: "Total potential revenue lost due to cancellations"
+        tests:
+          - not_null
+
+
+
+

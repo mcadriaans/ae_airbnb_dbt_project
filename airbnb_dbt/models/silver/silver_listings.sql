@@ -36,8 +36,8 @@ silver_listings_cleaned AS (
     SELECT 
         CAST(listing_id AS NUMERIC(38,0)) AS listing_id,
         CAST(host_id AS NUMERIC(38,0)) AS host_id,
-        LOWER(TRIM(property_type)) AS property_type,
-        LOWER(TRIM(room_type)) AS room_type,
+        INITCAP(TRIM(property_type)) AS property_type,
+        INITCAP(TRIM(room_type)) AS room_type,
         INITCAP(TRIM(city)) AS city,
         INITCAP(TRIM(country)) AS country,
         CAST(accommodates AS INTEGER) AS accommodates,

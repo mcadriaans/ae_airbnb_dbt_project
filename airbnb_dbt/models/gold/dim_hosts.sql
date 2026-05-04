@@ -25,6 +25,8 @@ host_listings_counts AS(
 )
 
 SELECT
+    -- Unique surrogat ekey for Star schema Joins
+    {{ dbt_utils.generate_surrogate_key(['h.host_id']) }} AS host_key,
     h.host_id,
     h.host_name,
     h.host_since,

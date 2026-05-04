@@ -11,6 +11,8 @@ hosts AS (
 )
 
 SELECT 
+    -- Unique surrogate key for Star schema Joins
+    {{ dbt_utils.generate_surrogate_key(['l.listing_id']) }} AS listing_key,
     l.listing_id,
     l.host_id,
     h.host_name,

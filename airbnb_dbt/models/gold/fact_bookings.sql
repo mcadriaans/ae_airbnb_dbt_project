@@ -15,6 +15,11 @@ listings AS (
 SELECT 
     -- Keys
     b.booking_id,
+
+    {{ dbt_utils.generate_surrogate_key(['b.listing_id']) }} AS listing_key,  -- Surrogate key for Star schema Joins
+    {{ dbt_utils.generate_surrogate_key(['h.host_id']) }} AS host_key,  -- Surrogate key for Star schema Joins
+
+
     b.listing_id,
     l.host_id,
 
@@ -49,11 +54,7 @@ SELECT
 
     -- Derived Business Logic
     {{ calc_actual_revenue('b.booking_status', 'b.expected_revenue', 'b.cancellation_fee') }} AS actual_revenue,
-    CASE
-        WHEN b.booking_status = 'cancelled'
-            THEN b.expected_revenue - b.cancellation_fee
-        ELSE 0
-    END AS revenue_loss,
+    {{ calc_revenue_loss('b.booking_status', 'b.expected_revenue', 'b.cancellation_fee') }} AS revenue_loss,
 
     -- Boolean Flags for easier compuation
     CASE WHEN b.booking_status = 'cancelled' THEN 1 ELSE 0 END AS cancellation_flag,

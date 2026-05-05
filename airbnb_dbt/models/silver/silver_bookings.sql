@@ -66,14 +66,14 @@ silver_bookings_enriched AS (
         booking_amount,
         cleaning_fee,
         service_fee,
-        cancellation_fee,
-        -- Calculate expected revenue if there were no cancellations
+        -- Booking revenue for each booking, handling nulls gracefully
         CAST(
-            {{ calc_expected_revenue(
+            {{ calc_booking_revenue(
                 'booking_amount',
                 'cleaning_fee',
                 'service_fee'
-            ) }} AS DECIMAL(18,2)) AS expected_revenue,
+            ) }} AS DECIMAL(18,2)) AS booking_revenue,
+        cancellation_fee,
         created_at,
         updated_at,
          -- Metadata for tracking

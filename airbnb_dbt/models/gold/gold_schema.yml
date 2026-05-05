@@ -8,8 +8,21 @@ models:
       Contains dimensions for guest behavior, property attributes at the time of booking, 
       and financial metrics including gross booking value and net revenue logic.
     columns:
+      - name: booking_key
+        description: "Surrogate key for the booking fact table, generated using dbt_utils.generate_surrogate_key on booking_id."
+        tests:
+          - unique
+          - not_null
+      - name: listing_key
+        description: "Surrogate key linking to the listing dimension for star schema joins."
+        tests:
+          - not_null
+      - name: host_key
+        description: "Surrogate key linking to the host dimension for star schema joins."
+        tests:
+          - not_null
       - name: booking_id  
-        description: "Unique identifier for the booking."
+        description: "Universally Unique Identifier (UUID) for the booking."
         tests:
           - unique
           - not_null
@@ -130,6 +143,11 @@ models:
   - name: dim_hosts
     description: "Dimension table containing host attributes and performance indicators."
     columns:
+      - name: host_key
+        description: "Surrogate key linking to the host dimension for star schema joins."
+        tests:
+          - unique
+          - not_null
       - name: host_id
         description: "Unique identifier for the host."
         tests:
@@ -179,6 +197,11 @@ models:
   - name: dim_listings
     description: "Dimension table containing listing attributes used for slicing fact tables."
     columns:
+      - name: listing_key
+        description: "Surrogate key linking to the listing dimension for star schema joins."
+        tests:
+          - unique
+          - not_null
       - name: listing_id
         description: "Unique identifier for the listing."
         tests:
@@ -252,7 +275,38 @@ models:
         description: "Total potential revenue lost due to cancellations"
         tests:
           - not_null
-
+  
+  - name: mart_country_price_tier_revenue
+    description: >
+      Aggregate model providing insights into revenue performance across country and price tier segments. 
+      Includes actual revenue, potential revenue, and revenue lost due to cancellations.
+    config:
+      materialized: view
+    columns:
+      - name: country
+        description: "Country where the property is located."
+        tests:
+          - not_null
+      - name: price_tier
+        description: "Economic classification of the listing (Budget, Mid-range, Luxury)."
+        tests:
+          - not_null
+      - name: actual_revenue
+        description: "Total revenue realized from bookings in the given group."
+        tests:
+          - not_null
+      - name: potential_revenue
+        description: "Total potential revenue from bookings in the given group (including cancellations)."
+        tests:
+          - not_null
+      - name: revenue_lost
+        description: "Potential revenue lost due to cancellations in the given group."
+        tests:
+          - not_null
+      - name: cancellation_revenue
+        description: "Total revenue collected from cancellation fees in the given group."
+        tests:
+          - not_null
 
 
 

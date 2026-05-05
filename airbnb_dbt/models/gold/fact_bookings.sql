@@ -13,15 +13,18 @@ listings AS (
 
 
 SELECT 
-    -- Keys
+    -- Primary Key for fact table
+    {{ dbt_utils.generate_surrogate_key(['b.booking_id']) }} AS booking_key,  
+
+    -- Foreign Keys for Star Schema Joins  
+ 
+    {{ dbt_utils.generate_surrogate_key(['b.listing_id']) }} AS listing_key, 
+    {{ dbt_utils.generate_surrogate_key(['h.host_id']) }} AS host_key,
+
+    -- Original IDs for traceability
     b.booking_id,
-
-    {{ dbt_utils.generate_surrogate_key(['b.listing_id']) }} AS listing_key,  -- Surrogate key for Star schema Joins
-    {{ dbt_utils.generate_surrogate_key(['h.host_id']) }} AS host_key,  -- Surrogate key for Star schema Joins
-
-
-    b.listing_id,
-    l.host_id,
+    l.listing_id,
+    h.host_id,
 
     -- Booking Details & Status
     b.booking_date,
@@ -49,16 +52,16 @@ SELECT
     b.booking_amount,
     b.cleaning_fee,
     b.service_fee,
-    b.expected_revenue,    -- Potential revenue if not cancelled
+    b.booking_revenue,    -- Potential revenue if not cancelled
     b.cancellation_fee,
 
     -- Derived Business Logic
-    {{ calc_actual_revenue('b.booking_status', 'b.expected_revenue', 'b.cancellation_fee') }} AS actual_revenue,
-    {{ calc_revenue_loss('b.booking_status', 'b.expected_revenue', 'b.cancellation_fee') }} AS revenue_loss,
+    {{ calc_actual_revenue('b.booking_status', 'b.booking_revenue', 'b.cancellation_fee') }} AS actual_revenue,
+    {{ calc_revenue_loss('b.booking_status', 'b.booking_revenue', 'b.cancellation_fee') }} AS revenue_loss,
 
     -- Boolean Flags for easier compuation
-    CASE WHEN b.booking_status = 'cancelled' THEN 1 ELSE 0 END AS cancellation_flag,
-    CASE WHEN b.booking_status = 'confirmed' THEN 1 ELSE 0 END AS confirmation_flag
+    CASE WHEN b.booking_status = 'Cancelled' THEN 1 ELSE 0 END AS cancellation_flag,
+    CASE WHEN b.booking_status = 'Confirmed' THEN 1 ELSE 0 END AS confirmation_flag
         
 FROM bookings AS b
 LEFT JOIN listings AS l

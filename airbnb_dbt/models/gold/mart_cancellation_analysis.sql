@@ -20,8 +20,9 @@ SELECT
     -- Financial Metrics
     CAST(SUM(booking_revenue) AS DECIMAL(18, 2)) AS potential_revenue,
     CAST(SUM(actual_revenue) AS DECIMAL(18, 2)) AS actual_revenue,
+    CAST(SUM(gross_revenue_loss) AS DECIMAL(18, 2)) AS gross_revenue_loss,
     CAST(SUM(cancellation_fee) AS DECIMAL(18, 2)) AS cancellations_revenue,
-    CAST(SUM(revenue_loss) AS DECIMAL(18, 2)) AS revenue_lost
+    CAST(SUM(net_revenue_loss) AS DECIMAL(18, 2)) AS net_revenue_loss
 FROM {{ ref('fact_bookings')}}
 GROUP BY 
     country,

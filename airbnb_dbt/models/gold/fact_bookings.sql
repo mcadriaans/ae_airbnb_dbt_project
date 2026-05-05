@@ -57,7 +57,8 @@ SELECT
 
     -- Derived Business Logic
     {{ calc_actual_revenue('b.booking_status', 'b.booking_revenue', 'b.cancellation_fee') }} AS actual_revenue,
-    {{ calc_revenue_loss('b.booking_status', 'b.booking_revenue', 'b.cancellation_fee') }} AS revenue_loss,
+    {{ calc_gross_revenue_loss('b.booking_status', 'b.booking_revenue', 'b.cancellation_fee') }} AS gross_revenue_loss,
+    {{ calc_net_revenue_loss('b.booking_status', 'b.booking_revenue', 'b.cancellation_fee') }} AS net_revenue_loss,
 
     -- Boolean Flags for easier compuation
     CASE WHEN b.booking_status = 'Cancelled' THEN 1 ELSE 0 END AS cancellation_flag,

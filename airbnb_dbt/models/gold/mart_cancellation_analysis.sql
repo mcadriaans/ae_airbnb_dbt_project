@@ -4,6 +4,13 @@ SELECT
     city,
     property_type,
     price_tier,
+    -- Lead Time Bucket 
+    CASE
+        WHEN lead_time_days < 7 THEN '0-6 days'
+        WHEN lead_time_days BETWEEN 7 AND 30 THEN '7-30 days'
+        WHEN lead_time_days BETWEEN 31 AND 90 THEN '31-90 days'
+        ELSE '90+ days'
+    END AS lead_time_group,
     -- Cancellation Analysis Metrics
     COUNT(*) AS total_bookings,
     SUM(cancellation_flag) AS cancelled_bookings,
@@ -24,9 +31,5 @@ SELECT
     CAST(SUM(cancellation_fee) AS DECIMAL(18, 2)) AS cancellations_revenue,
     CAST(SUM(net_revenue_loss) AS DECIMAL(18, 2)) AS net_revenue_loss
 FROM {{ ref('fact_bookings')}}
-GROUP BY 
-    country,
-    city,
-    property_type,
-    price_tier
+GROUP BY 1, 2, 3, 4, 5
 ORDER BY actual_revenue DESC

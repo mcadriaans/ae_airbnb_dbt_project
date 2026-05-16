@@ -4,51 +4,44 @@ WITH bookings AS (
 ),
 hosts AS (
     SELECT *
-    FROM {{ ref('silver_hosts') }}
+    FROM {{ ref('dim_hosts') }}
 ),
 listings AS (
     SELECT *
-    FROM {{ ref('silver_listings') }}
+    FROM {{ ref('dim_listings') }}
 )
 
 
 SELECT 
-    -- Primary Key for fact table
-    {{ dbt_utils.generate_surrogate_key(['b.booking_id']) }} AS booking_key,  
-
-    -- Foreign Keys for Star Schema Joins  
- 
-    {{ dbt_utils.generate_surrogate_key(['b.listing_id']) }} AS listing_key, 
-    {{ dbt_utils.generate_surrogate_key(['h.host_id']) }} AS host_key,
-
-    -- Original IDs for traceability
+    -- Keys and IDs
+    {{ dbt_utils.generate_surrogate_key(['b.booking_id']) }} AS booking_key, 
+    l.listing_key, 
+    h.host_key,
     b.booking_id,
-    l.listing_id,
+    b.listing_id,
     h.host_id,
 
-    -- Booking Details & Status
+    -- Dates and Time Dimensions
     b.booking_date,
     EXTRACT(year FROM b.booking_date) AS booking_year,
     EXTRACT(month FROM b.booking_date) AS booking_month,
-    b.lead_time_days,
     b.stay_start_date,
     b.stay_end_date,
-    b.booking_status,
+    b.lead_time_days,
 
-    -- Geographic Dimensions
+   -- Dimensional Attributes (For Dashboard Filtering and Segmentation)
+    b.booking_status,
     l.country,
     l.city,
-
-    -- Property & Host Dimensions
     l.property_type,
     l.room_type,
     l.listing_size_category,
     l.price_tier,
     h.is_superhost,
-    h.avg_host_rating,
     h.host_rating_category,
 
-    -- Revenue Metrics (Measures)
+    -- Measures
+    h.avg_host_rating,
     b.nights_booked,
     b.booking_amount,
     b.cleaning_fee,

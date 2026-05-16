@@ -6,4 +6,3 @@ SELECT
     AVG(avg_host_rating) AS avg_rating
 FROM {{ ref('fact_bookings')}}
 GROUP BY host_id
-ORDER BY host_id

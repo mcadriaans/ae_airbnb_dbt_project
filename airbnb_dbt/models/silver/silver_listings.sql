@@ -3,7 +3,7 @@
         materialized='incremental',
         unique_key='listing_id',
         incremental_strategy='merge',
-        transient= true
+        transient=true
     )
 }}
 

@@ -45,6 +45,7 @@ SELECT
     l.listing_size_category,
     l.price_tier,
     h.is_superhost,
+    h.avg_host_rating,
     h.host_rating_category,
 
     -- Revenue Metrics (Measures)

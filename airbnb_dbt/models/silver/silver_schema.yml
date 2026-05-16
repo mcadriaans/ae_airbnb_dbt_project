@@ -1,54 +1,82 @@
 version: 2
 
 models:
-  - name: silver_listings
+  - name: silver_bookings
     description: >
-      Cleaned and enriched listing data for all Airbnb properties. This model standardizes raw listing information by normalizing property types and locations, 
-      calculating key metrics such as price per night and occupancy rates, and enriching the data with host information from the silver_hosts model. 
+      Cleaned, transformed, and enriched booking records derived from the bronze layer. 
+      This model standardizes raw booking data and calculates key business metrics such as lead time, 
+      stay duration, and total expected revenue. 
       It is materialized incrementally to optimize processing performance.
     columns:
-      - name: listing_id
-        description: Unique identifier for a listing.
+      - name: booking_id
+        description: Unique identifier for a booking.
         tests:
           - unique
           - not_null
-      - name: host_id
-        description: Identifier for the host associated with the listing.
+      - name: booking_date
+        description: Date when the booking was made.
         tests:
           - not_null
-      - name: property_type
-        description: Type of property (e.g., apartment, house, etc.).
+      - name: booking_status
+        description: Status of the booking, indicating whether it is confirmed or cancelled.
+        tests:
+          - accepted_values:
+              values: ['Confirmed', 'Cancelled']
+      - name: listing_id
+        description: Identifier for the listing associated with the booking.
         tests:
           - not_null
-      - name: room_type
-        description: Type of room offered (e.g., entire home, private room, etc.).
+          - relationships:
+              to: ref('silver_listings')
+              field: listing_id
+      - name: stay_start_date
+        description: Start date of the stay.
         tests:
           - not_null
-      - name: city
-        description: City where the listing is located.
+      - name: lead_time_days
+        description: Number of days between the booking date and the stay start date, indicating how far in advance the booking was made.
         tests:
           - not_null
-      - name: country
-        description: Country where the listing is located.
+          # Lead time cannot be negative, as it represents the number of days between the booking date and the stay start date.
+          - dbt_utils.expression_is_true:
+              expression: "lead_time_days >= 0"  
+      - name: nights_booked
+        description: Number of nights booked for the stay.
         tests:
           - not_null
-      - name: accommodates
-        description: Number of guests the listing can accommodate.
+          # Number of nights booked must be greater than zero, as a booking cannot have a non-positive duration.
+          - dbt_utils.expression_is_true:
+              expression: "nights_booked > 0"  
+      - name: stay_end_date
+        description: End date of the stay, calculated based on the stay start date and the number of nights booked.
         tests:
           - not_null
-      - name: bedrooms
-        description: Number of bedrooms in the listing.
+          # Stay end date must be after the stay start date, ensuring that the booking duration is valid.
+          - dbt_utils.expression_is_true:
+              expression: "stay_end_date > stay_start_date"  
+      - name: booking_amount
+        description: Amount paid for the booking.
         tests:
           - not_null
-      - name: bathrooms
-        description: Number of bathrooms in the listing.
+      - name: cleaning_fee
+        description: Cleaning fee associated with the booking.
         tests:
           - not_null
-      - name: price_per_night
-        description: Price per night for the listing.
+      - name: service_fee
+        description: Service fee associated with the booking.
         tests:
           - not_null
-      - name: created_at
+      - name: booking_revenue
+        description: Total expected revenue from the booking, calculated as the sum of the booking amount, cleaning fee, and service fee.
+        tests:
+          - not_null
+      - name: cancellation_fee
+        description: Cancellation fee associated with the booking, if applicable.
+        tests:
+          - not_null
+          # Cancellation fee cannot be negative, as it represents a penalty for cancelling a booking.
+          - dbt_utils.expression_is_true:
+              expression: "cancellation_fee <= booking_amount"  
         description: Timestamp when the record was first created.
         tests:
           - not_null
@@ -56,22 +84,11 @@ models:
         description: Timestamp when the record was last updated.
         tests:
           - not_null
-      - name: listing_size_category
-        description: >  
-          Categorization of listings based on the number of bedrooms and bathrooms, 
-          providing insights into the size and type of accommodation offered.
-        tests:
-          - not_null
-      - name: price_tier
-        description: >
-          Classification of listings into price tiers (e.g., budget, mid-range, luxury) based on the price per night, helping to 
-          segment listings for analysis and recommendations.
-        tests:
-          - not_null
       - name: loaded_at
         description: Timestamp when the record was loaded into the silver layer.
         tests:
           - not_null
+
   - name: silver_hosts
     description: >
       Cleaned and enriched profile data for all Airbnb hosts. This model standardizes 
@@ -124,71 +141,69 @@ models:
         description: Timestamp when the record was last updated.
         tests:
           - not_null
+      - name: host_tenure_years
+        description: Number of years the host has been active on the platform, calculated based on the host_since date.
+        tests:
+          - not_null
+      - name: host_rating_category
+        description: >
+          Classification of hosts into rating categories (e.g., Excellent, Good, Average, Poor) based on their average host rating, 
+          providing insights into host performance and reliability.
+        tests:
+          - not_null
       - name: loaded_at
         description: Timestamp when the record was loaded into the silver layer.
         tests:
           - not_null
-  - name: silver_bookings
+     
+  - name: silver_listings
     description: >
-      Cleaned, transformed, and enriched booking records derived from the bronze layer. 
-      This model standardizes raw booking data and calculates key business metrics such as lead time, 
-      stay duration, and total expected revenue. 
+      Cleaned and enriched listing data for all Airbnb properties. This model standardizes raw listing information by normalizing property types and locations, 
+      calculating key metrics such as price per night and occupancy rates, and enriching the data with host information from the silver_hosts model. 
       It is materialized incrementally to optimize processing performance.
     columns:
-      - name: booking_id
-        description: Unique identifier for a booking.
+      - name: listing_id
+        description: Unique identifier for a listing.
         tests:
           - unique
           - not_null
-      - name: listing_id
-        description: Identifier for the listing associated with the booking.
+      - name: host_id
+        description: Identifier for the host associated with the listing.
         tests:
           - not_null
-      - name: booking_status
-        description: Status of the booking, indicating whether it is confirmed or cancelled.
-        tests:
-          - accepted_values:
-              values: ['confirmed', 'cancelled']
-      - name: booking_date
-        description: Date when the booking was made.
+          - relationships:
+              to: ref('silver_hosts')
+              field: host_id
+      - name: property_type
+        description: Type of property (e.g., apartment, house, etc.).
         tests:
           - not_null
-      - name: stay_start_date
-        description: Start date of the stay.
+      - name: room_type
+        description: Type of room offered (e.g., entire home, private room, etc.).
         tests:
           - not_null
-      - name: lead_time_days
-        description: Number of days between booking date and stay start date.
+      - name: city
+        description: City where the listing is located.
         tests:
           - not_null
-      - name: nights_booked
-        description: Number of nights booked for the stay.
+      - name: country
+        description: Country where the listing is located.
         tests:
           - not_null
-      - name: stay_end_date
-        description: Calculated end date of the stay based on nights booked.
+      - name: accommodates
+        description: Number of guests the listing can accommodate.
         tests:
           - not_null
-      - name: booking_amount
-        description: Amount paid for the booking.
+      - name: bedrooms
+        description: Number of bedrooms in the listing.
         tests:
           - not_null
-      - name: cleaning_fee
-        description: Cleaning fee associated with the booking.
+      - name: bathrooms
+        description: Number of bathrooms in the listing.
         tests:
           - not_null
-      - name: service_fee
-        description: Service fee associated with the booking.
-        tests:
-          - not_null
-      - name: cancellation_fee
-        description: Fee charged for cancellations, if applicable.
-        tests:
-          - not_null
-      - name: expected_revenue
-        description: >
-          Expected revenue from the booking, calculated as the sum of booking amount,
-          cleaning fee, and service fee.
+      - name: price_per_night
+        description: Price per night for the listing.
         tests:
           - not_null
       - name: created_at
@@ -197,6 +212,18 @@ models:
           - not_null
       - name: updated_at
         description: Timestamp when the record was last updated.
+        tests:
+          - not_null
+      - name: listing_size_category
+        description: >  
+          Categorization of listings based on the number of bedrooms and bathrooms, 
+          providing insights into the size and type of accommodation offered.
+        tests:
+          - not_null
+      - name: price_tier
+        description: >
+          Classification of listings into price tiers (e.g., budget, mid-range, luxury) based on the price per night, helping to 
+          segment listings for analysis and recommendations.
         tests:
           - not_null
       - name: loaded_at

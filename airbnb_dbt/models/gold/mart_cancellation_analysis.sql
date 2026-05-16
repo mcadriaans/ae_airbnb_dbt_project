@@ -31,5 +31,5 @@ SELECT
     CAST(SUM(cancellation_fee) AS DECIMAL(18, 2)) AS cancellations_revenue,
     CAST(SUM(net_revenue_loss) AS DECIMAL(18, 2)) AS net_revenue_loss
 FROM {{ ref('fact_bookings')}}
-GROUP BY 1, 2, 3, 4, 5
+GROUP BY country, city, property_type, price_tier, lead_time_group
 ORDER BY actual_revenue DESC

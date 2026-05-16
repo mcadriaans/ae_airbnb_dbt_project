@@ -1,7 +1,7 @@
 {{
     config(
         materialized='incremental',
-        unique_key='host_id',
+        unique_key='booking_id',
         incremental_strategy='merge',
         transient= true
     )

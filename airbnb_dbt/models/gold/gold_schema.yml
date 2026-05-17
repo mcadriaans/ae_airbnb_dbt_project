@@ -250,11 +250,9 @@ models:
         description: "Date when the booking was made."
         tests:
           - not_null  
-          - dbt_utils.accepted_range:
-              name: booking_date_within_valid_range
-              arguments:
-                min_value: '2023-03-01'  # Start of the dataset
-                max_value: "CAST(CURRENT_DATE AS DATE)"  # Current date to ensure no future dates are accepted
+          - dbt_utils.expression_is_true:
+              name: booking_date_not_in_future
+              expression: "booking_date >= '2023-03-01' AND booking_date <= CURRENT_DATE"  
       - name: booking_year
         description: "Year of the booking (2023-2025). Used for time-based analysis."
         tests:
@@ -303,7 +301,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Completed', 'Cancelled']
+              values: ['confirmed', 'cancelled']
       - name: country
         description: "Country where the booked listing is located. Captured at the time of booking to reflect the context of the transaction."
         tests:
@@ -325,7 +323,7 @@ models:
           - accepted_values:
               values: ['1 Bedroom', 'Medium (2-3 Bedrooms)', 'Large (4+ Bedrooms)']
       - name: price_tier
-        description: "Categorization of listing price (e.g. Budget, Mid-range, Luxury).
+        description: "Categorization of listing price (e.g. Budget, Mid-range, Luxury)."
         tests:
           - not_null
           - accepted_values:

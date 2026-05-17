@@ -34,7 +34,6 @@ SELECT
     l.country,
     l.city,
     l.property_type,
-    l.room_type,
     l.listing_size_category,
     l.price_tier,
     h.is_superhost,
@@ -55,8 +54,8 @@ SELECT
     {{ calc_net_revenue_loss('b.booking_status', 'b.booking_revenue', 'b.cancellation_fee') }} AS net_revenue_loss,
 
     -- Boolean Flags for easier compuation
-    CASE WHEN b.booking_status = 'Cancelled' THEN 1 ELSE 0 END AS cancellation_flag,
-    CASE WHEN b.booking_status = 'Confirmed' THEN 1 ELSE 0 END AS confirmation_flag
+    CASE WHEN LOWER(b.booking_status) = 'cancelled' THEN 1 ELSE 0 END AS cancellation_flag,
+    CASE WHEN LOWER(b.booking_status) = 'confirmed' THEN 1 ELSE 0 END AS confirmation_flag
         
 FROM bookings AS b
 LEFT JOIN listings AS l

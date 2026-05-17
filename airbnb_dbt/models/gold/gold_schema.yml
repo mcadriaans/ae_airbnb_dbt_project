@@ -1,145 +1,6 @@
 version: 2
 
 models:
-  - name: fact_bookings
-    description: >
-      The central fact table for booking transactions. 
-      Grain: One row per unique booking ID. 
-      Contains dimensions for guest behavior, property attributes at the time of booking, 
-      and financial metrics including gross booking value and net revenue logic.
-    columns:
-      - name: booking_key
-        description: "Surrogate key for the booking fact table, generated using dbt_utils.generate_surrogate_key on booking_id."
-        tests:
-          - unique
-          - not_null
-      - name: listing_key
-        description: "Surrogate key linking to the listing dimension for star schema joins."
-        tests:
-          - not_null
-      - name: host_key
-        description: "Surrogate key linking to the host dimension for star schema joins."
-        tests:
-          - not_null
-      - name: booking_id  
-        description: "Universally Unique Identifier (UUID) for the booking."
-        tests:
-          - unique
-          - not_null
-      - name: listing_id
-        description: "Foreign key linking to the listing dimension."
-        tests:
-          - not_null
-      - name: host_id
-        description: "Foreign key linking to the host dimension."
-        tests:
-          - not_null
-      - name: booking_date
-        description: "Date when the booking was made."
-        tests:
-          - not_null  
-      - name: booking_year
-        description: "Year of the booking (2023-2025). Used for time-based analysis."
-        tests:
-          - not_null
-      - name: booking_month
-        description: "Month of the booking, used for time-based analysis."
-        tests:
-          - not_null
-      - name: lead_time_days
-        description: "Number of days between booking date and check-in date."
-        tests:
-          - not_null
-      - name: stay_start_date
-        description: "Check-in date for the booking."
-        tests:
-          - not_null
-      - name: stay_end_date
-        description: "Check-out date for the booking."
-        tests:
-          - not_null
-      - name: booking_status
-        description: "Status of the booking (e.g. confirmed, cancelled)."
-        tests:
-          - not_null
-      - name: country
-        description: "Country where the listing is located.There are 18 unique countries in the dataset."
-        tests:
-          - not_null
-      - name: city
-        description: "City where the listing is located. There are 26 unique cities in the dataset."
-        tests:
-          - not_null
-      - name: property_type
-        description: "Type of property booked (e.g. boutique hotel, apartment, house, loft, condo)."
-        tests:
-          - not_null
-      - name: room_type
-        description: "Type of room booked (e.g. entire home, private room)."
-        tests:
-          - not_null    
-      - name: listing_size_category
-        description: > 
-          Categorization of listing size based on number of guests (e.g. 1 Bedroom, Medium(2-3 bedrooms), 
-          Large(4+ bedrooms)).
-        tests:
-          - not_null
-      - name: price_tier
-        description: "Categorization of listing price (e.g. Budget, Mid-range, Luxury)."
-        tests:
-          - not_null
-      - name: is_superhost
-        description: "Boolean indicating whether the host is a superhost."
-        tests:
-          - not_null
-      - name: host_rating_category
-        description: "Categorization of host based on average rating (e.g. Average, Good, Excellent)."
-        tests:
-          - not_null
-      - name: nights_booked
-        description: "Number of nights booked for the stay."
-        tests:
-          - not_null
-      - name: booking_amount
-        description: "Total amount paid for the booking."
-        tests:
-          - not_null
-      - name: cleaning_fee
-        description: "Cleaning fee charged for the booking, if applicable."
-        tests:
-          - not_null
-      - name: service_fee
-        description: "Service fee charged for the booking, if applicable."
-      - name: expected_revenue
-        description: "Expected revenue from the booking, calculated as booking_amount minus any cancellation fees."
-        tests:
-          - not_null
-      - name: cancellation_fee
-        description: "Cancellation fee charged for the booking, if applicable."
-        tests:
-          - not_null
-      - name: actual_revenue
-        description: >
-         Actual revenue from the booking, calculated as expected_revenue minus cancellation_fee 
-         if the booking was cancelled. Otherwise, it is equal to expected_revenue.
-         tests:
-          - not_null
-      - name: revenue_loss 
-        description: >
-          Revenue lost due to cancellation, calculated as expected_revenue if the booking
-          was cancelled, otherwise 0."
-        tests:
-          - not_null
-      - name: cancellation_flag
-        description: "Boolean indicating whether the booking was cancelled."
-        tests:
-          - not_null
-      - name: confirmation_flag
-        description: "Boolean indicating whether the booking was confirmed (not cancelled)."
-        tests:
-          - not_null
-
-
   - name: dim_hosts
     description: "Dimension table containing host attributes and performance indicators."
     columns:
@@ -161,15 +22,27 @@ models:
         description: "Date when the host joined Airbnb."
         tests:
           - not_null
+          - dbt_utils.accepted_range:
+              name: host_since_within_valid_lifespan
+              arguments:
+                min_value: '2008-08-01'  # Airbnb launch date
+                max_value: "CAST(CURRENT_DATE AS DATE)"  # Current date to ensure no future dates are accepted
+      - name: host_location
+        description: "Location of the host (city, country)."
+        tests:
+          - not_null
       - name: is_superhost
         description: "Boolean indicating whether the host is a superhost."
         tests:
           - not_null
+          - accepted_values:
+              values: [true, false]
       - name: response_rate
         description: "Host's response rate to booking inquiries."
         tests:
           - not_null
           - dbt_utils.accepted_range:
+              name: response_rate_within_valid_range
               arguments:
                 min_value: 0
                 max_value: 1
@@ -177,22 +50,43 @@ models:
         description: "Average rating across all listings owned by the host."
         tests:
           - not_null
+          - dbt_utils.accepted_range:
+              name: avg_host_rating_within_valid_range
+              arguments:
+                min_value: 0
+                max_value: 5
+                inclusive: true
+      - name: host_tenure_years
+        description: "Number of years the host has been active on Airbnb."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              name: host_tenure_years_within_valid_range
+              arguments:
+                min_value: 0
+                inclusive: true 
       - name: total_listings
         description: "Total number of listings owned by the host."
         tests:
           - not_null
+          - dbt_utils.accepted_range:
+              name: total_listings_non_negative
+              arguments:
+                min_value: 1
+                inclusive: true
       - name: host_portfolio_type
         description: "Categorization of host based on number of listings (e.g. Single Listing, Multi-listing)."
         tests:
           - not_null
-      - name: host_rating_category
-        description: "Categorization of host based on average rating (e.g. Premium, Moderate, Low)."
-        tests:
-          - not_null
+          - accepted_values:
+              values: ['Professional (5+ Listings)', 'Multi-listing', 'Single Listing', 'No Active Listings']
       - name: host_profile_last_updated
         description: "Timestamp of the last update to the host's profile."
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+
+              expression: "host_profile_last_updated >= host_since"
 
   - name: dim_listings
     description: "Dimension table containing listing attributes used for slicing fact tables."
@@ -207,14 +101,361 @@ models:
         tests:
           - unique
           - not_null
+      - name: host_id
+        description: "Foreign key linking to the host dimension."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_hosts')
+              field: host_id
+      - name: property_type
+        description: "Type of property (e.g. apartment, house, loft)."
+        tests:
+          - not_null  
+          - accepted_values:
+              values: ['Apartment', 'House', 'Loft', 'Condo', 'Boutique Hotel']
       - name: city
         description: "City where the listing is located."
         tests:
           - not_null
-      - name: property_type
-        description: "Type of property (entire home, private room, etc.)."
+      - name: country
+        description: "Country where the listing is located."
         tests:
           - not_null
+      - name: accommodates
+        description: "Number of guests the listing can accommodate."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              name: accommodates_within_valid_range
+              arguments:
+                min_value: 1
+                inclusive: true
+      - name: bedrooms
+        description: "Number of bedrooms in the listing."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              name: bedrooms_within_valid_range
+              arguments:
+                min_value: 1
+                inclusive: true
+      - name: bathrooms
+        description: "Number of bathrooms in the listing."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              name: bathrooms_within_valid_range
+              arguments:
+                min_value: 0.5
+                inclusive: true
+      - name: listing_size_category
+        description: "Categorization of listing size based on number of guests (e.g. 1 Bedroom, Medium(2-3 bedrooms), Large(4+ bedrooms))."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['1 Bedroom', 'Medium (2-3 Bedrooms)', 'Large (4+ Bedrooms)']
+      - name: price_per_night
+        description: "Average price per night for the listing."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              name: price_per_night_positive
+              expression: "price_per_night > 0"  
+      - name: price_tier
+        description: "Categorization of listing price (e.g. Budget, Mid-range, Luxury)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Budget', 'Mid-range', 'Luxury']
+      - name: price_per_guest
+        description: "Average price per guest for the listing."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              name: price_per_guest_positive
+              expression: "price_per_guest > 0"
+      - name: capacity_type
+        description: "Categorization of listing capacity (e.g. Solo/Pair, Small Group(3-5), Large Group(6+))."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Solo/Pair','Small Group(3-5)', 'Large Group(6+)']
+      - name: listing_created_at
+        description: "Date when the listing was created."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              name: listing_created_at_within_valid_range
+              arguments:
+                min_value: '2008-08-01'  # Airbnb launch date
+                max_value: "CAST(CURRENT_DATE AS DATE)"  # Current date to ensure no future dates are accepted
+      - name: listing_last_updated
+        description: "Date when the listing was last updated."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              name: listing_last_updated_after_created_at
+              expression: "listing_last_updated >= listing_created_at"
+      - name: loaded_at
+        description: "Timestamp when the listing record was loaded into the data warehouse."
+        tests:
+          - not_null
+  - name: fact_bookings
+    description: >
+      The central fact table for booking transactions. 
+      Grain: One row per unique booking ID. 
+      Contains dimensions for guest behavior, property attributes at the time of booking, 
+      and financial metrics including gross booking value and net revenue logic.
+    columns:
+      - name: booking_key
+        description: "Surrogate key for the booking fact table, generated using dbt_utils.generate_surrogate_key on booking_id."
+        tests:
+          - unique
+          - not_null
+      - name: listing_key
+        description: "Surrogate key linking to the listing dimension for star schema joins."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_listings')
+              field: listing_key
+      - name: host_key
+        description: "Surrogate key linking to the host dimension for star schema joins."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_hosts')
+              field: host_key
+      - name: booking_id  
+        description: "Universally Unique Identifier (UUID) for the booking."
+        tests:
+          - unique
+          - not_null
+      - name: listing_id
+        description: "Foreign key linking to the listing dimension."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_listings')
+              field: listing_id
+      - name: host_id
+        description: "Foreign key linking to the host dimension."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_hosts')
+              field: host_id
+      - name: booking_date
+        description: "Date when the booking was made."
+        tests:
+          - not_null  
+          - dbt_utils.accepted_range:
+              name: booking_date_within_valid_range
+              arguments:
+                min_value: '2023-03-01'  # Start of the dataset
+                max_value: "CAST(CURRENT_DATE AS DATE)"  # Current date to ensure no future dates are accepted
+      - name: booking_year
+        description: "Year of the booking (2023-2025). Used for time-based analysis."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              name: booking_year_within_valid_range
+              arguments:
+                min_value: 2023
+                max_value: "CAST(EXTRACT(YEAR FROM CURRENT_DATE) AS INTEGER)"  # Current year to ensure no future years are accepted
+      - name: booking_month
+        description: "Month of the booking, used for time-based analysis."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              name: booking_month_within_valid_range
+              arguments:
+                min_value: 1
+                max_value: 12
+      - name: stay_start_date
+        description: "Check-in date for the booking."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              name: stay_start_date_within_valid_range
+              arguments:
+                min_value: '2023-03-01'  # Start of the dataset
+                max_value: "CAST(CURRENT_DATE AS DATE)"  # Current date to ensure no future dates are accepted
+      - name: stay_end_date
+        description: "Check-out date for the booking."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              name: stay_dates_logic
+              expression: "stay_end_date > stay_start_date"  # Ensure end date is after start date
+      - name: lead_time_days
+        description: "Number of days between the booking date and the stay start date."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              name: lead_time_days_non_negative
+              arguments:
+                min_value: 0
+                inclusive: true  # Allow same-day bookings with 0 lead time
+      - name: booking_status
+        description: "Status of the booking (e.g. Completed, Cancelled)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Completed', 'Cancelled']
+      - name: country
+        description: "Country where the booked listing is located. Captured at the time of booking to reflect the context of the transaction."
+        tests:
+          - not_null
+      - name: city
+        description: "City where the booked listing is located. Captured at the time of booking to reflect the context of the transaction."
+        tests:
+          - not_null
+      - name: property_type
+        description: "Type of property booked (e.g. apartment, house, loft). Captured at the time of booking to reflect the context of the transaction."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Apartment', 'House', 'Loft', 'Condo', 'Boutique Hotel']
+      - name: listing_size_category
+        description: "Categorization of listing size based on number of guests (e.g. 1 Bedroom, Medium(2-3 bedrooms), Large(4+ bedrooms))."
+        tests:   
+          - not_null
+          - accepted_values:
+              values: ['1 Bedroom', 'Medium (2-3 Bedrooms)', 'Large (4+ Bedrooms)']
+      - name: price_tier
+        description: "Categorization of listing price (e.g. Budget, Mid-range, Luxury).
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Budget', 'Mid-range', 'Luxury']
+      - name: is_superhost
+        description: "Boolean indicating whether the host is a superhost at the time of booking." 
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: host_rating_category
+        description: "Categorization of host rating (e.g. No Reviews, Below Average, Average, Good, Excellent)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['No Reviews', 'Below Average (<3.0)', 'Average (>=3.0)', 'Good (>=4.0)', 'Excellent (>=4.5)']
+      - name: avg_host_rating
+        description: "Average rating of the host at the time of booking."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              name: check_avg_host_rating_logic
+              arguments:
+                min_value: 0
+                max_value: 5
+                inclusive: true
+      - name: nights_booked
+        description: "Number of nights booked for the stay."  
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              name: check_nights_booked_logic
+              arguments:
+                min_value: 1
+                inclusive: true
+      - name: booking_amount
+        description: "Total amount paid for the booking (excluding cleaning and service fees)."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              name: booking_amount_non_negative
+              arguments:
+                min_value: 0
+                inclusive: true
+      - name: cleaning_fee
+        description: "Cleaning fee charged for the booking."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              name: cleaning_fee_non_negative
+              expression: "cleaning_fee >= 0"  # Allow for zero cleaning fee but not negative values
+      - name: service_fee
+        description: "Service fee charged for the booking."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              name: service_fee_non_negative
+              expression: "service_fee >= 0"  # Allow for zero service fee but not negative values
+      - name: booking_revenue
+        description: "Total revenue from the booking (booking_amount + cleaning_fee + service_fee)."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              name: check_booking_revenue_logic
+              expression: "booking_revenue = booking_amount + cleaning_fee + service_fee"  # Ensure revenue is correctly calculated
+          - dbt_utils.expression_is_true:
+              name: booking_revenue_non_negative
+              expression: "booking_revenue >= 0"  # Revenue should not be negative
+      - name: cancellation_fee
+        description: "Fee charged for cancellations, if applicable."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              name: cancellation_fee_non_negative
+              expression: "cancellation_fee >= 0"  # Allow for zero cancellation fee but not negative values
+      - name: actual_revenue
+        description: "Revenue realized from the booking after accounting for cancellations (booking_revenue - cancellation_fee)."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              name: check_actual_revenue_logic
+              expression: "actual_revenue = booking_revenue - cancellation_fee"  # Ensure actual revenue is correctly calculated
+          - dbt_utils.expression_is_true:
+              name: actual_revenue_non_negative
+              expression: "actual_revenue >= 0"  # Actual revenue should not be negative
+      - name: gross_revenue_loss
+        description: >
+         "Calculated financial metric capturing revenue leakage. If booking_status is 'cancelled', this value equals 
+         booking_revenue. For all other statuses, it defaults to 0"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              name: check_gross_revenue_logic
+              expression: "CASE WHEN LOWER(booking_status) = 'cancelled' THEN gross_revenue_loss = booking_revenue ELSE gross_revenue_loss = 0 END"
+          - dbt_utils.expression_is_true:
+              name: gross_revenue_loss_non_negative
+              expression: "gross_revenue_loss >= 0"  # Gross revenue loss should not be negative
+      - name: net_revenue_loss
+        description: >
+         "Calculated financial metric capturing net revenue loss after accounting for cancellation fees. If booking_status is 'cancelled', 
+         this value equals (booking_revenue - cancellation_fee). For all other statuses, it defaults to 0."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              name: check_net_revenue_logic
+              expression: "CASE WHEN LOWER(booking_status) = 'cancelled' THEN net_revenue_loss = booking_revenue - cancellation_fee ELSE net_revenue_loss = 0 END"
+          - dbt_utils.expression_is_true:
+              name: net_revenue_loss_non_negative
+              expression: "net_revenue_loss >= 0"  # Net revenue loss should not be negative
+      - name: cancellation_flag
+        description: "Boolean flag indicating whether the booking was cancelled."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 0]
+          - dbt_utils.expression_is_true:
+              name: check_cancellation_flag_logic
+              expression: "cancellation_flag = CASE WHEN LOWER(booking_status) = 'cancelled' THEN 1 ELSE 0 END"  
+      - name: confirmation_flag
+        description: "Boolean flag indicating whether the booking was confirmed (not cancelled)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 0]
+          - dbt_utils.expression_is_true:
+              name: check_confirmation_flag_logic
+              expression: "confirmation_flag = CASE WHEN LOWER(booking_status) = 'confirmed' THEN 1 ELSE 0 END"
+
+
+
   - name: mart_cancellation_analysis
     description: >
       Aggregate model providing insights into booking cancellations across country,
@@ -275,6 +516,10 @@ models:
         description: "Total potential revenue lost due to cancellations"
         tests:
           - not_null
+  
+
+
+  
   
   - name: mart_country_price_tier_revenue
     description: >

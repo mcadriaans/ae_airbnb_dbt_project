@@ -55,7 +55,7 @@ silver_bookings_enriched AS (
     SELECT
         booking_id,
         listing_id,
-        INITCAP(TRIM(booking_status)) AS booking_status,
+        LOWER(TRIM(booking_status)) AS booking_status,
         booking_date,
         stay_start_date,
         -- Calculate lead time in days between booking date and stay start date

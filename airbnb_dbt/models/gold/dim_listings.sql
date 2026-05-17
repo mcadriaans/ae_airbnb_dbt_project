@@ -15,7 +15,6 @@ SELECT
 
     -- Descriptive attributes
     property_type,
-    room_type,
     city,
     country,
 

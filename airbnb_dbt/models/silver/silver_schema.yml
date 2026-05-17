@@ -38,12 +38,11 @@ models:
           - not_null
           - dbt_utils.expression_is_true:
               name: stay_start_date_not_in_past
-              expression: "stay_start_date >= booking_date"  # Stay start date cannot be before the booking date
+              expression: "stay_start_date >= booking_date"  
       - name: lead_time_days
         description: Number of days between the booking date and the stay start date, indicating how far in advance the booking was made.
         tests:
           - not_null
-          # Lead time cannot be negative, as it represents the number of days between the booking date and the stay start date.
           - dbt_utils.expression_is_true:
               name: lead_time_non_negative
               expression: "lead_time_days >= 0"  
@@ -51,7 +50,6 @@ models:
         description: Number of nights booked for the stay.
         tests:
           - not_null
-          # Number of nights booked must be greater than zero, as a booking cannot have a non-positive duration.
           - dbt_utils.expression_is_true:
               name: nights_booked_positive
               expression: "nights_booked > 0"  

@@ -17,11 +17,14 @@ models:
         description: Date when the booking was made.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: booking_date_not_in_future
+              expression: "booking_date <= CURRENT_DATE"  # Booking date cannot be in the future
       - name: booking_status
         description: Status of the booking, indicating whether it is confirmed or cancelled.
         tests:
           - accepted_values:
-              values: ['Confirmed', 'Cancelled']
+              values: ['confirmed', 'cancelled']
       - name: listing_id
         description: Identifier for the listing associated with the booking.
         tests:
@@ -33,12 +36,16 @@ models:
         description: Start date of the stay.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: stay_start_date_not_in_past
+              expression: "stay_start_date >= booking_date"  # Stay start date cannot be before the booking date
       - name: lead_time_days
         description: Number of days between the booking date and the stay start date, indicating how far in advance the booking was made.
         tests:
           - not_null
           # Lead time cannot be negative, as it represents the number of days between the booking date and the stay start date.
           - dbt_utils.expression_is_true:
+              name: lead_time_non_negative
               expression: "lead_time_days >= 0"  
       - name: nights_booked
         description: Number of nights booked for the stay.
@@ -46,22 +53,29 @@ models:
           - not_null
           # Number of nights booked must be greater than zero, as a booking cannot have a non-positive duration.
           - dbt_utils.expression_is_true:
+              name: nights_booked_positive
               expression: "nights_booked > 0"  
       - name: stay_end_date
         description: End date of the stay, calculated based on the stay start date and the number of nights booked.
         tests:
           - not_null
-          # Stay end date must be after the stay start date, ensuring that the booking duration is valid.
           - dbt_utils.expression_is_true:
+              name: stay_end_date_after_start_date
               expression: "stay_end_date > stay_start_date"  
       - name: booking_amount
         description: Amount paid for the booking.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: booking_amount_non_negative
+              expression: "booking_amount >= 0"  
       - name: cleaning_fee
         description: Cleaning fee associated with the booking.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: cleaning_fee_non_negative
+              expression: "cleaning_fee >= 0"  
       - name: service_fee
         description: Service fee associated with the booking.
         tests:
@@ -70,24 +84,37 @@ models:
         description: Total expected revenue from the booking, calculated as the sum of the booking amount, cleaning fee, and service fee.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: booking_revenue_logic
+              expression: "booking_revenue = booking_amount + cleaning_fee + service_fee" 
       - name: cancellation_fee
         description: Cancellation fee associated with the booking, if applicable.
         tests:
           - not_null
-          # Cancellation fee cannot be negative, as it represents a penalty for cancelling a booking.
           - dbt_utils.expression_is_true:
+              name: cancellation_fee_logic
               expression: "cancellation_fee <= booking_amount"  
+      - name: created_at
         description: Timestamp when the record was first created.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: created_at_not_in_future
+              expression: "created_at <= CURRENT_TIMESTAMP" 
       - name: updated_at
         description: Timestamp when the record was last updated.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: updated_at_not_in_future
+              expression: "updated_at <= CURRENT_TIMESTAMP"
       - name: loaded_at
         description: Timestamp when the record was loaded into the silver layer.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: loaded_at_not_in_future
+              expression: "loaded_at <= CURRENT_TIMESTAMP"
 
   - name: silver_hosts
     description: >
@@ -123,6 +150,7 @@ models:
         description: Percentage of booking inquiries the host has responded to.
         tests:
           - dbt_utils.accepted_range:
+              name: response_rate_range
               min_value: 0
               max_value: 1
               inclusive: true 
@@ -130,6 +158,7 @@ models:
         description: Average rating of the host.
         tests:
           - dbt_utils.accepted_range:
+              name: avg_host_rating_range
               min_value: 0
               max_value: 5
               inclusive: true 
@@ -137,25 +166,40 @@ models:
         description: Timestamp when the record was first created.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: created_at_not_in_future
+              expression: "created_at <= CURRENT_TIMESTAMP"
       - name: updated_at
         description: Timestamp when the record was last updated.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: updated_at_not_in_future
+              expression: "updated_at <= CURRENT_TIMESTAMP"
       - name: host_tenure_years
         description: Number of years the host has been active on the platform, calculated based on the host_since date.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: host_tenure_non_negative
+              expression: "host_tenure_years >= 0"
       - name: host_rating_category
         description: >
           Classification of hosts into rating categories (e.g., Excellent, Good, Average, Poor) based on their average host rating, 
           providing insights into host performance and reliability.
         tests:
           - not_null
+          - accepted_values:
+              name: host_rating_category_values
+              values: ['Excellent', 'Good', 'Average', 'Poor']
       - name: loaded_at
         description: Timestamp when the record was loaded into the silver layer.
         tests:
           - not_null
-     
+          - dbt_utils.expression_is_true:
+              name: loaded_at_not_in_future
+              expression: "loaded_at <= CURRENT_TIMESTAMP"
+
   - name: silver_listings
     description: >
       Cleaned and enriched listing data for all Airbnb properties. This model standardizes raw listing information by normalizing property types and locations, 
@@ -178,10 +222,6 @@ models:
         description: Type of property (e.g., apartment, house, etc.).
         tests:
           - not_null
-      - name: room_type
-        description: Type of room offered (e.g., entire home, private room, etc.).
-        tests:
-          - not_null
       - name: city
         description: City where the listing is located.
         tests:
@@ -194,39 +234,66 @@ models:
         description: Number of guests the listing can accommodate.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: accommodates_positive
+              expression: "accommodates > 0"  # Accommodates must be greater than zero
       - name: bedrooms
         description: Number of bedrooms in the listing.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: bedrooms_non_negative
+              expression: "bedrooms >= 1"  # Bedrooms can be zero (e.g., studio) but not negative
       - name: bathrooms
         description: Number of bathrooms in the listing.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: bathrooms_non_negative
+              expression: "bathrooms >= 0.5"  # Bathrooms can be zero but not negative
       - name: price_per_night
         description: Price per night for the listing.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: price_per_night_non_negative
+              expression: "price_per_night >= 0"  # Price per night cannot be negative
       - name: created_at
         description: Timestamp when the record was first created.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: created_at_not_in_future
+              expression: "created_at <= CURRENT_TIMESTAMP"
       - name: updated_at
         description: Timestamp when the record was last updated.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: updated_at_not_in_future
+              expression: "updated_at <= CURRENT_TIMESTAMP"
       - name: listing_size_category
         description: >  
           Categorization of listings based on the number of bedrooms and bathrooms, 
           providing insights into the size and type of accommodation offered.
         tests:
           - not_null
+          - accepted_values:
+              name: listing_size_category_values
+              values: ['Studio', '1 Bedroom', 'Medium (2-3 Bedrooms)', 'Large (4+ Bedrooms)']
       - name: price_tier
         description: >
           Classification of listings into price tiers (e.g., budget, mid-range, luxury) based on the price per night, helping to 
           segment listings for analysis and recommendations.
         tests:
           - not_null
+          - accepted_values:
+              name: price_tier_values
+              values: ['Budget', 'Mid-Range', 'Luxury']
       - name: loaded_at
         description: Timestamp when the record was loaded into the silver layer.
         tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              name: loaded_at_not_in_future
+              expression: "loaded_at <= CURRENT_TIMESTAMP"

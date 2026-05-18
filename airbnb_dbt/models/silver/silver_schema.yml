@@ -3,17 +3,18 @@ version: 2
 models:
   - name: silver_bookings
     description: >
-      Cleaned, transformed, and enriched booking records derived from the bronze layer. 
-      This model standardizes raw booking data and calculates key business metrics such as lead time, 
-      stay duration, and total expected revenue. 
-      It is materialized incrementally to optimize processing performance.
+      Cleaned and enriched booking transaction records. 
+      The grain of this model is one row per unique booking_id.
+      This model transforms raw bronze data into standardized transaction records by:
+      1. Standardizing status flags (confirmed/cancelled).
+      2. Calculating stay duration (stay_end_date) and lead time (lead_time_days).
+      3. Applying business logic macros to calculate total booking revenue.
+      Materialized incrementally to ensure performance as booking volume grows.
     tests:
         # Relational Logic Tests
         - dbt_utils.expression_is_true:
               name: booking_date_within_valid_range
-              expression: > 
-                "booking_date >= '{{ var('airbnb_launch_date') }}'
-                AND booking_date <= CURRENT_DATE()"  
+              expression: "booking_date >= '{{ var('airbnb_launch_date') }}' AND booking_date <= CURRENT_DATE()"  
         - dbt_utils.expression_is_true:
               name: stay_end_date_after_start_date
               expression: "stay_end_date > stay_start_date"  
@@ -141,10 +142,13 @@ models:
 
   - name: silver_hosts
     description: >
-      Cleaned and enriched profile data for all Airbnb hosts. This model standardizes 
-      raw host information by normalizing names and locations, standardizing status flags as non-nullable Booleans, 
-      and calculating performance metrics. It enriches the data 
-      with host tenure (in years) and performance-based rating classifications.
+      Standardized and enriched profiles for all Airbnb hosts. 
+      The grain of this model is one row per unique host_id.
+      Key transformations include:
+      1. Normalizing host names and locations using INITCAP formatting.
+      2. Standardizing the is_superhost flag into a strict boolean format.
+      3. Calculating host_tenure_years based on their platform join date.
+      4. Categorizing hosts into performance-based rating buckets.
     columns:
       - name: host_id
         description: Unique identifier for a host.
@@ -232,9 +236,13 @@ models:
 
   - name: silver_listings
     description: >
-      Cleaned and enriched listing data for all Airbnb properties. This model standardizes raw listing information by normalizing property types and locations, 
-      calculating key metrics such as price per night and occupancy rates, and enriching the data with host information from the silver_hosts model. 
-      It is materialized incrementally to optimize processing performance.
+      Cleaned and categorized data for all property listings. 
+      The grain of this model is one row per unique listing_id.
+      This model enriches property attributes by:
+      1. Standardizing property_type and city names for consistent BI filtering.
+      2. Categorizing properties into 'Listing Size' buckets (Studio to Large) based on bedroom counts.
+      3. Segmenting listings into price tiers (Budget, Mid-Range, Luxury) based on price_per_night.
+      4. Calculating occupancy metrics like price_per_guest.
     columns:
       - name: listing_id
         description: Unique identifier for a listing.

@@ -278,7 +278,7 @@ models:
           - dbt_utils.accepted_range:
               name: stay_start_date_within_valid_range
               arguments:
-                min_value: 'start_date'  # Gllobal variable defined in dbt_project.yml to ensure consistency across models
+                min_value: 'airbnb_start_date'  # Gllobal variable defined in dbt_project.yml to ensure consistency across models
                 max_value: "CURRENT_DATE" 
       - name: stay_end_date
         description: "Check-out date for the booking."

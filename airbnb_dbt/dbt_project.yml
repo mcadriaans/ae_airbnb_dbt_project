@@ -14,7 +14,7 @@ clean-targets:
   - "dbt_packages"
 
 vars:
-  airbnb_start_date: '2023-03-01'
+  airbnb_launch_date: '2008-08-01'
 
 
 models:

@@ -13,10 +13,12 @@ listings AS (
 
 
 SELECT 
-    -- Keys and IDs
+    -- Surrogate keys for Star Schema Joins
     {{ dbt_utils.generate_surrogate_key(['b.booking_id']) }} AS booking_key, 
     l.listing_key, 
     h.host_key,
+
+    --  Natural keys for traceability   
     b.booking_id,
     b.listing_id,
     h.host_id,

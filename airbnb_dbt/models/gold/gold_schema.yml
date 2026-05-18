@@ -252,9 +252,9 @@ models:
           - not_null  
           - dbt_utils.expression_is_true:
               name: booking_date_not_in_future
-              expression: "booking_date >= '2023-03-01' AND booking_date <= CURRENT_DATE"  
+              expression: "booking_date >= 'start_date' AND booking_date <= CURRENT_DATE"  
       - name: booking_year
-        description: "Year of the booking (2023-2025). Used for time-based analysis."
+        description: "Year of the booking. Used for time-based analysis."
         tests:
           - not_null
           - dbt_utils.accepted_range:
@@ -278,8 +278,8 @@ models:
           - dbt_utils.accepted_range:
               name: stay_start_date_within_valid_range
               arguments:
-                min_value: '2023-03-01'  # Start of the dataset
-                max_value: "CAST(CURRENT_DATE AS DATE)"  # Current date to ensure no future dates are accepted
+                min_value: 'start_date'  # Gllobal variable defined in dbt_project.yml to ensure consistency across models
+                max_value: "CURRENT_DATE" 
       - name: stay_end_date
         description: "Check-out date for the booking."
         tests:

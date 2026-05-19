@@ -526,37 +526,4 @@ models:
 
   
   
-  - name: mart_country_price_tier_revenue
-    description: >
-      Aggregate model providing insights into revenue performance across country and price tier segments. 
-      Includes actual revenue, potential revenue, and revenue lost due to cancellations.
-    config:
-      materialized: view
-    columns:
-      - name: country
-        description: "Country where the property is located."
-        tests:
-          - not_null
-      - name: price_tier
-        description: "Economic classification of the listing (Budget, Mid-Range, Luxury)."
-        tests:
-          - not_null
-      - name: actual_revenue
-        description: "Total revenue realized from bookings in the given group."
-        tests:
-          - not_null
-      - name: potential_revenue
-        description: "Total potential revenue from bookings in the given group (including cancellations)."
-        tests:
-          - not_null
-      - name: revenue_lost
-        description: "Potential revenue lost due to cancellations in the given group."
-        tests:
-          - not_null
-      - name: cancellation_revenue
-        description: "Total revenue collected from cancellation fees in the given group."
-        tests:
-          - not_null
-
-
-
+  

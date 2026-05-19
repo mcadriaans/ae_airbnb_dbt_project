@@ -61,10 +61,7 @@ models:
          how far in advance the booking was made.
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              name: lead_time_non_negative
-              min_value: 0
-              inclusive: true
+          - not_negative
 
       - name: nights_booked
         description: Number of nights booked for the stay.
@@ -86,40 +83,33 @@ models:
         description: Amount paid for the booking.
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              name: booking_amount_non_negative
-              min_value: 0
-              inclusive: true
+          - not_negative
 
       - name: cleaning_fee
         description: Cleaning fee associated with the booking.
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              name: cleaning_fee_non_negative
-              min_value: 0
-              inclusive: true
-
+          - not_negative
+          
       - name: service_fee
         description: Service fee associated with the booking.
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              name: service_fee_non_negative
-              min_value: 0
-              inclusive: true
-
+          - not_negative
+            
       - name: booking_revenue
         description: >
           Total expected revenue from the booking, calculated as the sum of the booking amount, 
           cleaning fee, and service fee.
         tests:
           - not_null
+          - not_negative
           
       - name: cancellation_fee
         description: Cancellation fee associated with the booking, if applicable.
         tests:
           - not_null
+          - not_negative
    
       - name: created_at
         description: Timestamp when the record was first created.
@@ -213,20 +203,18 @@ models:
         description: Number of years the host has been active on the platform, calculated based on the host_since date.
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              name: host_tenure_non_negative
-              min_value: 0
-              inclusive: true
+          -  not_negative
 
       - name: host_rating_category
         description: >
-          Classification of hosts into rating categories (e.g., Excellent, Good, Average, Poor) based on their average host rating, 
+          Classification of hosts into rating categories (e.g., No Reviews, Below Average (<3.0),
+          Average (>=3.0), Good (>=4.0), Excellent (>=4.5)),  based on their average host rating, 
           providing insights into host performance and reliability.
         tests:
           - not_null
           - accepted_values:
               name: host_rating_category_values
-              values: ['Excellent', 'Good', 'Average', 'Poor']
+              values: ['Excellent', 'Good', 'Average', 'Poor', 'No Reviews']
 
       - name: loaded_at
         description: Timestamp when the record was loaded into the silver layer.
@@ -279,8 +267,8 @@ models:
         description: Number of guests the listing can accommodate.
         tests:
           - not_null
+          - not_negative
           - dbt_utils.accepted_range:
-              name: accommodates_non_negative
               min_value: 1
               inclusive: true
 
@@ -288,17 +276,14 @@ models:
         description: Number of bedrooms in the listing.
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              name: bedrooms_non_negative
-              min_value: 0
-              inclusive: true
+          - not_negative
 
       - name: bathrooms
         description: Number of bathrooms in the listing.
         tests:
           - not_null
+          - not_negative
           - dbt_utils.accepted_range:
-              name: bathrooms_non_negative
               min_value: 0.5
               inclusive: true
 
@@ -306,10 +291,7 @@ models:
         description: Price per night for the listing.
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              name: price_per_night_non_negative
-              min_value: 0
-              inclusive: true
+          - not_negative
 
       - name: created_at
         description: Timestamp when the record was first created.
@@ -335,7 +317,7 @@ models:
 
       - name: price_tier
         description: >
-          Classification of listings into price tiers (e.g., budget, mid-range, luxury) based on the price per night, helping to 
+          Classification of listings into price tiers based on the price per night, helping to 
           segment listings for analysis and recommendations.
         tests:
           - not_null

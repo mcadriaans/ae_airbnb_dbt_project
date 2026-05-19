@@ -79,7 +79,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Professional (5+ Listings)', 'Multi-listing', 'Single Listing', 'No Active Listings']
+              values: ['Professional (5+ Listings)', 'Multi-listing Host (2-4 Listings)', 'Single-listing Host', 'No Active Listings']
       - name: host_profile_last_updated
         description: "Timestamp of the last update to the host's profile."
         tests:
@@ -163,11 +163,11 @@ models:
               name: price_per_night_positive
               expression: "price_per_night > 0"  
       - name: price_tier
-        description: "Categorization of listing price (e.g. Budget, Mid-range, Luxury)."
+        description: "Categorization of listing price (e.g. Budget, Mid-Range, Luxury)."
         tests:
           - not_null
           - accepted_values:
-              values: ['Budget', 'Mid-range', 'Luxury']
+              values: ['Budget', 'Mid-Range', 'Luxury']
       - name: price_per_guest
         description: "Average price per guest for the listing."
         tests:
@@ -323,11 +323,11 @@ models:
           - accepted_values:
               values: ['1 Bedroom', 'Medium (2-3 Bedrooms)', 'Large (4+ Bedrooms)']
       - name: price_tier
-        description: "Categorization of listing price (e.g. Budget, Mid-range, Luxury)."
+        description: "Categorization of listing price (e.g. Budget, Mid-Range, Luxury)."
         tests:
           - not_null
           - accepted_values:
-              values: ['Budget', 'Mid-range', 'Luxury']
+              values: ['Budget', 'Mid-Range', 'Luxury']
       - name: is_superhost
         description: "Boolean indicating whether the host is a superhost at the time of booking." 
         tests:
@@ -339,7 +339,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['No Reviews', 'Below Average (<3.0)', 'Average (>=3.0)', 'Good (>=4.0)', 'Excellent (>=4.5)']
+              values: ['No Reviews', 'Below Average', 'Average', 'Good', 'Excellent']
       - name: avg_host_rating
         description: "Average rating of the host at the time of booking."
         tests:
@@ -405,7 +405,14 @@ models:
           - not_null
           - dbt_utils.expression_is_true:
               name: check_actual_revenue_logic
-              expression: "actual_revenue = booking_revenue - cancellation_fee"  # Ensure actual revenue is correctly calculated
+              expression: "
+                  actual_revenue =
+                  CASE
+                      WHEN LOWER(booking_status) = 'cancelled'
+                        THEN cancellation_fee
+                      ELSE booking_revenue
+                  END
+              "
           - dbt_utils.expression_is_true:
               name: actual_revenue_non_negative
               expression: "actual_revenue >= 0"  # Actual revenue should not be negative
@@ -475,7 +482,7 @@ models:
         tests:
           - not_null
       - name: price_tier
-        description: "Economic classification of the listing (Budget, Mid-range, Luxury)."
+        description: "Economic classification of the listing (Budget, Mid-Range, Luxury)."
         tests:
           - not_null
       - name: total_bookings
@@ -531,7 +538,7 @@ models:
         tests:
           - not_null
       - name: price_tier
-        description: "Economic classification of the listing (Budget, Mid-range, Luxury)."
+        description: "Economic classification of the listing (Budget, Mid-Range, Luxury)."
         tests:
           - not_null
       - name: actual_revenue

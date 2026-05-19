@@ -36,6 +36,7 @@ SELECT
     h.host_location,
     h.is_superhost,
 
+
     -- Performance metrics
     h.response_rate,
     h.avg_host_rating,
@@ -47,7 +48,8 @@ SELECT
     COALESCE(m.host_portfolio_type, 'No Active Listings') AS host_portfolio_type,
 
     -- Metadata for tracking  
-    h.updated_at AS host_profile_last_updated
+    h.created_at  AS host_profile_created_at,
+    h.loaded_at AS data_last_refreshed_at
     
 FROM hosts h
 LEFT JOIN host_listings_metrics AS m

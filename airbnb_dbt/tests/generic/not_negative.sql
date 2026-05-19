@@ -1,3 +1,4 @@
+-- This test checks that the specified column in the model does not contain any negative values.
 
 {% test not_negative(model, column_name) %}
 

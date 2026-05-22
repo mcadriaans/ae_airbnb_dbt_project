@@ -62,9 +62,6 @@ models:
         tests:
           - not_null
   
-
-
-  
   
   - name: mart_country_price_tier_revenue
     description: >

@@ -61,5 +61,4 @@ silver_hosts_enriched AS (
     FROM silver_hosts_cleaned
 )
 
-
-SELECT * FROM silver_hosts_enriched}}
+SELECT * FROM silver_hosts_enriched

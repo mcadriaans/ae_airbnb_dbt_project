@@ -16,6 +16,10 @@ clean-targets:
 vars:
   airbnb_launch_date: '2008-08-01'
 
+seeds:
+  airbnb_dbt:
+    +schema: seeds
+    
 
 models:
   airbnb_dbt:

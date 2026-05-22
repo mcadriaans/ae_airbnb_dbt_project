@@ -57,12 +57,23 @@ silver_listings_enriched AS (
             WHEN bedrooms BETWEEN 2 AND 3 THEN 'Medium (2-3 Bedrooms)'
             ELSE 'Large (4+ Bedrooms)'
         END AS listing_size_category,
+        -- Capacity type
+        CASE
+            WHEN accommodates >= 6 THEN 'Large Group (6+)'
+            WHEN accommodates >= 3 THEN 'Small Group (3-5)'
+            ELSE 'Solo/Pair'
+        END AS capacity_type,
+
+        -- Efficiency metric
+          ROUND(price_per_night / NULLIF(accommodates, 0), 2) AS price_per_guest,
+
         -- Price tier based on price per night
         CASE
             WHEN price_per_night < 100 THEN 'Budget'
             WHEN price_per_night BETWEEN 100 AND 300 THEN 'Mid-Range'
             ELSE 'Luxury'
         END AS price_tier,
+        
         -- Metadata for tracking
         CAST(current_timestamp() AS timestamp_ntz) AS loaded_at
     FROM silver_listings_cleaned

@@ -1,3 +1,9 @@
+{{
+    config(
+        on_schema_change='sync_all_columns'
+    )
+}}
+
 SELECT
     is_superhost,
     COUNT(*) AS bookings,

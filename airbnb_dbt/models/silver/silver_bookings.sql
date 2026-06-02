@@ -3,7 +3,7 @@
         materialized='incremental',
         unique_key='booking_id',
         incremental_strategy='merge',
-        transient=true
+        on_schema_change='sync_all_columns'
     )
 }}
 

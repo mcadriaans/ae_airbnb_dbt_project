@@ -214,7 +214,7 @@ models:
           - not_null
           - accepted_values:
               name: host_rating_category_values
-              values: ['Excellent', 'Good', 'Average', 'Poor', 'No Reviews']
+              values: ['Excellent', 'Good', 'Average', 'Below Average', 'No Reviews']
 
       - name: loaded_at
         description: Timestamp when the record was loaded into the silver layer.

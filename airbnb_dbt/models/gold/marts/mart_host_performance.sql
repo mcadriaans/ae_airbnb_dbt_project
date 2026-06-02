@@ -1,3 +1,9 @@
+{{
+    config(
+        on_schema_change='sync_all_columns'
+    )
+}}
+
 SELECT 
     host_id,
     COUNT(booking_id) AS total_bookings,

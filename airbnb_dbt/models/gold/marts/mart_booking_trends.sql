@@ -1,5 +1,11 @@
 -- This Mart tells us when and where the cancellations happen
 
+{{
+    config(
+        on_schema_change='sync_all_columns'
+    )
+}}
+
 WITH bookings AS (
     SELECT *
     FROM {{ ref('fact_bookings') }}

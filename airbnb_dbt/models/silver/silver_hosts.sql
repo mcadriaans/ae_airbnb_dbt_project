@@ -1,9 +1,11 @@
+-- silver_hosts.sql : This model transforms raw host data from the bronze layer into a cleaned and enriched format in the silver layer. It includes data type conversions, calculated fields for host tenure and rating categories, and metadata for tracking data freshness. The incremental loading strategy ensures efficient updates while maintaining historical data integrity.
+
 {{
     config(
         materialized='incremental',
         unique_key='host_id',
         incremental_strategy='merge',
-        transient=true
+        on_schema_change='sync_all_columns'
     )
 }}
 
@@ -23,7 +25,7 @@ WITH source_data AS (
     {% if is_incremental() %}
       -- This only runs on incremental runs, not on the first run or --full-refresh
       WHERE updated_at >= (
-          SELECT DATEADD(day, -3, COALESCE(MAX(updated_at), '1900-01-01'::timestamp_ntz))
+          SELECT DATEADD(day, -7, COALESCE(MAX(updated_at), '1900-01-01'::timestamp_ntz))
           FROM {{ this }}
       )
     {% endif %}

@@ -1,0 +1,108 @@
+version: 2
+
+sources:
+  - name: airbnb
+    description: "Raw Airbnb data is ingested from the source system. This is the source-of-truth layer in Snowflake."
+    database: AIRBNB
+    schema: DEV_BRONZE
+
+    freshness:
+      warn_after:
+        count: 24
+        period: hour
+      error_after:
+        count: 48
+        period: hour
+    loaded_at_field: updated_at
+
+    tables:
+      - name: bronze_bookings
+        identifier: BRONZE_BOOKINGS
+        description: "Raw transactional data for every booking."
+        columns:
+          - name: booking_id
+            description: "PK: Unique identifier for each booking."
+            tests:
+              - not_null
+              - unique
+
+          - name: booking_status
+            description: "Status of the booking (e.g., confirmed, cancelled)."
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['confirmed', 'cancelled']
+
+          - name: booking_amount
+            description: "Total amount paid for the booking."
+            tests:
+              - not_null
+              - dbt_utils.accepted_range:
+                  min_value: 0
+
+          - name: updated_at
+            description: "Timestamp of the last update to the booking record."
+            tests:
+              - not_null
+              - not_in_future
+
+      - name: bronze_hosts
+        identifier: BRONZE_HOSTS
+        description: "Profile Information and performance metrics for property owners."
+        columns:
+          - name: host_id
+            description: "PK: Unique identifier for each host."
+            tests:
+              - not_null
+              - unique
+
+          - name: is_superhost
+            description: "Indicates if the host is a Superhost (true/false)."
+            tests:
+              - not_null
+              - accepted_values:
+                  values: [true, false]
+
+          - name: avg_host_rating
+            description: "Average rating given to the host by guests."
+            tests:
+              - dbt_utils.accepted_range:
+                  min_value: 0
+                  max_value: 5
+
+          - name: updated_at
+            description: "Timestamp of the last update to the host record."
+            tests:
+              - not_null
+              - not_in_future
+
+      - name: bronze_listings
+        identifier: BRONZE_LISTINGS
+        description: "Inventory of properties available on the platform."
+        columns:
+          - name: listing_id
+            description: "PK: Unique identifier for each listing."
+            tests:
+              - not_null
+              - unique
+
+          - name: host_id
+            description: "FK: Identifier for the host of the listing."
+            tests:
+              - not_null
+              - relationships:
+                  to: source('airbnb', 'bronze_hosts')
+                  field: host_id
+
+          - name: price_per_night
+            description: "Cost per night for the listing."
+            tests:
+              - not_null
+              - dbt_utils.accepted_range:
+                  min_value: 0
+
+          - name: updated_at
+            description: "Timestamp of the last update to the listing record."
+            tests:
+              - not_null
+              - not_in_future

@@ -1,3 +1,11 @@
+{{
+    config(
+        on_schema_change='sync_all_columns'
+    )
+}}
+
+
+
 WITH revenue_summary AS (
         SELECT 
             country,

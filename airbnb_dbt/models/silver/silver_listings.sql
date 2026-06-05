@@ -1,9 +1,11 @@
+-- silver_listings.sql : This model transforms raw listing data from the bronze layer into a cleaned and enriched format in the silver layer. It includes data type conversions, calculated fields for listing size and price tiers, and metadata for tracking data freshness. The incremental loading strategy ensures efficient updates while maintaining historical data integrity.
+
 {{
     config(
         materialized='incremental',
         unique_key='listing_id',
         incremental_strategy='merge',
-        transient=true
+        on_schema_change='sync_all_columns'
     )
 }}
 
@@ -25,7 +27,7 @@ WITH source_data AS (
     {% if is_incremental() %}
       -- This only runs on incremental runs, not on the first run or --full-refresh
       WHERE updated_at >= (
-          SELECT DATEADD(day, -3, COALESCE(MAX(updated_at), '1900-01-01'::timestamp_ntz))
+          SELECT DATEADD(day, -7, COALESCE(MAX(updated_at), '1900-01-01'::timestamp_ntz))
           FROM {{ this }}
       )
     {% endif %}
@@ -65,7 +67,7 @@ silver_listings_enriched AS (
         END AS capacity_type,
 
         -- Efficiency metric
-          ROUND(price_per_night / NULLIF(accommodates, 0), 2) AS price_per_guest,
+        {{ safe_divide('price_per_night', 'accommodates', decimals=2) }} AS price_per_guest,
 
         -- Price tier based on price per night
         CASE

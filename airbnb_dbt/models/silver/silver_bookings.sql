@@ -1,3 +1,5 @@
+
+-- silver_bookings.sql : This model transforms raw booking data from the bronze layer into a cleaned and enriched format in the silver layer. It includes data type conversions, calculated fields for lead time and stay end date, and a standardized booking revenue calculation. The incremental loading strategy ensures efficient updates while maintaining historical data integrity.
 {{
     config(
         materialized='incremental',
@@ -29,7 +31,7 @@ WITH source_data AS (
     {% if is_incremental() %}
       -- This only runs on incremental runs, not on the first run or --full-refresh
       WHERE updated_at >= (
-          SELECT DATEADD(day, -3, COALESCE(MAX(updated_at), '1900-01-01'::timestamp_ntz))
+          SELECT DATEADD(day, -7, COALESCE(MAX(updated_at), '1900-01-01'::timestamp_ntz))
           FROM {{ this }}
       )
     {% endif %}

@@ -29,6 +29,7 @@ models:
         description: "Host's response rate to booking inquiries (percentage)."
       - name: avg_host_rating
         description: "Average rating received by the host from guests."
+
       - name: host_rating_category
         description: >
           Categorical classification of the host's average rating (e.g., Excellent, Good, Fair, Poor).
@@ -36,7 +37,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Excellent', 'Good', 'Fair', 'Poor']
+              values: ['Excellent', 'Good', 'Average', 'Below Average','No Reviews']
       - name: host_tenure_years
         description: "Number of years the host has been active on Airbnb."
         tests:

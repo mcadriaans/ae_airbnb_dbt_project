@@ -20,12 +20,14 @@ seeds:
   airbnb_dbt:
     +schema: seeds
     
-
 models:
   airbnb_dbt:
+    staging:
+      +schema: staging
+      +materialized: view
     silver:
       +schema: silver
-      +materialized: view
+      +materialized: incremental
     gold:
       core:
         +schema: core

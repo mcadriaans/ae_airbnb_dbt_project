@@ -1,3 +1,4 @@
+# dbt_project.yml
 name: 'airbnb_dbt'
 version: '1.0.0'
 profile: 'airbnb_dbt'
@@ -19,6 +20,13 @@ vars:
 seeds:
   airbnb_dbt:
     +schema: seeds
+
+snapshots:
+  airbnb_dbt:
+    +schema: snapshots
+    +strategy: timestamp
+    +updated_at: updated_at
+    +unique_key: id
     
 models:
   airbnb_dbt:

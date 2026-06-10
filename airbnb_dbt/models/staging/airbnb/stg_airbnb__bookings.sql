@@ -8,6 +8,8 @@ WITH source AS (
 
 standardized AS (
     SELECT
+        -- Generate the Key here so it exists in the Snapshot and Silver, Gold layers
+         {{dbt_utils.generate_surrogate_key(['booking_id', 'booking_date'])}} AS booking_key,
         LOWER(TRIM(booking_id)) AS booking_id,
         CAST(booking_date AS DATE) AS booking_date,
         LOWER(TRIM(booking_status)) AS booking_status,

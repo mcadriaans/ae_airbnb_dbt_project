@@ -1,3 +1,6 @@
+# sources.yml : Source definition file for the raw Airbnb data in the DEV_BRONZE schema. This file defines 
+# the source tables, their columns, and associated tests to ensure data quality.
+
 version: 2
 
 sources:

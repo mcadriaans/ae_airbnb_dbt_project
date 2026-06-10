@@ -1,3 +1,4 @@
+-- bookings_snapshot.sql
 {% snapshot bookings_snapshot %}
 
     {{
@@ -13,8 +14,15 @@
         booking_id,
         booking_date,
         booking_status,
+        listing_id,
+        stay_start_date,
+        nights_booked,
         booking_amount,
+        cleaning_fee,
+        service_fee,
+        cancellation_fee,
+        created_at,
         updated_at
-    FROM {{ source('airbnb', 'bronze_bookings') }}
+    FROM {{ ref('stg_airbnb__bookings') }}
     
 {% endsnapshot %}

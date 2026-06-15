@@ -12,8 +12,8 @@ models:
       - name: booking_id
         description: "Unique booking identifier (UUID format)"
         tests:
+          - unique
           - not_null
-      
       - name: booking_date
         description: "Date when booking was made"
         tests:
@@ -33,6 +33,9 @@ models:
         description: "Reference to the listing being booked"
         tests:
           - not_null
+          - relationships:
+              to: ref('stg_airbnb__listings')
+              field: listing_id
       
       - name: stay_start_date
         description: "Check-in date"

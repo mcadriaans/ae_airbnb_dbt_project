@@ -67,6 +67,7 @@ snapshots:
               min_value: 1
       - name: booking_amount
         description: "Total amount paid for the booking."
+        
       - name: cleaning_fee
         description: "Fee for cleaning the property."
       - name: service_fee

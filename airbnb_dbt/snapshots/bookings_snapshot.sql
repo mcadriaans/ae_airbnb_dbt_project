@@ -1,6 +1,5 @@
--- bookings_snapshot.sql
-{% snapshot bookings_snapshot %}
-
+-- bookings_snapshot.sql : Uses timestamp strategy to watch updated_at and track history.
+{% snapshot bookings_snapshot %} 
     {{
         config(
             target_schema='snapshots',
@@ -11,7 +10,6 @@
     }}
 
     SELECT
-        booking_key,
         booking_id,
         booking_date,
         booking_status,

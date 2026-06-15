@@ -1,14 +1,14 @@
 # dbt_project.yml
+
 name: 'airbnb_dbt'
 version: '1.0.0'
 profile: 'airbnb_dbt'
 
 model-paths: ["models"]
-analysis-paths: ["analyses"]
 test-paths: ["tests"]
-seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
+seed-paths: ["seeds"]
 
 clean-targets:
   - "target"

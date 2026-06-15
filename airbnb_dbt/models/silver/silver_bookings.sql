@@ -1,7 +1,7 @@
 
--- silver_bookings.sql : This model transforms raw booking data from the bronze layer into a cleaned and enriched format in the silver layer. 
---It includes data type conversions, calculated fields for lead time and stay end date, and a standardized booking revenue calculation. 
---The incremental loading strategy ensures efficient updates while maintaining historical data integrity.
+-- silver_bookings.sql : Enriched booking facts with SCD2 history
+-- Input: bookings_snapshot (SCD2 tracking booking changes)
+-- Output: Facts enriched with calculations, all versions preserved
 {{
     config(
         materialized='incremental',
@@ -13,40 +13,22 @@
 
 WITH booking_snapshot_data AS (
     SELECT 
-        -- Keys
         booking_id,
-        listing_id,
-
-        -- Dimensions
-        booking_status,
-
-        -- Dates
         booking_date,
+        booking_status,
+        listing_id,
         stay_start_date,
-        stay_end_date,
-
-        -- Durations
         nights_booked,
-        lead_time_days,
-
-        -- Amounts
         booking_amount,
         cleaning_fee,
         service_fee,
         cancellation_fee,
-        booking_revenue,
-
-        -- SCD2 / History Tracking
-        dbt_scd_id,
-        dbt_valid_from,
-        dbt_valid_to,
-        is_current_record,
-
-        -- Metadata
         created_at,
         updated_at,
+        dbt_scd_id,
         dbt_updated_at,
-        loaded_at
+        dbt_valid_from,
+        dbt_valid_to
     FROM {{ ref('bookings_snapshot') }}
   
 

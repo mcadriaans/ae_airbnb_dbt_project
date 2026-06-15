@@ -1,6 +1,7 @@
-/* silver_schema.yml : This schema file defines the structure, descriptions, and tests for the silver layer models in the Airbnb data warehouse. 
-It includes detailed documentation for each model and column, as well as comprehensive tests to ensure data quality and integrity as the raw bronze data is transformed into a more refined format for analysis and reporting.
-*/
+## silver_schema.yml : This schema file defines the structure, descriptions, and tests for the silver layer models in the Airbnb data warehouse. 
+## It includes detailed documentation for each model and column, as well as comprehensive tests to ensure data quality and integrity as the raw bronze data
+## is transformed into a more refined format for analysis and reporting.
+
 version: 2
 
 models:

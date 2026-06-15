@@ -5,7 +5,7 @@
 {{
     config(
         materialized='incremental',
-        unique_key='booking_id',
+        unique_key='host_id',
         incremental_strategy='merge',
         on_schema_change='sync_all_columns'
     )
@@ -23,7 +23,7 @@ WITH current_snapshot_data AS (
         created_at,
         updated_at
     FROM {{ ref('hosts_snapshot') }}
-    WHERE dbt_valid_to IS NULL -- Only consider the current valid records from the snapshot
+ 
 
     {% if is_incremental() %}
       -- Only grab records updated since the last run  
@@ -56,6 +56,12 @@ silver_hosts_enriched AS (
         is_superhost,
         response_rate,
         avg_host_rating,
+
+        --SCD Type 2 tracking
+        dbt_valid_from,
+        dbt_valid_to,
+        CASE WHEN dbt_valid_to IS NULL THEN 1 ELSE 0 END AS is_current_record, 
+
         created_at,
         updated_at,
         -- Metadata for tracking

@@ -9,19 +9,19 @@ sources:
     database: AIRBNB
     schema: DEV_BRONZE
 
-    freshness:
-      warn_after:
-        count: 24
-        period: hour
-      error_after:
-        count: 48
-        period: hour
-    loaded_at_field: updated_at
 
     tables:
       - name: bronze_bookings
         identifier: BRONZE_BOOKINGS
         description: "Raw transactional data for every booking."
+        freshness:
+          warn_after:
+            count: 24
+            period: hour
+          error_after:
+            count: 48
+            period: hour
+        loaded_at_field: updated_at
         columns:
           - name: booking_id
             description: "PK: Unique identifier for each booking."
@@ -52,6 +52,14 @@ sources:
       - name: bronze_hosts
         identifier: BRONZE_HOSTS
         description: "Profile Information and performance metrics for property owners."
+        freshness:
+          warn_after:
+            count: 24
+            period: hour
+          error_after:
+            count: 48
+            period: hour
+        loaded_at_field: updated_at
         columns:
           - name: host_id
             description: "PK: Unique identifier for each host."

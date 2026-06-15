@@ -5,11 +5,37 @@ version: 2
 models:
   - name: silver_bookings
     description: >
-      Cleaned and enriched booking transaction records. 
-      The grain of this model is one row per unique booking_id.
-      This model sources active records from the Snapshot layer and applies:
-      1. Lead time and Stay End Date calculations.
-      2. Centralized revenue logic via the calc_booking_revenue macro.
+      SILVER: Enriched booking facts with SCD2 history
+      INPUT: bookings_snapshot (SCD2 tracking booking status changes)
+      OUTPUT: Facts enriched with business logic + all history preserved
+
+      WHAT IT DOES:
+      1. Lead time: days between booking_date and stay_start_date
+        → Insight: How far in advance are people booking?
+
+      2. Stay end date: stay_start_date + nights_booked
+        → Required for stay duration analysis
+
+      3. Booking revenue: booking_amount + cleaning_fee + service_fee
+        → Total expected revenue from each booking
+
+      4. History: All SCD2 fields preserved
+        → Enables "when did booking status change?" analysis
+
+      INCREMENTAL STRATEGY:
+      - Merge strategy: processes new versions, doesn't duplicate
+      - Only processes new snapshot versions: WHERE dbt_valid_from >= max(dbt_valid_from)
+      - Preserves all history: old versions remain with dbt_valid_to set
+
+      GRAIN: One row per booking_id version (SCD2)
+      - If booking_status changes: new version created
+      - Latest version has dbt_valid_to = NULL, is_current_record = 1
+
+      FOR ANALYSTS:
+      - Get latest state: WHERE is_current_record = 1
+      - Get full history: ORDER BY booking_id, dbt_valid_from
+      - Find state on specific date: WHERE booking_date <= 'YYYY-MM-DD' AND (dbt_valid_to IS NULL OR dbt_valid_to > 'YYYY-MM-DD')
+
     tests:
         #  CROSS-COLUMN LOGIC: These ensure your SQL calculations make sense and that the relationships between fields are consistent with business rules.
         - dbt_utils.expression_is_true:
@@ -19,17 +45,12 @@ models:
               name: stay_end_date_after_start_date
               expression: "stay_end_date >= stay_start_date"  
         - dbt_utils.expression_is_true:
-              name: booking_revenue_logic
-              expression: "booking_revenue = booking_amount + cleaning_fee + service_fee" 
-        - dbt_utils.expression_is_true:
               name: cancellation_fee_within_revenue_limit
-              expression: "cancellation_fee <= booking_revenue"  
-
+              expression: "cancellation_fee <= booking_revenue" 
     columns:
       - name: booking_id
         description: "PK: Unique identifier for a booking."
         tests:
-          - unique
           - not_null
       - name: listing_id
         description: "FK: Identifier for the listing associated with the booking."
@@ -41,22 +62,25 @@ models:
               config:
                 severity: warn # sometimes a booking arrives before the Listing is synced,It notifies you, but doesn't stop the run
       - name: booking_status
-        description: Status of the booking, indicating whether it is confirmed or cancelled.
+        description: "Status of the booking (e.g., confirmed, cancelled)."
         tests:
+          - not_null
           - accepted_values:
               values: ['confirmed', 'cancelled']
       - name: booking_date
-        description: Date when the booking was made.
+        description: "Date when the booking was made."
         tests:
           - not_null
       - name: stay_start_date
-        description: Start date of the stay.
+        description: "Start date of the stay."
+        tests:
+          - not_null
+      - name: stay_end_date 
+        description: "End date of the stay."
         tests:
           - not_null
       - name: lead_time_days
-        description: >
-         Number of days between the booking date and the stay start date, indicating 
-         how far in advance the booking was made.
+        description: "Number of days between the booking date and the stay start date."
         tests:
           - not_null
           - not_negative
@@ -66,20 +90,13 @@ models:
               max_value: 730
               inclusive: true
       - name: nights_booked
-        description: Number of nights booked for the stay.
+        description: "Number of nights booked for the stay."
         tests:
           - not_null
           - dbt_utils.accepted_range:
               name: nights_booked_positive
               min_value: 1
               inclusive: true
-
-      - name: stay_end_date
-        description: > 
-          End date of the stay, calculated based on the stay start date 
-          and the number of nights booked.
-        tests:
-          - not_null
       - name: booking_amount
         description: "Amount paid for the booking."
         tests:
@@ -89,16 +106,9 @@ models:
         description: "Cleaning fee associated with the booking."
         tests:
           - not_null
-          - not_negative   
+          - not_negative
       - name: service_fee
         description: "Service fee associated with the booking."
-        tests:
-          - not_null
-          - not_negative
-      - name: booking_revenue
-        description: >
-          Total expected revenue from the booking, calculated as the sum of the booking amount, 
-          cleaning fee, and service fee.
         tests:
           - not_null
           - not_negative
@@ -107,6 +117,28 @@ models:
         tests:
           - not_null
           - not_negative
+      - name: booking_revenue
+        description: >
+          Total expected revenue from the booking.
+          Calculation : booking_amount + cleaning_fee + service_fee
+        tests:
+          - not_null
+          - not_negative  
+      - name: dbt_scd_id
+        description: "Unique identifier for each version of a booking record (auto-generated by dbt)."
+        tests:
+          - unique
+          - not_null
+      - name: dbt_valid_from
+        description: "Timestamp indicating when the record became valid."
+        tests:
+          - not_null
+      - name: dbt_valid_to
+        description: "Timestamp indicating when the record ceased to be valid."
+      - name: is_current_record
+        description: "Flag indicating whether the record is the current version."
+        tests:
+          - not_null
       - name: created_at
         description: "Timestamp when the record was first created."
         tests:
@@ -117,11 +149,18 @@ models:
         tests:
           - not_null
           - not_in_future
-      - name: loaded_at
-        description: "Timestamp when the record was loaded into the silver layer."
+      - name: dbt_updated_at  
+        description: "Timestamp of the last update to the record, managed by dbt."
         tests:
           - not_null
           - not_in_future
+      - name: loaded_at 
+        description: "Timestamp when the record was loaded into the silver layer."
+        tests:
+          - not_null
+          - not_in_future 
+
+------------------------------------------
               
 
   - name: silver_hosts

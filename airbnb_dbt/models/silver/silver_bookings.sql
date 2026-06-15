@@ -5,38 +5,55 @@
 {{
     config(
         materialized='incremental',
-        unique_key='booking_id',
+        unique_key= 'dbt_scd_id',
         incremental_strategy='merge',
         on_schema_change='sync_all_columns'
     )
 }}
 
-WITH current_snapshot_data AS (
+WITH booking_snapshot_data AS (
     SELECT 
-        booking_key,
+        -- Keys
         booking_id,
-        booking_date,
-        booking_status,
         listing_id,
+
+        -- Dimensions
+        booking_status,
+
+        -- Dates
+        booking_date,
         stay_start_date,
+        stay_end_date,
+
+        -- Durations
         nights_booked,
+        lead_time_days,
+
+        -- Amounts
         booking_amount,
         cleaning_fee,
         service_fee,
         cancellation_fee,
-        --SCD Type 2 tracking
+        booking_revenue,
+
+        -- SCD2 / History Tracking
+        dbt_scd_id,
         dbt_valid_from,
         dbt_valid_to,
-        CASE WHEN dbt_valid_to IS NULL THEN 1 ELSE 0 END AS is_current_record, 
+        is_current_record,
+
+        -- Metadata
         created_at,
-        updated_at
+        updated_at,
+        dbt_updated_at,
+        loaded_at
     FROM {{ ref('bookings_snapshot') }}
-    WHERE dbt_valid_to IS NULL -- Only consider the current valid records from the snapshot
+  
 
     {% if is_incremental() %}
-      -- Only grab records updated since the last run  
-      AND updated_at >= (
-          SELECT DATEADD(day, -7, COALESCE(MAX(updated_at), '1900-01-01'::timestamp_ntz))
+      -- Only grab snapshot rows that are NEW to silver  
+      WHERE dbt_valid_from >= (
+          SELECT COALESCE(MAX(dbt_valid_from), '1900-01-01'::timestamp_ntz)
           FROM {{ this }}
       )
     {% endif %}
@@ -44,26 +61,27 @@ WITH current_snapshot_data AS (
 
 silver_bookings_enriched AS (
     SELECT
-        booking_key,
+          -- Keys
         booking_id,
         listing_id,
+
+        -- Dimensions
         booking_status,
+
+        -- Dates
         booking_date,
         stay_start_date,
+        DATEADD(day, nights_booked, stay_start_date) AS stay_end_date,  -- Calculate stay end date based on start date and nights booked
 
-        -- Calculate lead time in days between booking date and stay start date
-        DATEDIFF(day, booking_date, stay_start_date) AS lead_time_days,
-
+        -- Durations
+        DATEDIFF(day, booking_date, stay_start_date) AS lead_time_days,   -- Calculate lead time in days between booking date and stay start date
         nights_booked,
 
-        -- Calculate stay end date based on start date and nights booked
-        DATEADD(day, nights_booked, stay_start_date) AS stay_end_date,
-
+        -- Amounts
         booking_amount,
         cleaning_fee,
         service_fee,
-
-        -- Booking revenue for each booking, handling nulls gracefully
+        cancellation_fee,
         CAST(
             {{ calc_booking_revenue(
                 'booking_amount',
@@ -71,15 +89,19 @@ silver_bookings_enriched AS (
                 'service_fee'
             ) }} AS DECIMAL(18,2)) AS booking_revenue,
 
-        cancellation_fee,
+
+
+        -- SCD2 / History Tracking
+        dbt_scd_id,
         dbt_valid_from,
         dbt_valid_to,
-        is_current_record,
+        CASE WHEN dbt_valid_to IS NULL THEN 1 ELSE 0 END AS is_current_record,
+
+         -- Metadata
         created_at,
         updated_at,
-
-         -- Metadata for tracking when this record hits the silver layer
-        CAST(current_timestamp() AS timestamp_ntz) AS loaded_at
-    FROM current_snapshot_data 
+        dbt_updated_at,
+        CAST(current_timestamp() AS timestamp_ntz) AS loaded_at   -- tracking when this record hits the silver layer
+    FROM booking_snapshot_data 
 )
 SELECT * FROM silver_bookings_enriched

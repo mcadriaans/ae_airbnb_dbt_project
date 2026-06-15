@@ -1,0 +1,87 @@
+#stg_properties.yml 
+
+version: 2
+
+models:
+  - name: stg_airbnb__bookings
+    description: "Standardized booking data from bronze layer"
+    config:
+      materialized: view
+    
+    columns:
+      - name: booking_id
+        description: "Unique booking identifier (UUID format)"
+        tests:
+          - not_null
+      
+      - name: booking_date
+        description: "Date when booking was made"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              name: booking_date_not_in_future
+              expression: "booking_date >=  '{{ var('airbnb_launch_date') }}'   AND booking_date <= current_date()"  
+      
+      - name: booking_status
+        description: "Booking state (confirmed or cancelled)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['confirmed', 'cancelled']
+      
+      - name: listing_id
+        description: "Reference to the listing being booked"
+        tests:
+          - not_null
+      
+      - name: stay_start_date
+        description: "Check-in date"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              name: stay_start_date_not_in_past
+              expression: "stay_start_date >= booking_date AND stay_start_date <= booking_date + INTERVAL '2 year'"
+      
+      - name: nights_booked
+        description: "Number of nights booked (must be positive)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 730  # Max 2 years booking length
+      
+      - name: booking_amount
+        description: "Base booking amount in USD"
+        tests:
+          - not_null
+          - not_negative
+      
+      - name: cleaning_fee
+        description: "Cleaning fee"
+        tests:
+          - not_null
+          - not_negative
+      
+      - name: service_fee
+        description: "Service/platform fee"
+        tests:
+          - not_null
+          - not_negative
+      
+      - name: cancellation_fee
+        description: "Cancellation fee (if applicable)"
+        tests:
+          - not_null
+          - not_negative
+      
+      - name: created_at
+        description: "When record was created in source system"
+        tests:
+          - not_null
+          - not_in_future
+      
+      - name: updated_at
+        description: "When record was last updated in source system"
+        tests:
+          - not_null
+          - not_in_future

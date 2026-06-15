@@ -11,6 +11,7 @@
     }}
 
     SELECT
+        booking_key,
         booking_id,
         booking_date,
         booking_status,

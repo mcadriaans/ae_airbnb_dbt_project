@@ -1,15 +1,27 @@
--- stg_airbnb__bookings.sql : This staging model extracts raw booking data from the bronze layer, performs initial data cleaning and standardization, and prepares it for further transformation in the silver layer. It includes data type conversions, trimming of string fields, and basic formatting to ensure consistency and readiness for downstream processing.
+-- stg_airbnb__bookings.sql : This staging model extracts raw booking data from the bronze layer, 
+-- performs initial data cleaning and standardization, and prepares it for further transformation in the silver layer. 
+-- It includes data type conversions, trimming of string fields, and basic formatting to ensure consistency and readiness for downstream processing.
 
 WITH source AS (
-    SELECT *
+    SELECT 
+        booking_id,
+        booking_date,
+        booking_status,
+        listing_id,
+        stay_start_date,
+        nights_booked,
+        booking_amount,
+        cleaning_fee,
+        service_fee,
+        cancellation_fee,
+        created_at,
+        updated_at
     FROM {{ source('airbnb', 'bronze_bookings') }}
 
 ),
 
 standardized AS (
     SELECT
-        -- Generate the Key here so it exists in the Snapshot and Silver, Gold layers
-        {{dbt_utils.generate_surrogate_key(['booking_id', 'booking_date'])}} AS booking_key,
         LOWER(TRIM(booking_id)) AS booking_id,
         CAST(booking_date AS DATE) AS booking_date,
         LOWER(TRIM(booking_status)) AS booking_status,

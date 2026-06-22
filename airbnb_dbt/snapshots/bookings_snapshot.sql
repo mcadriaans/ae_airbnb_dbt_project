@@ -1,5 +1,10 @@
 -- bookings_snapshot.sql : Uses timestamp strategy to watch updated_at and track history.
-{% snapshot bookings_snapshot %} 
+-- SCD2 Snapshot: Tracks all booking versions over time
+-- When booking_status or any column changes, creates new version with dbt_valid_from/to
+-- Result: One booking_id can have multiple rows (one per version)
+-- Analyst usage: Filter WHERE is_current_record = 1 for latest, or query full history for cohort analysis
+
+{% snapshot bookings_snapshot %}
     {{
         config(
             target_schema='snapshots',

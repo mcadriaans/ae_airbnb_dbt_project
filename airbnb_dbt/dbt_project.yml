@@ -36,6 +36,22 @@ models:
     silver:
       +schema: silver
       +materialized: incremental
+      silver_airbnb__bookings:
+        +meta:
+          scd_type: 2  
+          grain: "booking_id + dbt_scd_id (one row per booking version)"
+          description: "SCD2 Silver model capturing booking history with surrogate keys for each version."
+      silver_airbnb__listings:
+        +meta:
+          scd_type: 1
+          grain: "listing_id (one row per listing)"
+          description: "Silver model for listings with one row per unique listing_id."
+      silver_airbnb__hosts:
+        +meta:
+          scd_type: 1
+          grain: "host_id (one row per host)"
+          description: "Silver model for hosts with one row per unique host_id."
+
     gold:
       core:
         +schema: core

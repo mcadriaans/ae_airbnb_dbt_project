@@ -1,5 +1,5 @@
 
--- silver_bookings.sql : Enriched booking facts with SCD2 history
+-- silver/silver_bookings.sql : Enriched booking facts with SCD2 history
 -- Input: bookings_snapshot (SCD2 tracking booking changes)
 -- Output: Facts enriched with calculations, all versions preserved
 {{

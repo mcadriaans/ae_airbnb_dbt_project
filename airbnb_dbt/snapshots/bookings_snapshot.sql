@@ -1,4 +1,4 @@
--- bookings_snapshot.sql : Uses timestamp strategy to watch updated_at and track history.
+-- snapshots/bookings_snapshot.sql : Uses timestamp strategy to watch updated_at and track history.
 -- SCD2 Snapshot: Tracks all booking versions over time
 -- When booking_status or any column changes, creates new version with dbt_valid_from/to
 -- Result: One booking_id can have multiple rows (one per version)

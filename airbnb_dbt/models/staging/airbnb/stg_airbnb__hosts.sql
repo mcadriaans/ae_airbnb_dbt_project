@@ -1,4 +1,4 @@
---stg_airbnb__hosts.sql : This staging model extracts raw host data from the bronze layer, performs initial data cleaning and standardization,
+--staging/airbnb/stg_airbnb__hosts.sql : This staging model extracts raw host data from the bronze layer, performs initial data cleaning and standardization,
 -- and prepares it for further transformation in the silver layer. It includes data type conversions, trimming of string fields, 
 -- and basic formatting to ensure consistency and readiness for downstream processing.
 WITH source AS (

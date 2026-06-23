@@ -1,4 +1,4 @@
-## silver_schema.yml : This schema file defines the structure, descriptions, and tests for the silver layer models in the Airbnb data warehouse. 
+## models/silver/silver_schema.yml : This schema file defines the structure, descriptions, and tests for the silver layer models in the Airbnb data warehouse. 
 ## It includes detailed documentation for each model and column, as well as comprehensive tests to ensure data quality and integrity as the raw bronze data
 ## is transformed into a more refined format for analysis and reporting.
 
@@ -214,16 +214,20 @@ models:
     - dbt_utils.expression_is_true: 
         name: rating_category_consistency
         expression: >
-         (avg_host_rating >= 4.5 AND host_rating_category = 'Excellent') OR 
-         (avg_host_rating < 3.0  AND host_rating_category = 'Below Average') OR 
-         (avg_host_rating IS NULL AND host_rating_category = 'No Reviews') OR 
-         (avg_host_rating >= 3.0 AND avg_host_rating < 4.5)  -- Covers Good/Average
-
+          CASE
+            WHEN avg_host_rating >= 4.5 THEN host_rating_category = 'Excellent' 
+            WHEN avg_host_rating >= 4.0 THEN host_rating_category = 'Good' 
+            WHEN avg_host_rating >= 3.0 THEN host_rating_category = 'Average' 
+            WHEN avg_host_rating < 3.0 THEN host_rating_category = 'Below Average' 
+            WHEN avg_host_rating IS NULL THEN host_rating_category = 'no Reviews' 
+            ELSE FALSE
+          END
+   
     columns:
     # Keys
     - name: host_id
       description: "PK: Unique identifier for an Airbnb host."
-      test:
+      tests:
         - unique
         - not_null
 

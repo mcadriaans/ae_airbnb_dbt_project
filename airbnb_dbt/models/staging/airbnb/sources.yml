@@ -14,15 +14,11 @@ sources:
     tables:
       - name: bronze_bookings
         identifier: BRONZE_BOOKINGS
-        description: "Raw transactional data for every booking."
-        freshness:
-          warn_after:
-            count: 24
-            period: hour
-          error_after:
-            count: 48
-            period: hour
-        loaded_at_field: updated_at
+        description: >
+          Raw transactional data for every booking.
+          NOTE: This is a static portfolio dataset.
+          In production, this would have freshness monitoring and SLAs.
+
         columns:
           - name: booking_id
             description: "PK: Unique identifier for each booking."
@@ -52,15 +48,11 @@ sources:
 
       - name: bronze_hosts
         identifier: BRONZE_HOSTS
-        description: "Profile Information and performance metrics for property owners."
-        freshness:
-          warn_after:
-            count: 24
-            period: hour
-          error_after:
-            count: 48
-            period: hour
-        loaded_at_field: updated_at
+        description: > 
+          Profile Information and performance metrics for property owners.
+          NOTE: This is a static portfolio dataset.
+          In production, this would have freshness monitoring and SLAs.
+
         columns:
           - name: host_id
             description: "PK: Unique identifier for each host."
@@ -90,7 +82,10 @@ sources:
 
       - name: bronze_listings
         identifier: BRONZE_LISTINGS
-        description: "Inventory of properties available on the platform."
+        description: > 
+          Inventory of properties available on the platform.
+          NOTE: This is a static portfolio dataset.
+          In production, this would have freshness monitoring and SLAs.
         columns:
           - name: listing_id
             description: "PK: Unique identifier for each listing."

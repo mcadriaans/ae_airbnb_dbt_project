@@ -6,22 +6,21 @@
     config(
         materialized='incremental',
         unique_key='host_id',
-        incremental_strategy='delete+insert',
+        incremental_strategy='merge',
         on_schema_change='sync_all_columns'
     )
 }}
 
 WITH silver_hosts_enriched AS (
     SELECT 
+        -- Keys
         host_id,
+
+        -- Dimensions
         host_name,
-        host_since,
         host_location,
-
-        -- Calculate host tenure in years
-        ROUND(DATEDIFF('day', host_since, CURRENT_DATE) / 365.25, 1) AS host_tenure_years,
-
-        -- Categorize hosts based on average rating
+        is_superhost,
+        --- Categorize hosts based on average rating
         CASE 
             WHEN avg_host_rating >= 4.5 THEN 'Excellent'
             WHEN avg_host_rating >= 4.0 THEN 'Good'
@@ -30,17 +29,20 @@ WITH silver_hosts_enriched AS (
             ELSE 'Below Average'
         END AS host_rating_category,
 
-        is_superhost,
+        -- Dates & Metrics
+         host_since,
+        --- Calculate host tenure in years
+        ROUND(DATEDIFF('day', host_since, CURRENT_DATE) / 365.25, 1) AS host_tenure_years,
         response_rate,
         avg_host_rating,
-
+        
+        -- Metadata for tracking
         created_at,
         updated_at,
-        -- Metadata for tracking
-         CAST(current_timestamp() AS timestamp_ntz) AS loaded_at
+        CAST(current_timestamp() AS timestamp_ntz) AS loaded_at
     FROM {{ ref('stg_airbnb__hosts') }}
 
-        {% if is_incremental() %}
+    {% if is_incremental() %}
       -- Only grab records updated since the last run  
       -- 7-day lookback handles late arrivals in source data
         WHERE updated_at >= (

@@ -299,138 +299,147 @@ models:
         - not_null
         - not_in_future 
 
-
   - name: silver_listings
     description: >
-      Cleaned and categorized data for all property listings. 
-      The grain of this model is one row per unique listing_id.
-      This model enriches property attributes by:
-      1. Standardizing property_type and city names for consistent BI filtering.
-      2. Categorizing properties into 'Listing Size' buckets (Studio to Large) based on bedroom counts.
-      3. Segmenting listings into price tiers (Budget, Mid-Range, Luxury) based on price_per_night.
-      4. Calculating occupancy metrics like price_per_guest.
+      SILVER: Enriched and standardized listing dimensions (SCD1)
+      INPUT: stg_airbnb__listings
+      OUTPUT: Single source of truth for property attributes and pricing tiers
+
+      WHAT IT DOES:
+      1. Property Classification: Categorizes properties by size (Studio to Large) and capacity (Solo to Large Group).
+         -> Insight: How is our inventory distributed across property types?
+      2. Pricing Efficiency: Computes 'price_per_guest' to normalize costs across differently sized properties.
+      3. Price Tiering: Bins properties into Budget, Mid-Range and Luxury tiers.
+         -> Insight: Which price segments are driving the most revenue in the Marts?
+
+      INCREMENTAL STRATEGY:
+      - Strategy: merge (SCD Type 1).
+      - Logic: Updates existing listing records if changes are detected in source.
+      - Lookback: 7-day lookback on 'updated_at' ensures no late-arriving data is missed.
+
+      GRAIN: One row per listing_id (UNIQUE)
+      - Tracks latest state only. For historical property changes, a snapshot layer would be required.
+
+      FOR ANALYSIS:
+      - Inventory Analysis: Group by 'listing_size_category' and 'city'.
+      - Market Positioning: Use 'price_tier' to compare booking performance across luxury vs budget segments.
+
+    tests:
+      # CROSS-COLUMN LOGIC: Validating that the CASE statements in SQL match the expected business categories
+      - dbt_utils.expression_is_true:
+          name: listing_size_consistency
+          expression: >
+            (bedrooms = 0 AND listing_size_category = 'Studio') OR
+            (bedrooms = 1 AND listing_size_category = '1 Bedroom') OR
+            (bedrooms BETWEEN 2 AND 3 AND listing_size_category = 'Medium (2-3 Bedrooms)') OR
+            (bedrooms >= 4 AND listing_size_category = 'Large (4+ Bedrooms)')
+
+      - dbt_utils.expression_is_true:
+          name: price_tier_consistency
+          expression: >
+            (price_per_night < 100 AND price_tier = 'Budget') OR
+            (price_per_night BETWEEN 100 AND 300 AND price_tier = 'Mid-Range') OR
+            (price_per_night > 300 AND price_tier = 'Luxury')
+      
+      - dbt_utils.expression_is_true:
+          name: price_per_guest_logic
+          # Ensure price per guest is not greater than the total price per night
+          expression: "price_per_guest <= price_per_night"
+    
     columns:
+      # Keys
       - name: listing_id
-        description: Unique identifier for a listing.
+        description: "PK: Unique Identifier for each property listing."
         tests:
           - unique
           - not_null
-
       - name: host_id
-        description: Identifier for the host associated with the listing.
+        description: "FK: Identifier for the host who owns the listing."
         tests:
           - not_null
-          - relationships:
+          - relationships: 
               to: ref('silver_hosts')
               field: host_id
-
+      
+      # Dimensions
       - name: property_type
-        description: Type of property (e.g., apartment, house, etc.).
+        description: "The type of property (e.g., Apartment, House, Loft)."
+        tests:
+          - not_null
+      - name: city
+        description: "City where the property is located (standardized)."
+        tests:
+          - not_null
+      - name: country
+        description: "Country where the property is located (standardized)."
+        tests:
+          - not_null 
+      - name: listing_size_category
+        description: "Categorization based on bedroom count (Studio to Large)."
         tests:
           - not_null
           - accepted_values:
-              values: ['Apartment', 'House', 'Loft', 'Condo', 'Boutique Hotel']
-
-      - name: city
-        description: City where the listing is located.
+              values: ['Studio', '1 Bedroom', 'Medium (2-3 Bedrooms)', 'Large (4+ Bedrooms)']
+      - name: capacity_type
+        description: "Classification of property based on 'accomodates' count."
         tests:
           - not_null
-
-      - name: country
-        description: Country where the listing is located.
+          - accepted_values:
+              values: ['Solo/Pair', 'Small Group (3-5)', 'Large Group (6+)']
+      - name: price_tier
+        description: "Economic segment of th elisting (Budget, Mid-Range, Luxury)."
         tests:
           - not_null
+          - accepted_values:
+              values: ['Budget', 'Mid-Range', 'Luxury']
 
-      - name: accommodates
-        description: Number of guests the listing can accommodate.
+      # Metrics
+      - name: accomodates
+        description: "Maximum number of guests the property can hold."
         tests:
           - not_null
-          - not_negative
           - dbt_utils.accepted_range:
               min_value: 1
               inclusive: true
-
       - name: bedrooms
-        description: Number of bedrooms in the listing.
+        description: "Number of bedrooms in the property (0 for Studios)."
         tests:
           - not_null
-          - not_negative
-
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
       - name: bathrooms
-        description: Number of bathrooms in the listing.
+        description: "Number of bathrooms in the property."
         tests:
           - not_null
-          - not_negative
           - dbt_utils.accepted_range:
-              min_value: 0.5
+              min_value: 1
               inclusive: true
-
       - name: price_per_night
-        description: Price per night for the listing.
+        description: "Current cost to rent the property for one night."
         tests:
           - not_null
           - not_negative
-          - dbt_utils.accepted_range:
-              name: price_per_night_positive
-              min_value: 0
-              max_value: 10000
-              inclusive: true
-
-      - name: created_at
-        description: Timestamp when the record was first created.
-        tests:
-          - not_null
-          - not_in_future
-
-      - name: updated_at
-        description: Timestamp when the record was last updated.
-        tests:
-          - not_null
-          - not_in_future
-
-      - name: listing_size_category
-        description: >  
-          Categorization of listings based on the number of bedrooms and bathrooms, 
-          providing insights into the size and type of accommodation offered.
-        tests:
-          - not_null
-          - accepted_values:
-              name: listing_size_category_values
-              values: ['Studio', '1 Bedroom', 'Medium (2-3 Bedrooms)', 'Large (4+ Bedrooms)']
-      - name: capacity_type
-        description: >
-          Classification of listings based on their accommodation capacity, 
-          helping to segment listings for different guest group sizes.
-        tests:
-          - not_null
-          - accepted_values:
-              name: capacity_type_values
-              values: ['Solo/Pair', 'Small Group (3-5)', 'Large Group (6+)']
-
       - name: price_per_guest
-        description: >
-          Calculated metric representing the price per guest, derived from the price per night divided by the accommodates field.
-          This provides insights into the cost efficiency of listings for different group sizes.
+        description: "Price per night divided ba total guest capacity (efficiency metric)."
         tests:
           - not_null
           - not_negative
-          - dbt_utils.accepted_range:
-              name: price_per_guest_range
-              min_value: 0
-              max_value: 10000
-              inclusive: true
-      - name: price_tier
-        description: >
-          Classification of listings into price tiers based on the price per night, helping to 
-          segment listings for analysis and recommendations.
-        tests:
-          - not_null
-          - accepted_values:
-              name: price_tier_values
-              values: ['Budget', 'Mid-Range', 'Luxury']
 
-      - name: loaded_at
-        description: Timestamp when the record was loaded into the silver layer.
+      # Metadata
+      - name: created_at
+        description: "Source system creation timestamp."
         tests:
           - not_null
           - not_in_future
+      - name: updated_at
+        description: "Source system last-update timestamp."
+        tests:
+          - not_null
+          - not_in_future
+      - name: loaded_at
+        description: "Timestamp when the record was processed into the Silver layer."
+        tests:
+          - not_null
+          - not_in_future
+

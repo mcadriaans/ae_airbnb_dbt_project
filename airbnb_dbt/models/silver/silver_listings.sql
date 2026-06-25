@@ -10,7 +10,7 @@
     config(
         materialized='incremental',
         unique_key='listing_id',
-        incremental_strategy='merge',
+        incremental_strategy='delete+insert',
         on_schema_change='sync_all_columns'
     )
 }}
@@ -46,7 +46,7 @@ WITH silver_listings_enriched AS (
         END AS price_tier,
         
         -- Metrics
-        accomodates,
+        accommodates,
         bedrooms,
         bathrooms,
         price_per_night,

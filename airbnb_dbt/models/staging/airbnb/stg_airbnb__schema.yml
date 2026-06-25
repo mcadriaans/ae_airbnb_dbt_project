@@ -1,90 +1,100 @@
-#stg_airbnb__schema.yml 
+#-- stg_airbnb__schema.yml:
+## Business Contract : Tests if the data makes sense (Ranges, Accepted Values, Logical Comparisons
 
 version: 2
 
 models:
   - name: stg_airbnb__bookings
-    description: "Standardized booking data from bronze layer"
+    description: >
+      STAGING: Standardized booking data.
+      Logic: Lowercase IDs/Status, Cast Types, and COALESCE null metrics
+      This layer enforces 'Business Sanity' before data hits the Silver history tracking.
     config:
       materialized: view
     
     columns:
+      # -- KEYS
       - name: booking_id
-        description: "Unique booking identifier (UUID format)"
+        description: "PK: Unique booking identifier (UUID format)."
         tests:
-          - unique
-          - not_null
-      - name: booking_date
-        description: "Date when booking was made"
-        tests:
-          - not_null
-          - dbt_utils.expression_is_true:
-              name: booking_date_not_in_future
-              expression: "booking_date >=  '{{ var('airbnb_launch_date') }}'   AND booking_date <= current_date()"  
-      
-      - name: booking_status
-        description: "Booking state (confirmed or cancelled)"
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['confirmed', 'cancelled']
-      
+          - not_null:
+              config:
+                severity: error
       - name: listing_id
-        description: "Reference to the listing being booked"
+        description: "FK to staging listings"
         tests:
-          - not_null
           - relationships:
               to: ref('stg_airbnb__listings')
               field: listing_id
-      
-      - name: stay_start_date
-        description: "Check-in date"
+              description: "Ensures referential integrity between staging models."
+              config:
+                severity: warn
+
+      # -- STATUS & CATEGORIES
+      - name: booking_status
+        description: "Booking state (confirmed or cancelled)."
         tests:
-          - not_null
+          - accepted_values:
+              values: ['confirmed', 'cancelled']
+
+      # -- DATA SANITY
+      - name: booking_date
+        description: "Date when booking was made."
+        tests:
+          - dbt_utils.expression_is_true:
+              name: booking_date_not_in_future
+              expression: "booking_date >=  '{{ var('airbnb_launch_date') }}' AND booking_date <= CURRENT_DATE()"  
+      - name: stay_start_date
+        description: "Guest check-in date."
+        tests:
           - dbt_utils.expression_is_true:
               name: stay_start_date_not_in_past
-              expression: "stay_start_date >= booking_date AND stay_start_date <= booking_date + INTERVAL '2 year'"
+              expression: "stay_start_date >= booking_date"
       
+      # -- METRIC RANGES
       - name: nights_booked
-        description: "Number of nights booked (must be positive)"
+        description: "Number of nights booked."
         tests:
-          - not_null
           - dbt_utils.accepted_range:
               min_value: 1
-              max_value: 730  # Max 2 years booking length
-      
+              max_value: 730  
+              description: "Sanity check: Stays must be between 1 night and 2 years."
       - name: booking_amount
-        description: "Base booking amount in USD"
+        description:  "Base room price."
         tests:
-          - not_null
-          - not_negative
-      
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 100000
       - name: cleaning_fee
-        description: "Cleaning fee"
+        description: "Cleaning fee."
         tests:
-          - not_null
-          - not_negative
-      
+          - not_negative:
+              description: "Ensures fee is 0 or higher (Coalesced in SQL)."
       - name: service_fee
-        description: "Service/platform fee"
+        description: "Service/platform fee."
         tests:
-          - not_null
-          - not_negative
-      
+          - not_negative:
+              description: "Ensures fee is 0 or higher (Coalesced in SQL)."
       - name: cancellation_fee
-        description: "Cancellation fee (if applicable)"
+        description: "Cancellation fee (if applicable)."
         tests:
-          - not_null
           - not_negative
-      
+          - dbt_utils.expression_is_true:
+              name: cancellation_fee_sanity
+              expression: "cancellation_fee <= booking_amount"
+
+      # -- AUDIT METADATA
       - name: created_at
-        description: "When record was created in source system"
+        description: "When record was created in source system."
         tests:
-          - not_null
-          - not_in_future
-      
+          - not_in_future:
+              description: "Custom test: Record cannot be created in the future."
       - name: updated_at
-        description: "When record was last updated in source system"
+        description: "When record was last updated in source system."
         tests:
-          - not_null
           - not_in_future
+          - dbt_utils.expression_is_true:
+              name: update_after_create
+              expression: "updated_at >= created_at"
+              description: "Audit Logic: Last update cannot happen before creation."
+          

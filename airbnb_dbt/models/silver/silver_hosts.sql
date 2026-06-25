@@ -6,7 +6,7 @@
     config(
         materialized='incremental',
         unique_key='host_id',
-        incremental_strategy='merge',
+        incremental_strategy='delete+insert',
         on_schema_change='sync_all_columns'
     )
 }}

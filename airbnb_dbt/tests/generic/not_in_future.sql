@@ -6,6 +6,7 @@
 SELECT *
 FROM {{ model }}
 -- Compare to the actual real-world clock (with a 1-minute buffer)
-WHERE {{ column_name }} > {{ dbt.dateadd('minute', 1, dbt.current_timestamp()) }}
+-- Cast the current time (plus the buffer) to match the Snowflake data type
+WHERE {{ column_name }} > CAST({{ dbt.dateadd('minute', 1, dbt.current_timestamp()) }} AS TIMESTAMP_NTZ)
 
 {% endtest %}

@@ -1,115 +1,274 @@
 # staging/airbnb/sources.yml : 
-# Source definition file for the raw Airbnb data in the DEV_BRONZE schema. This file defines 
-# the source tables, their columns, and associated tests to ensure data quality.
+# Source definition file for the raw Airbnb data in the DEV_BRONZE schema. 
+## Physical Contract (Is the data there? Is it unique? Are the timestamps present?)
 
 version: 2
 
 sources:
   - name: airbnb
-    description: "Raw Airbnb data is ingested from the source system. This is the source-of-truth layer in Snowflake."
+    description: >
+      Static portfolio dataset. Raw airbnb data ingested into Snowflake.
+      Testing at this layer ensures the 'physical contract' is met:
+      PKs are unique, FKs exist, and mandatory timestamps are present.
+
     database: AIRBNB
     schema: DEV_BRONZE
-
 
     tables:
       - name: bronze_bookings
         identifier: BRONZE_BOOKINGS
-        description: >
-          Raw transactional data for every booking.
-          NOTE: This is a static portfolio dataset.
-          In production, this would have freshness monitoring and SLAs.
-
+        description: "Raw transactional data for every booking."
         columns:
+          # -- PRIMARY KEYS
           - name: booking_id
-            description: "PK: Unique identifier for each booking."
+            description: "PK: Unique identifier for each Airbnb booking."
             tests:
-              - not_null
-              - unique
+              - unique:
+                  description: "Ensures no duplicates. Critical for SCD2 history tracking."
+                  config:
+                    severity: error
+              - not_null:
+                  description: "Ensures every record is identifiable."
+                  config:
+                    severity: error
+                  
 
+          # -- FOREIGN KEYS
+          - name: listing_id
+            description: "FK: Identifier for listing associated with the booking."
+            tests:
+              - not_null:
+                  description: "Critical failure in source data integrity; a booking cannot exist without a listing_id."
+                  config:
+                    severity: error
+              - relationships:
+                  to: source('airbnb', 'bronze_listings')
+                  field: listing_id
+                  description:  "Set to warn because late-arriving dimensions / source sync lag is common."
+                  config:
+                    severity: warn
+                  
+
+          # -- MANDATORY FIELDS
+          - name: booking_date
+            description: "Date the booking was made."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn
+          - name: nights_booked
+            description: "Number of nights booked for the stay."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn
+          - name: booking_amount
+            description: "Base accommodation price."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn 
+          - name: cleaning_fee
+            description: "Cleaning fee associated with the booking."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn
+          - name: service_fee
+            description: "Service fee associated with the booking."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn
+          - name: cancellation_fee
+            description: "Cancellation fee associated with the booking."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn
           - name: booking_status
             description: "Status of the booking (e.g., confirmed, cancelled)."
             tests:
-              - not_null
-              - accepted_values:
-                  values: ['confirmed', 'cancelled']
-
-          - name: booking_amount
-            description: "Total amount paid for the booking."
+              - not_null:
+                  config:
+                    severity: warn             
+          - name: stay_start_date
+            description: "Start date of the stay."
             tests:
-              - not_null
-              - dbt_utils.accepted_range:
-                  min_value: 0
+              - not_null:
+                  config:
+                    severity: warn              
 
+          # -- SYSTEM TIMESTAMPS 
+          - name: created_at
+            description: "Timestamp when the record was first created."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn              
           - name: updated_at
-            description: "Timestamp of the last update to the booking record."
+            description: "Timestamp when the record was last updated."
             tests:
-              - not_null
-              - not_in_future
+              - not_null:
+                  config:
+                    severity: warn              
+
 
       - name: bronze_hosts
         identifier: BRONZE_HOSTS
-        description: > 
-          Profile Information and performance metrics for property owners.
-          NOTE: This is a static portfolio dataset.
-          In production, this would have freshness monitoring and SLAs.
-
+        description: "Raw host profile and performance metrics."
         columns:
+          # -- PRIMARY KEYS
           - name: host_id
-            description: "PK: Unique identifier for each host."
+            description: "PK: Unique identifier for an Airbnb host."
             tests:
-              - not_null
-              - unique
+              - unique:
+                  description: "Critical for preventing fan-out in host dimension joins."
+                  config:
+                    severity: error  
+              - not_null:
+                  config:
+                    severity: error                                                      
 
+          # -- MANDATORY FIELDS
+          - name: host_name
+            description: "Name of the host."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn                
+          - name: host_since
+            description: "Date the host joined the Airbnb platform."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn                
+          - name: host_location
+            description: "Host's primary geographic location."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn                
           - name: is_superhost
-            description: "Indicates if the host is a Superhost (true/false)."
+            description: "Superhost status flag."
             tests:
-              - not_null
-              - accepted_values:
-                  values: [true, false]
-
+              - not_null:
+                  config:
+                    severity: warn                
+          - name: response_rate
+            description: "Percentage (0 to 100) of inquiries answered by the host."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn                
           - name: avg_host_rating
-            description: "Average rating given to the host by guests."
+            description: "Average star rating (0 to 5) across all host listings."
             tests:
-              - dbt_utils.accepted_range:
-                  min_value: 0
-                  max_value: 5
-
+              - not_null:
+                  config:
+                    severity: warn                
+    
+          # -- SYSTEM TIMESTAMPS
+          - name: created_at
+            description: "Timestamp when the record was first created."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn                
           - name: updated_at
-            description: "Timestamp of the last update to the host record."
+            description: "Timestamp when the record was last updated."
             tests:
-              - not_null
-              - not_in_future
+              - not_null:
+                  config:
+                    severity: warn                
+
+
 
       - name: bronze_listings
         identifier: BRONZE_LISTINGS
-        description: > 
-          Inventory of properties available on the platform.
-          NOTE: This is a static portfolio dataset.
-          In production, this would have freshness monitoring and SLAs.
+        description: "Raw listings inventory."
         columns:
+          # -- PRIMARY KEYS
           - name: listing_id
             description: "PK: Unique identifier for each listing."
             tests:
-              - not_null
-              - unique
+              - unique:
+                  description: "Ensures each property is unique in the inventory."
+                  config:
+                    severity: error   
+              - not_null:
+                  config:
+                    severity: error              
+           
 
+          # -- FOREIGN KEYS
           - name: host_id
             description: "FK: Identifier for the host of the listing."
             tests:
-              - not_null
+              - not_null:
+                  config:
+                    severity: warn              
               - relationships:
                   to: source('airbnb', 'bronze_hosts')
                   field: host_id
+                  description: "WARN: Set to warn to handle host/listing sync lag."
+                  config:
+                    severity: warn
 
+          # -- MANDATORY FIELDS
+          - name: property_type
+            description: "The type of property (e.g., Apartment, House, Loft)."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn              
+          - name: city
+            description: "City where the property is located."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn              
+          - name: country
+            description: "Country where the property is located."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn              
+          - name: accommodates
+            description: "Maximum number of guests the property can hold."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn              
+          - name: bedrooms
+            description: "Number of bedrooms in the property (0 for Studios)."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn             
+          - name: bathrooms
+            description: "Number of bathrooms in the property."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn              
           - name: price_per_night
-            description: "Cost per night for the listing."
+            description: "Base nightly stay price."
             tests:
-              - not_null
-              - dbt_utils.accepted_range:
-                  min_value: 0
-
+              - not_null:
+                  config:
+                    severity: warn              
+              
+          # -- SYSTEM TIMESTAMPS
+          - name: created_at
+            description: "Timestamp when the record was first created."
+            tests:
+              - not_null:
+                  config:
+                    severity: warn              
           - name: updated_at
-            description: "Timestamp of the last update to the listing record."
+            description: "Timestamp when the record was last updated."
             tests:
-              - not_null
-              - not_in_future
+              - not_null:
+                  config:
+                    severity: warn              

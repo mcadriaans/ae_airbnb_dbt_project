@@ -112,7 +112,7 @@ models:
               inclusive: true
       # Amounts
       - name: booking_amount
-        description: "Amount paid for the booking."
+        description: "Base accommodation price."
         tests:
           - not_null
           - not_negative

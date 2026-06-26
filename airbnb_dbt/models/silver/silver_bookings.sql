@@ -2,6 +2,8 @@
 -- silver/silver_bookings.sql : Enriched booking facts with SCD2 history
 -- Input: bookings_snapshot (SCD2 tracking booking changes)
 -- Output: Facts enriched with calculations, all versions preserved
+
+--> 'merge': implies versioning
 {{
     config(
         materialized='incremental',
@@ -35,7 +37,7 @@ WITH booking_snapshot_data AS (
     {% if is_incremental() %}
       -- Only grab snapshot rows that are NEW to silver  
       WHERE dbt_valid_from >= (
-          SELECT COALESCE(MAX(dbt_valid_from), '1900-01-01'::timestamp_ntz)
+          SELECT COALESCE(MAX(dbt_updated_at), '1900-01-01'::timestamp_ntz)
           FROM {{ this }}
       )
     {% endif %}

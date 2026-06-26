@@ -19,7 +19,6 @@ sources:
         identifier: BRONZE_BOOKINGS
         description: "Raw transactional data for every booking."
         columns:
-          # -- PRIMARY KEYS
           - name: booking_id
             description: "PK: Unique identifier for each Airbnb booking."
             tests:
@@ -31,14 +30,12 @@ sources:
                   description: "Ensures every record is identifiable."
                   config:
                     severity: error
-                  
-
-          # -- FOREIGN KEYS
+                
           - name: listing_id
             description: "FK: Identifier for listing associated with the booking."
             tests:
               - not_null:
-                  description: "Critical failure in source data integrity; a booking cannot exist without a listing_id."
+                  description: "A booking cannot exist without a valid listing_id reference."
                   config:
                     severity: error
               - relationships:
@@ -48,50 +45,55 @@ sources:
                   config:
                     severity: warn
                   
-
-          # -- MANDATORY FIELDS
           - name: booking_date
             description: "Date the booking was made."
             tests:
               - not_null:
                   config:
                     severity: warn
+
           - name: nights_booked
             description: "Number of nights booked for the stay."
             tests:
               - not_null:
                   config:
                     severity: warn
+
           - name: booking_amount
             description: "Base accommodation price."
             tests:
               - not_null:
                   config:
                     severity: warn 
+
           - name: cleaning_fee
             description: "Cleaning fee associated with the booking."
             tests:
               - not_null:
                   config:
                     severity: warn
+
           - name: service_fee
             description: "Service fee associated with the booking."
             tests:
               - not_null:
                   config:
                     severity: warn
+
           - name: cancellation_fee
             description: "Cancellation fee associated with the booking."
             tests:
               - not_null:
                   config:
                     severity: warn
+
           - name: booking_status
             description: "Status of the booking (e.g., confirmed, cancelled)."
             tests:
               - not_null:
                   config:
-                    severity: warn             
+                    severity: warn  
+
           - name: stay_start_date
             description: "Start date of the stay."
             tests:
@@ -99,13 +101,13 @@ sources:
                   config:
                     severity: warn              
 
-          # -- SYSTEM TIMESTAMPS 
           - name: created_at
             description: "Timestamp when the record was first created."
             tests:
               - not_null:
                   config:
-                    severity: warn              
+                    severity: warn   
+
           - name: updated_at
             description: "Timestamp when the record was last updated."
             tests:
@@ -118,31 +120,32 @@ sources:
         identifier: BRONZE_HOSTS
         description: "Raw host profile and performance metrics."
         columns:
-          # -- PRIMARY KEYS
           - name: host_id
             description: "PK: Unique identifier for an Airbnb host."
             tests:
               - unique:
-                  description: "Critical for preventing fan-out in host dimension joins."
+                  description: "Critical for preventing fan-out when joining hosts to listings/bookings."
                   config:
                     severity: error  
               - not_null:
+                  description: "Host records must have an identifier to be linked to properties."
                   config:
                     severity: error                                                      
 
-          # -- MANDATORY FIELDS
           - name: host_name
             description: "Name of the host."
             tests:
               - not_null:
                   config:
-                    severity: warn                
+                    severity: warn   
+
           - name: host_since
             description: "Date the host joined the Airbnb platform."
             tests:
               - not_null:
                   config:
-                    severity: warn                
+                    severity: warn  
+
           - name: host_location
             description: "Host's primary geographic location."
             tests:
@@ -154,13 +157,15 @@ sources:
             tests:
               - not_null:
                   config:
-                    severity: warn                
+                    severity: warn    
+
           - name: response_rate
             description: "Percentage (0 to 100) of inquiries answered by the host."
             tests:
               - not_null:
                   config:
-                    severity: warn                
+                    severity: warn   
+
           - name: avg_host_rating
             description: "Average star rating (0 to 5) across all host listings."
             tests:
@@ -168,13 +173,13 @@ sources:
                   config:
                     severity: warn                
     
-          # -- SYSTEM TIMESTAMPS
           - name: created_at
             description: "Timestamp when the record was first created."
             tests:
               - not_null:
                   config:
-                    severity: warn                
+                    severity: warn     
+
           - name: updated_at
             description: "Timestamp when the record was last updated."
             tests:
@@ -183,12 +188,10 @@ sources:
                     severity: warn                
 
 
-
       - name: bronze_listings
         identifier: BRONZE_LISTINGS
         description: "Raw listings inventory."
         columns:
-          # -- PRIMARY KEYS
           - name: listing_id
             description: "PK: Unique identifier for each listing."
             tests:
@@ -197,11 +200,10 @@ sources:
                   config:
                     severity: error   
               - not_null:
+                  description:  "Listing records must have an identifier for transactional joins."
                   config:
                     severity: error              
            
-
-          # -- FOREIGN KEYS
           - name: host_id
             description: "FK: Identifier for the host of the listing."
             tests:
@@ -215,37 +217,41 @@ sources:
                   config:
                     severity: warn
 
-          # -- MANDATORY FIELDS
           - name: property_type
             description: "The type of property (e.g., Apartment, House, Loft)."
             tests:
               - not_null:
                   config:
-                    severity: warn              
+                    severity: warn   
+
           - name: city
             description: "City where the property is located."
             tests:
               - not_null:
                   config:
-                    severity: warn              
+                    severity: warn    
+
           - name: country
             description: "Country where the property is located."
             tests:
               - not_null:
                   config:
-                    severity: warn              
+                    severity: warn  
+
           - name: accommodates
             description: "Maximum number of guests the property can hold."
             tests:
               - not_null:
                   config:
-                    severity: warn              
+                    severity: warn  
+
           - name: bedrooms
             description: "Number of bedrooms in the property (0 for Studios)."
             tests:
               - not_null:
                   config:
-                    severity: warn             
+                    severity: warn  
+
           - name: bathrooms
             description: "Number of bathrooms in the property."
             tests:
@@ -253,19 +259,20 @@ sources:
                   config:
                     severity: warn              
           - name: price_per_night
+
             description: "Base nightly stay price."
             tests:
               - not_null:
                   config:
                     severity: warn              
               
-          # -- SYSTEM TIMESTAMPS
           - name: created_at
             description: "Timestamp when the record was first created."
             tests:
               - not_null:
                   config:
-                    severity: warn              
+                    severity: warn    
+                              
           - name: updated_at
             description: "Timestamp when the record was last updated."
             tests:

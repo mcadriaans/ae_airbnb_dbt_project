@@ -1,9 +1,12 @@
 #-- stg_airbnb__schema.yml:
-## Business Contract : Tests if the data makes sense (Ranges, Accepted Values, Logical Comparisons
+## Business Contract : Validates Value Sanity and Logical Consistency across Staging Models.
 
 version: 2
 
 models:
+  # ---------------------------------------------------------
+  # 1. BOOKINGS STAGING
+  # ---------------------------------------------------------
   - name: stg_airbnb__bookings
     description: >
       STAGING: Standardized booking data.
@@ -12,16 +15,30 @@ models:
     config:
       materialized: view
     
+    # CROSS-COLUMN tests
+    tests:
+      - dbt_utils.expression_is_true:
+          name: booking_date_not_in_future
+          expression: "booking_date >=  '{{ var('airbnb_launch_date') }}' AND booking_date <= CURRENT_DATE()"  
+      - dbt_utils.expression_is_true:
+          name: stay_start_date_not_in_past
+          expression: "stay_start_date >= booking_date"
+      - dbt_utils.expression_is_true:
+          name: cancellation_fee_sanity
+          expression: "cancellation_fee <= booking_amount"
+      - dbt_utils.expression_is_true:
+          name: stg_bookings_update_after_create
+          expression: "updated_at >= created_at"
+    
     columns:
-      # -- KEYS
       - name: booking_id
         description: "PK: Unique booking identifier (UUID format)."
         tests:
           - not_null:
               config:
                 severity: error
+
       - name: listing_id
-        description: "FK to staging listings"
         tests:
           - relationships:
               to: ref('stg_airbnb__listings')
@@ -30,71 +47,165 @@ models:
               config:
                 severity: warn
 
-      # -- STATUS & CATEGORIES
       - name: booking_status
-        description: "Booking state (confirmed or cancelled)."
         tests:
           - accepted_values:
               values: ['confirmed', 'cancelled']
 
-      # -- DATA SANITY
-      - name: booking_date
-        description: "Date when booking was made."
-        tests:
-          - dbt_utils.expression_is_true:
-              name: booking_date_not_in_future
-              expression: "booking_date >=  '{{ var('airbnb_launch_date') }}' AND booking_date <= CURRENT_DATE()"  
-      - name: stay_start_date
-        description: "Guest check-in date."
-        tests:
-          - dbt_utils.expression_is_true:
-              name: stay_start_date_not_in_past
-              expression: "stay_start_date >= booking_date"
-      
-      # -- METRIC RANGES
       - name: nights_booked
         description: "Number of nights booked."
         tests:
           - dbt_utils.accepted_range:
               min_value: 1
               max_value: 730  
-              description: "Sanity check: Stays must be between 1 night and 2 years."
+              inclusive: true
+      
       - name: booking_amount
         description:  "Base room price."
         tests:
           - dbt_utils.accepted_range:
               min_value: 1
               max_value: 100000
+              inclusive: true
+
       - name: cleaning_fee
-        description: "Cleaning fee."
+        description: "Cancellation fee (if applicable)."
         tests:
-          - not_negative:
-              description: "Ensures fee is 0 or higher (Coalesced in SQL)."
+          - not_negative
+      
       - name: service_fee
-        description: "Service/platform fee."
+        description: "Cancellation fee (if applicable)."
         tests:
-          - not_negative:
-              description: "Ensures fee is 0 or higher (Coalesced in SQL)."
+          - not_negative
+
       - name: cancellation_fee
         description: "Cancellation fee (if applicable)."
         tests:
           - not_negative
-          - dbt_utils.expression_is_true:
-              name: cancellation_fee_sanity
-              expression: "cancellation_fee <= booking_amount"
 
-      # -- AUDIT METADATA
       - name: created_at
         description: "When record was created in source system."
         tests:
-          - not_in_future:
-              description: "Custom test: Record cannot be created in the future."
+          - not_in_future
+    
       - name: updated_at
         description: "When record was last updated in source system."
         tests:
           - not_in_future
-          - dbt_utils.expression_is_true:
-              name: update_after_create
-              expression: "updated_at >= created_at"
-              description: "Audit Logic: Last update cannot happen before creation."
-          
+
+      
+    # ---------------------------------------------------------
+    # 2. HOSTS STAGING
+    # ---------------------------------------------------------
+  - name: stg_airbnb__hosts  
+    description: "Standardized host profiles. Handles response rate normalization and superhost booleans."      
+
+    # CROSS-COLUMN tests
+    tests:
+      - dbt_utils.expression_is_true:
+          name: stg_hosts_since_after_launch 
+          expression: "host_since >= '{{ var('airbnb_launch_date') }}'"
+      - dbt_utils.expression_is_true:
+          name: stg_hosts_update_after_create
+          expression: "updated_at >= created_at"
+    columns:
+    - name: host_id
+      description: "PK: Unique booking identifier (UUID format)."
+      tests:
+        - not_null:
+            config:
+              severity: error
+
+    - name: is_superhost
+      description: "Standardized boolean flag. NULLs from source are defaulted to false."
+      tests:
+        - accepted_values:
+              values: [true, false] 
+
+    - name: response_rate
+      tests:
+        - dbt_utils.accepted_range:
+            min_value: 0
+            max_value: 1
+            inclusive: true
+
+    - name: avg_host_rating
+      tests:
+        - dbt_utils.accepted_range:
+            min_value: 0
+            max_value: 5
+            inclusive: true
+
+    - name: created_at
+      description: "When record was created in source system."
+      tests:
+        - not_in_future
+   
+    - name: updated_at
+      description: "When record was last updated in source system."
+      tests:
+        - not_in_future
+
+       
+  # ---------------------------------------------------------
+  # 3. LISTINGS STAGING
+  # ---------------------------------------------------------
+  - name: stg_airbnb__listings
+    description: "Standardized property inventory. "
+
+    # CROSS-COLUMN tests
+    tests:
+      - dbt_utils.expression_is_true:
+          name: stg_listings_update_after_create
+          expression: "updated_at >= created_at"
+    columns: 
+      - name: listing_id
+        description: "PK: Unique booking identifier (UUID format)."
+        tests:
+          - not_null:
+              config:
+                severity: error
+
+      - name: host_id
+        tests:
+          - relationships:
+              to: ref('stg_airbnb__hosts')
+              field: host_id
+              config:
+                severity: warn
+
+      - name: accommodates
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 30
+              inclusive: true
+
+      - name: bedrooms
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 20
+              inclusive: true
+
+      - name: bathrooms
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0.5
+              max_value: 10
+              inclusive: true
+
+      - name: price_per_night
+        tests: 
+           - dbt_utils.accepted_range:
+                min_value: 1
+                max_value: 50000
+
+      - name: created_at
+        tests:
+          - not_in_future
+      
+      - name: updated_at
+        tests:
+          - not_in_future
+     

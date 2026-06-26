@@ -10,25 +10,12 @@ snapshots:
         KEY TRANSITION:
         - Bronze (source): booking_id is PK (one row per booking)
         - Snapshot (this): dbt_scd_id is PK (one row per booking VERSION)
-      
-        When dbt snapshot runs with unique_key='booking_id':
-        1. Detects changes to booking_status (or any tracked column)
-        2. Auto-generates dbt_scd_id (surrogate PK for each version)
-        3. booking_id becomes a natural key (no longer unique here)
-        4. One booking_id can have multiple dbt_scd_ids (different versions)
+
       
         GRAIN: One row = one version of one booking
 
-        EXAMPLE : Capture changes to booking_status (confirmed → cancelled) and when they happen.
-        BUSINESS CASE:
-        -   Bookings are typically created in 'confirmed' state
-        -   Later, some are cancelled
-        - We need to preserve the history: WHEN did the cancellation happen?
-          (This enables cohort analysis: "Of bookings made on Jan 1, 
-           what % were still confirmed on Jan 8?")
-
         TECHNICAL APPROACH:
-        - snapshot uses strategy='timestamp' with updated_at field
+        - snapshot uses strategy='timestamp' with 'updated_at' field
         - When a booking_status changes, snapshot automatically:
         1. Closes the old record: dbt_valid_to = when change was detected
         2. Opens a new record: dbt_valid_from = when change was detected

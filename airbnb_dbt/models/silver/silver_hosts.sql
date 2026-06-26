@@ -2,11 +2,12 @@
 -- SCD1: One row per host (just latest state)
 -- When host data changes: OVERWRITE old row, don't track history
 
+--> 'delete+insert' :   One row per host. Old state completely replaced.
 {{
     config(
         materialized='incremental',
         unique_key='host_id',
-        incremental_strategy='delete+insert',
+        incremental_strategy='delete+insert', 
         on_schema_change='sync_all_columns'
     )
 }}

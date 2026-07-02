@@ -1,4 +1,5 @@
--- 1. JINJA SECTION (Always at the top)
+
+-- gold/core/dim_date.sql:
 {% set date_query %}
 SELECT 
     -- Use your airbnb_launch_date variable for the start!

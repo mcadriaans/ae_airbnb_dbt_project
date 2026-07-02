@@ -1,15 +1,15 @@
 # staging/airbnb/sources.yml : 
 # Source definition file for the raw Airbnb data in the DEV_BRONZE schema. 
-## Physical Contract (Is the data there? Is it unique? Are the timestamps present?)
+## Describes the physical tables in the source system, their columns, and associated tests for uniqueness, non-null constraints, and referential integrity.
 
 version: 2
 
 sources:
   - name: airbnb
     description: >
-      Static portfolio dataset. Raw airbnb data ingested into Snowflake.
-      Testing at this layer ensures the 'physical contract' is met:
-      PKs are unique, FKs exist, and mandatory timestamps are present.
+     Static portfolio dataset.
+     Note: Freshness blocks are omitted as this is a fixed historical load.
+     Validation focuses on 'Physical Contract' (schema and uniqueness).
 
     database: AIRBNB
     schema: DEV_BRONZE

@@ -10,7 +10,7 @@
             target_schema='snapshots',
             unique_key='booking_id',
             strategy='timestamp',
-            updated_at='updated_at'
+            updated_at='source_updated_at'
         )
     }}
 
@@ -25,8 +25,8 @@
         cleaning_fee,
         service_fee,
         cancellation_fee,
-        created_at,
-        updated_at
+        source_created_at,
+        source_updated_at
     FROM {{ ref('stg_airbnb__bookings') }}
     
 {% endsnapshot %}

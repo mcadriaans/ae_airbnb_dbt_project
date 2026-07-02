@@ -1,3 +1,4 @@
+-- gold/core/dim_listings.sql:
 -- Property attributes and capacity logic  
 
 WITH listings AS (

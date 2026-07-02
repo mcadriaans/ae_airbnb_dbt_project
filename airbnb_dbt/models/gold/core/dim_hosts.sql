@@ -1,3 +1,4 @@
+-- gold/core/dim_hosts.sql:
 -- Host profile and pre-aggregated performance metrics
 
 WITH hosts AS (

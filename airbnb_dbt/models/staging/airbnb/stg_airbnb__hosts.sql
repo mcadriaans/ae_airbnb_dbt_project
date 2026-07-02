@@ -19,15 +19,22 @@ WITH source AS (
 ),
 standardized AS (
     SELECT
+       -- Natural Keys
         CAST(host_id AS INT) AS host_id,
-        INITCAP(TRIM(host_name)) AS host_name,
+
+        -- Host Dimensions
+        CAST(INITCAP(TRIM(host_name)) AS VARCHAR) AS host_name,
         CAST(host_since AS DATE) AS host_since,
-        INITCAP(TRIM(host_location)) AS host_location,
+        CAST(INITCAP(TRIM(host_location)) AS VARCHAR) AS host_location,
         COALESCE(is_superhost, false) AS is_superhost,
-        {{ safe_divide('CAST(response_rate AS DECIMAL(10,2))', '100.0', decimals=2) }} AS response_rate,
-        CAST(avg_host_rating AS DECIMAL(10,2)) AS avg_host_rating,
-        CAST(created_at AS timestamp_ntz) AS created_at,
-        CAST(updated_at AS timestamp_ntz) AS updated_at
+        
+        -- Host Metrics
+        {{ safe_divide("response_rate" , "100.0", decimals=2) }} AS response_rate,
+        CAST(avg_host_rating AS DECIMAL(3,2)) AS avg_host_rating,
+
+        -- Metadata tracking
+        CAST(created_at AS timestamp_ntz) AS source_created_at,
+        CAST(updated_at AS timestamp_ntz) AS source_updated_at
     FROM source
     WHERE
         {% for col in mandatory_columns -%}

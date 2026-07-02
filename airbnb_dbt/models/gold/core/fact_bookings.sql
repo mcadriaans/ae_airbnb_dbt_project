@@ -1,3 +1,5 @@
+--gold/core/fact_bookings.sql:
+
 WITH bookings AS (
     SELECT *
     FROM {{ ref('silver_bookings') }}

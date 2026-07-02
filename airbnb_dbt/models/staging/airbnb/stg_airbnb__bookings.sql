@@ -31,10 +31,10 @@ WITH source AS (
 
 standardized AS (
     SELECT
-       -- Keys & Status
-        LOWER(TRIM(booking_id)) AS booking_id,
+       -- Natural Keys & Status
+        CAST(TRIM(booking_id) AS UUID) AS booking_id,
         CAST(listing_id AS INT) AS listing_id,
-        LOWER(TRIM(booking_status)) AS booking_status,
+        CAST(LOWER(TRIM(booking_status)) AS VARCHAR) booking_status,
 
         -- Dates
         CAST(booking_date AS DATE) AS booking_date,
@@ -50,8 +50,9 @@ standardized AS (
         CAST(COALESCE(cancellation_fee, 0) AS DECIMAL(18,2)) AS cancellation_fee,
 
         -- Metadata tracking
-        CAST(created_at AS timestamp_ntz) AS created_at,
-        CAST(updated_at AS timestamp_ntz) AS updated_at
+        CAST(created_at AS timestamp_ntz) AS source_created_at,
+        CAST(updated_at AS timestamp_ntz) AS source_updated_at
+
     FROM source
     -- Data Integrity: Filter out records missing mandatory business logic keys or metrics.
     WHERE 

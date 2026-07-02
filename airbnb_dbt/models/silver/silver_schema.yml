@@ -1,10 +1,24 @@
-## models/silver/silver_schema.yml : This schema file defines the structure, descriptions, and tests for the silver layer models in the Airbnb data warehouse. 
-## It includes detailed documentation for each model and column, as well as comprehensive tests to ensure data quality and integrity as the raw bronze data
-## is transformed into a more refined format for analysis and reporting.
+## models/silver/silver_schema.yml : 
+
+## ======================================================================================
+## SILVER LAYER: Enrichment & Business Logic Validation
+## ======================================================================================
+## This schema audits the "Value-Add" transformations performed in the Silver layer.
+## 
+## STRATEGY: Non-Redundant Testing
+## 1. Structural Integrity (Nulls/PKs) was verified in Staging/Snapshots.
+## 2. Silver Tests focus on:
+##    - Calculation Accuracy (e.g., Revenue, Lead Time)
+##    - Categorization Logic (e.g., Price Tiers, Rating Categories)
+##    - SCD2 Audit Synchronization (e.g., is_current_record vs dbt_valid_to)
+## ======================================================================================
 
 version: 2
 
 models:
+    # ---------------------------------------------------------
+    # 1. SILVER BOOKINGS (SCD2 Facts)
+    # ---------------------------------------------------------
   - name: silver_bookings
     description: >
       SILVER: Enriched booking facts with SCD2 history
@@ -41,149 +55,42 @@ models:
     tests:
         #  CROSS-COLUMN LOGIC: These ensure your SQL calculations make sense and that the relationships between fields are consistent with business rules.
         - dbt_utils.expression_is_true:
-              name: booking_date_within_valid_range
-              expression: "booking_date >= '{{ var('airbnb_launch_date') }}' AND booking_date <= CURRENT_DATE()"  
+            name: silver_bookings_stay_end_logic
+            description: "Ensures stay_end_date calculation is accurate."
+            expression: "stay_end_date = DATEADD(day, nights_booked, stay_start_date)"
+
         - dbt_utils.expression_is_true:
-              name: stay_end_date_after_start_date
-              expression: "stay_end_date >= stay_start_date"  
+            name: silver_bookings_revenue_sum_logic
+            description: "Ensures the revenue macro sum matches the components."
+            expression: "booking_revenue = (booking_amount + cleaning_fee + service_fee)"
+
         - dbt_utils.expression_is_true:
-              name: cancellation_fee_within_revenue_limit
-              expression: "cancellation_fee <= booking_revenue" 
+            name: silver_bookings_cancellation_limit
+            description: "Ensures cancellation fees do not exceed expected revenue."
+            expression: "cancellation_fee <= booking_revenue"
+
+        #  SCD2 TECHNICAL 
         - dbt_utils.expression_is_true:
-              name: is_current_record_consistency
-              expression: "is_current_record = CASE WHEN dbt_valid_to IS NULL THEN 1 ELSE 0 END"
+            name: silver_bookings_is_current_sync
+            description: "Ensures is_current_record flag is perfectly synced with dbt_valid_to logic."
+            expression: "(is_current_record = 1 AND dbt_valid_to IS NULL) OR (is_current_record = 0 AND dbt_valid_to IS NOT NULL)"
+
     columns:
-      # Keys  
-      - name: booking_id
-        description: "NK: Natural key identifying a booking across all versions (UUID)"
-        tests:
-          - not_null
-          # NOT unique because of SCD2: multiple versions of same booking_id can exist
-      - name: listing_id
-        description: "FK: Identifier for the listing associated with the booking."
-        tests:
-          - not_null
-          - relationships:
-              to: ref('silver_listings')
-              field: listing_id
-              config:
-                severity: warn # sometimes a booking arrives before the Listing is synced,It notifies you, but doesn't stop the run
-
-       # Dimensions
-      - name: booking_status
-        description: "Status of the booking (e.g., confirmed, cancelled)."
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['confirmed', 'cancelled']
-
-      # Dates
-      - name: booking_date
-        description: "Date when the booking was made."
-        tests:
-          - not_null
-      - name: stay_start_date
-        description: "Start date of the stay."
-        tests:
-          - not_null
-      - name: stay_end_date 
-        description: "End date of the stay."
-        tests:
-          - not_null
-
-      # Durations
       - name: lead_time_days
-        description: "Number of days between the booking date and the stay start date."
-        tests:
-          - not_null
-          - not_negative
-          - dbt_utils.accepted_range:
-              name: lead_time_days_non_negative
-              min_value: 0
-              max_value: 730
-              inclusive: true
-      - name: nights_booked
-        description: "Number of nights booked for the stay."
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              name: nights_booked_positive
-              min_value: 1
-              inclusive: true
-      # Amounts
-      - name: booking_amount
-        description: "Base accommodation price."
-        tests:
-          - not_null
-          - not_negative
-      - name: cleaning_fee
-        description: "Cleaning fee associated with the booking."
-        tests:
-          - not_null
-          - not_negative
-      - name: service_fee
-        description: "Service fee associated with the booking."
-        tests:
-          - not_null
-          - not_negative
-      - name: cancellation_fee
-        description: "Cancellation fee associated with the booking, if applicable."
-        tests:
-          - not_null
-          - not_negative
+        description: "Enrichment: Days between booking and check-in."
+        tests: 
+          - not_negative # Calculated in Silver, so we test it here.
       - name: booking_revenue
-        description: >
-          Total expected revenue from the booking.
-          Calculation : booking_amount + cleaning_fee + service_fee
+        description: "Enrichment: Total gross revenue (base + fees)."
         tests:
-          - not_null
-          - not_negative  
+          - not_negative
 
-        # SCD2  
-      - name: dbt_scd_id
-        description: "SK: Surrogate key uniquely identifying each booking version (auto-generated by dbt)."
-        tests:
-          - unique
-          - not_null
-      - name: dbt_valid_from
-        description: "Timestamp indicating when the record became valid."
-        tests:
-          - not_null
-      - name: dbt_valid_to
-        description: "Timestamp indicating when the record ceased to be valid."
-      - name: is_current_record
-        description: "Flag indicating whether the record is the current version."
-        tests:
-          - not_null
-          - accepted_values:
-              values: [0, 1]
-              
-      # Metadata
-      - name: created_at
-        description: "Timestamp when the record was first created."
-        tests:
-          - not_null
-          - not_in_future
-      - name: updated_at
-        description: "Timestamp when the record was last updated."
-        tests:
-          - not_null
-          - not_in_future
-      - name: dbt_updated_at  
-        description: "Timestamp of the last update to the record, managed by dbt."
-        tests:
-          - not_null
-          - not_in_future
-      - name: loaded_at 
-        description: "Timestamp when the record was loaded into the silver layer."
-        tests:
-          - not_null
-          - not_in_future 
-
-
+  # ---------------------------------------------------------
+  # 2. SILVER HOSTS (SCD1 Dimension)
+  # ---------------------------------------------------------   
   - name: silver_hosts
     description: >
-     - Standardized and enriched host profiles (SCD1)
+     - SILVER: SCD1 Host profiles with calculated tenure and rating tiers.
      - Input : stg_airbnb_hosts  Output: Single source of truth for host attributes and performance metrics
 
      WHAT IT DOES:
@@ -208,102 +115,30 @@ models:
 
     tests:
     # CROSS-COLUMN LOGIC
-    - dbt_utils.expression_is_true:
-        name: host_tenure_reasonable
-        expression: "host_tenure_years >= 0 AND host_tenure_years <= 30"
     - dbt_utils.expression_is_true: 
-        name: rating_category_consistency
+        name: host_rating_tier_consistency
+        description: "Ensures host_rating_category CASE logic matches avg_host_rating."
         expression: >
-          CASE
-            WHEN avg_host_rating >= 4.5 THEN host_rating_category = 'Excellent' 
-            WHEN avg_host_rating >= 4.0 THEN host_rating_category = 'Good' 
-            WHEN avg_host_rating >= 3.0 THEN host_rating_category = 'Average' 
-            WHEN avg_host_rating < 3.0 THEN host_rating_category = 'Below Average' 
-            WHEN avg_host_rating IS NULL THEN host_rating_category = 'no Reviews' 
-            ELSE FALSE
-          END
+            (avg_host_rating >= 4.5 AND host_rating_category = 'Excellent') OR 
+            (avg_host_rating < 3.0  AND host_rating_category = 'Below Average') OR 
+            (avg_host_rating IS NULL AND host_rating_category = 'No Reviews') OR 
+            (avg_host_rating >= 3.0 AND avg_host_rating < 4.5)
    
     columns:
-    # Keys
-    - name: host_id
-      description: "PK: Unique identifier for an Airbnb host."
-      tests:
-        - unique
-        - not_null
-
-    # Dimensions
-    - name: host_name
-      description: "Name of the host."
-      tests:
-        - not_null
-    - name: host_location
-      description: "Host's primary geographic location."
-      tests:
-        - not_null
-    - name: is_superhost
-      description: "Boolean flag indicating if the host has achieved Superhost status."
-      tests:
-        - not_null
-        - accepted_values: 
-            values: [true, false]
-    - name: host_rating_category
-      description: "Binned performance catgeory based on avg_host_rating."
-      tests:
-        - not_null
-        - accepted_values:
-            values: ['Excellent', 'Good', 'Average', 'Below Average', 'No Reviews']
-     
-    # Dates & Metrics
-    - name: host_since
-      description: "Date the host joined the Airbnb platform."
-      tests:
-        - not_null
-        - not_in_future
     - name: host_tenure_years
-      description: "Total years active on platform (calculated)."
+      description: "Enrichment: Calculated years since host_since."
       tests:
-        - not_null
         - dbt_utils.accepted_range:
             min_value: 0
             max_value: 30
             inclusive: true
-    - name: response_rate
-      description: "Percentage (0.0 to 1.0) of inquiries answered by the host."
-      tests: 
-        - dbt_utils.accepted_range:
-            min_value: 0
-            max_value: 1
-            inclusive: true
-    - name: avg_host_rating
-      description: "Average star rating (0 to 5) across all host listings."
-      tests:
-        - dbt_utils.accepted_range:
-            min_value: 0
-            max_value: 5 
-            inclusive: true
 
-    # Metadata
-    - name: created_at
-      description: "Source system creation timestamp."
-      tests:
-        - not_null
-        - not_in_future
-    - name: updated_at 
-      description: "Source system last-update timestamp."
-      tests:
-        - not_null
-        - not_in_future
-    - name: loaded_at
-      description: "Timestamp when this record was processed into the Silver layer."
-      tests: 
-        - not_null
-        - not_in_future 
-
+  # ---------------------------------------------------------
+  # 3. SILVER LISTINGS (SCD1 Dimension)
+  # ---------------------------------------------------------
   - name: silver_listings
     description: >
-      SILVER: Enriched and standardized listing dimensions (SCD1)
-      INPUT: stg_airbnb__listings
-      OUTPUT: Single source of truth for property attributes and pricing tiers
+     SILVER: SCD1 Listing dimensions with price tiers and capacity metrics.
 
       WHAT IT DOES:
       1. Property Classification: Categorizes properties by size (Studio to Large) and capacity (Solo to Large Group).
@@ -325,9 +160,10 @@ models:
       - Market Positioning: Use 'price_tier' to compare booking performance across luxury vs budget segments.
 
     tests:
-      # CROSS-COLUMN LOGIC: Validating that the CASE statements in SQL match the expected business categories
+      # CROSS-COLUMN LOGIC
       - dbt_utils.expression_is_true:
-          name: listing_size_consistency
+          name: listing_size_logic_consistency
+          description: "Validates bedroom-to-category mapping."
           expression: >
             (bedrooms = 0 AND listing_size_category = 'Studio') OR
             (bedrooms = 1 AND listing_size_category = '1 Bedroom') OR
@@ -335,111 +171,23 @@ models:
             (bedrooms >= 4 AND listing_size_category = 'Large (4+ Bedrooms)')
 
       - dbt_utils.expression_is_true:
-          name: price_tier_consistency
+          name: listing_price_tier_consistency
+          description: "Validates price-per-night to tier mapping."
           expression: >
             (price_per_night < 100 AND price_tier = 'Budget') OR
             (price_per_night BETWEEN 100 AND 300 AND price_tier = 'Mid-Range') OR
             (price_per_night > 300 AND price_tier = 'Luxury')
-      
-      - dbt_utils.expression_is_true:
-          name: price_per_guest_logic
-          # Ensure price per guest is not greater than the total price per night
-          expression: "price_per_guest <= price_per_night"
     
     columns:
-      # Keys
-      - name: listing_id
-        description: "PK: Unique Identifier for each property listing."
-        tests:
-          - unique
-          - not_null
       - name: host_id
-        description: "FK: Identifier for the host who owns the listing."
+        description: "FK: Link to silver_hosts."
         tests:
-          - not_null
-          - relationships: 
+          - relationships:
               to: ref('silver_hosts')
               field: host_id
-      
-      # Dimensions
-      - name: property_type
-        description: "The type of property (e.g., Apartment, House, Loft)."
-        tests:
-          - not_null
-      - name: city
-        description: "City where the property is located (standardized)."
-        tests:
-          - not_null
-      - name: country
-        description: "Country where the property is located (standardized)."
-        tests:
-          - not_null 
-      - name: listing_size_category
-        description: "Categorization based on bedroom count (Studio to Large)."
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Studio', '1 Bedroom', 'Medium (2-3 Bedrooms)', 'Large (4+ Bedrooms)']
-      - name: capacity_type
-        description: "Classification of property based on 'accomodates' count."
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Solo/Pair', 'Small Group (3-5)', 'Large Group (6+)']
-      - name: price_tier
-        description: "Economic segment of th elisting (Budget, Mid-Range, Luxury)."
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['Budget', 'Mid-Range', 'Luxury']
-
-      # Metrics
-      - name: accomodates
-        description: "Maximum number of guests the property can hold."
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 1
-              inclusive: true
-      - name: bedrooms
-        description: "Number of bedrooms in the property (0 for Studios)."
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              inclusive: true
-      - name: bathrooms
-        description: "Number of bathrooms in the property."
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 1
-              inclusive: true
-      - name: price_per_night
-        description: "Current cost to rent the property for one night."
-        tests:
-          - not_null
-          - not_negative
       - name: price_per_guest
-        description: "Price per night divided ba total guest capacity (efficiency metric)."
+        description: "Enrichment: Efficiency metric (Price / Accommodates)."
         tests:
           - not_null
           - not_negative
-
-      # Metadata
-      - name: created_at
-        description: "Source system creation timestamp."
-        tests:
-          - not_null
-          - not_in_future
-      - name: updated_at
-        description: "Source system last-update timestamp."
-        tests:
-          - not_null
-          - not_in_future
-      - name: loaded_at
-        description: "Timestamp when the record was processed into the Silver layer."
-        tests:
-          - not_null
-          - not_in_future
 

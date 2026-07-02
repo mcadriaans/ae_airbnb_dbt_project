@@ -1,8 +1,8 @@
---stg_airbnb__listings.sql : This staging model extracts raw listing data from the bronze layer, performs initial data cleaning and standardization,
--- and prepares it for further transformation in the silver layer. It includes data type conversions, trimming of string fields, and basic formatting
--- to ensure consistency and readiness for downstream processing.
+--stg_airbnb__listings.sql 
+-- -- Standardizes property inventory data and prepares Star Schema join anchors.
 
 {% set mandatory_columns = ['listing_id', 'host_id', 'price_per_night'] %}
+
 WITH source AS (
     SELECT 
         listing_id,
@@ -17,21 +17,29 @@ WITH source AS (
         created_at,
         updated_at 
     FROM {{ source('airbnb', 'bronze_listings') }}
-
 ),
+
 standardized AS (
-    SELECT 
+    SELECT
+        -- Natural Keys
         CAST(listing_id AS INT) AS listing_id,
         CAST(host_id AS INT) AS host_id,
-        INITCAP(TRIM(property_type)) AS property_type,
-        INITCAP(TRIM(city)) AS city,
-        INITCAP(TRIM(country)) AS country,
+
+        -- Dimensions
+        CAST(INITCAP(TRIM(property_type)) AS VARCHAR) AS property_type,
+        CAST(INITCAP(TRIM(city)) AS VARCHAR) AS city,
+        CAST(INITCAP(TRIM(country)) AS VARCHAR) AS country,
+
+        -- Metrics
         CAST(accommodates AS INT) AS accommodates,
         CAST(bedrooms AS INT) AS bedrooms,
-        CAST(bathrooms AS DECIMAL(4,2)) AS bathrooms,
-        CAST(price_per_night AS DECIMAL(10,2)) AS price_per_night,
-        CAST(created_at AS timestamp_ntz) AS created_at,
-        CAST(updated_at AS timestamp_ntz) AS updated_at
+        CAST(bathrooms AS DECIMAL(18,2)) AS bathrooms,
+        CAST(price_per_night AS DECIMAL(18,2)) AS price_per_night,
+
+        -- Metadata tracking
+        CAST(created_at AS timestamp_ntz) AS source_created_at,
+        CAST(updated_at AS timestamp_ntz) AS source_updated_at
+
     FROM source
     WHERE 
         {% for col in mandatory_columns -%}

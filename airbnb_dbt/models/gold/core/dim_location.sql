@@ -1,3 +1,4 @@
+-- gold/core/dim_location.sql:
 WITH unique_locations AS (
     SELECT DISTINCT
         city,

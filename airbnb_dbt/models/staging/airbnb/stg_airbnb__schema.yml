@@ -28,7 +28,7 @@ models:
           expression: "cancellation_fee <= booking_amount"
       - dbt_utils.expression_is_true:
           name: stg_bookings_update_after_create
-          expression: "updated_at >= created_at"
+          expression: "source_updated_at >= source_created_at"
     
     columns:
       - name: booking_id
@@ -37,6 +37,8 @@ models:
           - not_null:
               config:
                 severity: error
+      - name: booking_date
+        description: "Date when booking was made."
 
       - name: listing_id
         tests:
@@ -46,6 +48,8 @@ models:
               description: "Ensures referential integrity between staging models."
               config:
                 severity: warn
+      - name: stay_start_date
+        description: "Guest check-in date."
 
       - name: booking_status
         tests:
@@ -69,12 +73,12 @@ models:
               inclusive: true
 
       - name: cleaning_fee
-        description: "Cancellation fee (if applicable)."
+        description: "Cleaning fee (if applicable)."
         tests:
           - not_negative
       
       - name: service_fee
-        description: "Cancellation fee (if applicable)."
+        description: "Service fee (if applicable)."
         tests:
           - not_negative
 
@@ -83,12 +87,12 @@ models:
         tests:
           - not_negative
 
-      - name: created_at
+      - name: source_created_at
         description: "When record was created in source system."
         tests:
           - not_in_future
     
-      - name: updated_at
+      - name: source_updated_at
         description: "When record was last updated in source system."
         tests:
           - not_in_future
@@ -107,7 +111,7 @@ models:
           expression: "host_since >= '{{ var('airbnb_launch_date') }}'"
       - dbt_utils.expression_is_true:
           name: stg_hosts_update_after_create
-          expression: "updated_at >= created_at"
+          expression: "source_updated_at >= source_created_at"
     columns:
     - name: host_id
       description: "PK: Unique booking identifier (UUID format)."
@@ -115,6 +119,8 @@ models:
         - not_null:
             config:
               severity: error
+    - name: host_since
+      description: "Date the host joined the Airbnb platform."
 
     - name: is_superhost
       description: "Standardized boolean flag. NULLs from source are defaulted to false."
@@ -136,12 +142,12 @@ models:
             max_value: 5
             inclusive: true
 
-    - name: created_at
+    - name: source_created_at
       description: "When record was created in source system."
       tests:
         - not_in_future
    
-    - name: updated_at
+    - name: source_updated_at
       description: "When record was last updated in source system."
       tests:
         - not_in_future
@@ -157,7 +163,7 @@ models:
     tests:
       - dbt_utils.expression_is_true:
           name: stg_listings_update_after_create
-          expression: "updated_at >= created_at"
+          expression: "source_updated_at >= source_created_at"
     columns: 
       - name: listing_id
         description: "PK: Unique booking identifier (UUID format)."
@@ -201,11 +207,11 @@ models:
                 min_value: 1
                 max_value: 50000
 
-      - name: created_at
+      - name: source_created_at
         tests:
           - not_in_future
       
-      - name: updated_at
+      - name: source_updated_at
         tests:
           - not_in_future
      

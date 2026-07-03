@@ -50,8 +50,8 @@ standardized AS (
         CAST(COALESCE(cancellation_fee, 0) AS DECIMAL(18,2)) AS cancellation_fee,
 
         -- Metadata tracking
-        CAST(created_at AS timestamp_ntz) AS source_created_at,
-        CAST(updated_at AS timestamp_ntz) AS source_updated_at
+        CAST(created_at AS timestamp_ltz) AS source_created_at,
+        CAST(updated_at AS timestamp_ltz) AS source_updated_at
 
     FROM source
     -- Data Integrity: Filter out records missing mandatory business logic keys or metrics.

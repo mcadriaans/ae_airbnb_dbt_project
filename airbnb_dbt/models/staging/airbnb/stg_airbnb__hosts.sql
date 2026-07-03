@@ -29,12 +29,12 @@ standardized AS (
         COALESCE(is_superhost, false) AS is_superhost,
         
         -- Host Metrics
-        {{ safe_divide("response_rate" , "100.0", decimals=2) }} AS response_rate,
-        CAST(avg_host_rating AS DECIMAL(3,2)) AS avg_host_rating,
+        CAST({{ safe_divide("response_rate" , "100.0", decimals=2) }} AS DECIMAL(18,2)) AS response_rate,
+        CAST(avg_host_rating AS DECIMAL(18,2)) AS avg_host_rating,
 
         -- Metadata tracking
-        CAST(created_at AS timestamp_ntz) AS source_created_at,
-        CAST(updated_at AS timestamp_ntz) AS source_updated_at
+        CAST(created_at AS timestamp_ltz) AS source_created_at,
+        CAST(updated_at AS timestamp_ltz) AS source_updated_at
     FROM source
     WHERE
         {% for col in mandatory_columns -%}

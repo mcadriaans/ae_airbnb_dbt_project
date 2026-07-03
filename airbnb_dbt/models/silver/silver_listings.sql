@@ -15,7 +15,12 @@
     )
 }}
 
-WITH silver_listings_enriched AS (
+WITH last_run AS (
+    SELECT 
+        COALESCE(MAX(loaded_at), '1900-01-01'::timestamp_ltz) AS last_loaded_at
+    FROM {{ this }}
+),
+silver_listings_enriched AS (
     SELECT 
         -- Keys
         listing_id,
@@ -55,19 +60,17 @@ WITH silver_listings_enriched AS (
 
 
         -- Metadata for tracking
-        created_at,
-        updated_at,
-        CAST(current_timestamp() AS timestamp_ntz) AS loaded_at
+        source_created_at,
+        source_updated_at,
+        CAST(current_timestamp() AS timestamp_ltz) AS loaded_at
     FROM {{ ref('stg_airbnb__listings') }}
-
     {% if is_incremental() %}
-      -- Only grab records updated since the last run  
-      -- 7-day lookback handles late arrivals in source data
-      WHERE updated_at >= (
-          SELECT DATEADD(day, -7, COALESCE(MAX(updated_at), '1900-01-01'::timestamp_ntz))
-          FROM {{ this }}
+        WHERE source_updated_at >= (
+          SELECT DATEADD(day, -7, last_loaded_at)  -- Buffer of 7 days to catch late-arriving updates
+          FROM last_run
       )
     {% endif %}
 )
+
 
 SELECT * FROM silver_listings_enriched

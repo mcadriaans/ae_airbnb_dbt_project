@@ -31,9 +31,11 @@ WITH booking_snapshot_data AS (
         service_fee,
         cancellation_fee,
 
-        --Bi-temporal Tracking
+        -- Source Metadata 
         source_created_at,
         source_updated_at,
+
+        -- Snapshot Metadata (SCD2)
         dbt_scd_id,
         dbt_updated_at,
         dbt_valid_from,
@@ -43,7 +45,7 @@ WITH booking_snapshot_data AS (
     {% if is_incremental() %}
       -- Only grab snapshot rows that are NEW to silver  
       WHERE dbt_updated_at >= (
-          SELECT COALESCE(MAX(dbt_updated_at), '1900-01-01'::timestamp_ntz)
+          SELECT COALESCE(MAX(dbt_updated_at), '1900-01-01'::timestamp_ltz)
           FROM {{ this }}
       )
     {% endif %}
@@ -51,12 +53,8 @@ WITH booking_snapshot_data AS (
 
 silver_bookings_enriched AS (
     SELECT
-        -- Surrogate Keys (Internal Warehouse Joins)
+        -- Identifiers
         dbt_scd_id,   -- Primary Key: Identifies this specific version of the booking record
-        booking_key,  -- Entity Key: Identifies the booking itself (across versions)
-        listing_key,  -- Foreign Key: Identifies the property listing associated with this booking
-
-        -- Natural Keys (Business Traceability & Debugging)
         booking_id,  -- Original ID from source system (UUID)
         listing_id,  -- Original ID from source system (INT)
 
@@ -66,8 +64,8 @@ silver_bookings_enriched AS (
         -- Temporal Dimensions
         booking_date,
         stay_start_date,
-        DATEADD(day, nights_booked, stay_start_date) AS stay_end_date,  
-        DATEDIFF(day, booking_date, stay_start_date) AS lead_time_days,  
+        DATEADD(day, nights_booked, stay_start_date) AS stay_end_date,  -- Checkout date   
+        DATEDIFF(day, booking_date, stay_start_date) AS lead_time_days,  -- Measure booking urgency (Lead Time)
         nights_booked,
 
         -- Financial Metrics
@@ -93,7 +91,7 @@ silver_bookings_enriched AS (
         source_created_at,
         source_updated_at,
         dbt_updated_at,
-        CAST(current_timestamp() AS timestamp_ntz) AS silver_loaded_at   -- tracking when this record hits the silver layer
+        CAST(current_timestamp() AS timestamp_ltz) AS silver_loaded_at   -- tracking when this record hits the silver layer
     FROM booking_snapshot_data 
 )
 SELECT * FROM silver_bookings_enriched

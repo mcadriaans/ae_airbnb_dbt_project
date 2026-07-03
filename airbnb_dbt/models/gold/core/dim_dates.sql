@@ -50,7 +50,7 @@ SELECT
         ELSE false
     END AS is_weekend,
     -- Metadata
-    CURRENT_TIMESTAMP() AS loaded_at
+    CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_LTZ) AS loaded_at
 FROM date_dimension 
 
 

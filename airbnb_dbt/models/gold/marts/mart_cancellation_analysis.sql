@@ -1,7 +1,7 @@
-
+-- models/gold/marts/mart_cancellation_analysis.sql
 {{
     config(
-
+        materialized='table',
         on_schema_change='sync_all_columns'
     )
 }}
@@ -25,12 +25,10 @@ SELECT
     ROUND(SUM(cancellation_flag) * 1.0 / NULLIF(COUNT(*), 0), 2) AS cancellation_rate,
     -- Lead Time Analysis
     ROUND(
-        AVG(CASE WHEN booking_status = 'cancelled' THEN lead_time_days END), 
-    1) AS avg_lead_time_cancelled,
+        AVG(CASE WHEN booking_status = 'cancelled' THEN lead_time_days END), 1) AS avg_lead_time_cancelled,
 
     ROUND(
-        AVG(CASE WHEN booking_status = 'confirmed' THEN lead_time_days END), 
-    1) AS avg_lead_time_confirmed,
+        AVG(CASE WHEN booking_status = 'confirmed' THEN lead_time_days END), 1) AS avg_lead_time_confirmed,
 
     -- Financial Metrics
     CAST(SUM(booking_revenue) AS DECIMAL(18, 2)) AS potential_revenue,

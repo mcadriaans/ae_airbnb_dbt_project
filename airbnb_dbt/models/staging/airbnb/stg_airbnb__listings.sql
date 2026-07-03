@@ -37,8 +37,8 @@ standardized AS (
         CAST(price_per_night AS DECIMAL(18,2)) AS price_per_night,
 
         -- Metadata tracking
-        CAST(created_at AS timestamp_ntz) AS source_created_at,
-        CAST(updated_at AS timestamp_ntz) AS source_updated_at
+        CAST(created_at AS timestamp_ltz) AS source_created_at,
+        CAST(updated_at AS timestamp_ltz) AS source_updated_at
 
     FROM source
     WHERE 

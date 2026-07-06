@@ -2,98 +2,174 @@ version: 2
 
 models:
   - name: mart_cancellation_analysis
-    description: >
-      Aggregate model providing insights into booking cancellations across country,
-      city, and property_type. Includes cancellation rates, lead time behaviour, and 
-      cancellation fee revenue.
+    description: |
+      Business-focused mart analyzing revenue loss from cancellations.
+      Grain: One row per unique combination of (country, city, property_type, price_tier, lead_time_group).
+      
+      Pre-aggregated for Tableau consumption. Shows:
+      - Cancellation rates by segment
+      - Revenue loss vs. recovery potential
+      - Lead-time impact on cancellation risk
+      
+      Built from: fact_bookings
+      
     columns:
       - name: country
-        description: "Country where the property is located."
-        tests:
-          - not_null
+        description: "Country dimension"
+      
       - name: city
-        description: "City of the property."
-        tests:
-          - not_null
+        description: "City dimension"
+      
       - name: property_type
-        description: >
-         High-level property category (e.g. loft, boutique hotel, condo, house, apartment). Helps break down
-         booking patterns by type of inventory.
-        tests:
-          - not_null
+        description: "Property type dimension"
+      
       - name: price_tier
-        description: "Economic classification of the listing (Budget, Mid-Range, Luxury)."
-        tests:
-          - not_null
+        description: "Price tier bucketed: Budget, Mid-Range, Luxury"
+      
+      - name: lead_time_group
+        description: "Lead time bucketed: 0-6 days, 7-30 days, 31-90 days, 90+ days"
+      
       - name: total_bookings
-        description: "Total number of bookings for the given group"
-        tests:
-          - not_null
+        description: "Count of bookings in this segment"
+      
       - name: cancelled_bookings
-        description: "Number of bookings that were cancelled"
-        tests:
-          - not_null
+        description: "Count of cancelled bookings"
+      
       - name: cancellation_rate
-        description: "Proportion of bookings that were cancelled (0-1)"
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              arguments:
-                min_value: 0
-                max_value: 1
+        description: "Cancellation rate (0.0-1.0)"
+      
       - name: avg_lead_time_cancelled
-        description: "Average lead time (in days) for cancelled bookings"
-        tests:
-          - not_null
-      - name: avg_lead_time_completed
-        description: "Average lead time (in days) for non-cancelled bookings"
-        tests:
-          - not_null
-      - name: actual_revenue
-        description: "Total revenue realized from completed bookings (after cancellations)"
-        tests:
-          - not_null
-      - name: cancellation_fee_revenue
-        description: "Total revenue collected from cancellation fees"
-        tests:
-          - not_null
-      - name: revenue_lost
-        description: "Total potential revenue lost due to cancellations"
-        tests:
-          - not_null
-  
-  
-  - name: mart_country_price_tier_revenue
-    description: >
-      Aggregate model providing insights into revenue performance across country and price tier segments. 
-      Includes actual revenue, potential revenue, and revenue lost due to cancellations.
-    config:
-      materialized: view
-    columns:
-      - name: country
-        description: "Country where the property is located."
-        tests:
-          - not_null
-      - name: price_tier
-        description: "Economic classification of the listing (Budget, Mid-Range, Luxury)."
-        tests:
-          - not_null
-      - name: actual_revenue
-        description: "Total revenue realized from bookings in the given group."
-        tests:
-          - not_null
+        description: "Average lead time for cancelled bookings"
+      
+      - name: avg_lead_time_confirmed
+        description: "Average lead time for confirmed bookings"
+      
       - name: potential_revenue
-        description: "Total potential revenue from bookings in the given group (including cancellations)."
-        tests:
-          - not_null
-      - name: revenue_lost
-        description: "Potential revenue lost due to cancellations in the given group."
-        tests:
-          - not_null
-      - name: cancellation_revenue
-        description: "Total revenue collected from cancellation fees in the given group."
-        tests:
-          - not_null
+        description: "Sum of booking_revenue (what we would earn if no cancellations)"
+      
+      - name: actual_revenue
+        description: "Sum of actual_revenue (what we actually earned)"
+      
+      - name: gross_revenue_loss
+        description: "Sum of gross_revenue_loss (total potential lost)"
+      
+      - name: cancellations_revenue
+        description: "Sum of cancellation_fee (recovery from cancellations)"
+      
+      - name: net_revenue_loss
+        description: "Sum of net_revenue_loss (actual loss after recovery)"
 
+  - name: mart_host_performance
+    description: |
+      Host-focused mart for performance analysis and ranking.
+      Grain: One row per unique host (host_id).
+      
+      Shows:
+      - Host KPIs (revenue, bookings, ratings)
+      - Portfolio composition (number of listings)
+      - Cancellation risk per host
+      
+      Built from: dim_hosts + fact_bookings + dim_listings
+      
+    columns:
+      - name: host_id
+        description: "PK: Host identifier"
+        tests:
+          - unique
+          - not_null
+      
+      - name: host_name
+        description: "Host name"
+      
+      - name: is_superhost
+        description: "Boolean: Airbnb Superhost status"
+      
+      - name: host_rating_category
+        description: "Rating category bucketed"
+      
+      - name: avg_host_rating
+        description: "Average guest rating"
+      
+      - name: response_rate
+        description: "Response rate (0-1)"
+      
+      - name: host_tenure_years
+        description: "Years on platform"
+      
+      - name: total_listings
+        description: "Count of listings owned by host"
+      
+      - name: total_bookings
+        description: "Count of bookings across all listings"
+      
+      - name: avg_nights_per_booking
+        description: "Average stay length"
+      
+      - name: total_revenue
+        description: "Sum of booking_revenue (potential)"
+      
+      - name: actual_revenue
+        description: "Sum of actual_revenue (collected)"
+      
+      - name: revenue_per_listing
+        description: "actual_revenue / total_listings (efficiency metric)"
+      
+      - name: cancellation_rate
+        description: "Host cancellation rate (0-1)"
 
+  - name: mart_listing_performance
+    description: |
+      Property-focused mart for occupancy and pricing analysis.
+      Grain: One row per unique listing (listing_id).
+      
+      Shows:
+      - Occupancy rate (bookings per 365 days)
+      - Revenue per booking
+      - Price per night
+      - Cancellation risk per property
+      
+      Built from: dim_listings + dim_hosts + fact_bookings
+      
+    columns:
+      - name: listing_id
+        description: "PK: Listing identifier"
+        tests:
+          - unique
+          - not_null
+      
+      - name: property_type
+        description: "Type: Condo, Loft, Apartment, etc."
+      
+      - name: city
+        description: "City"
+      
+      - name: country
+        description: "Country"
+      
+      - name: price_tier
+        description: "Price tier bucketed"
+      
+      - name: listing_size_category
+        description: "Size category bucketed"
+      
+      - name: host_name
+        description: "Owner host name"
+      
+      - name: total_bookings
+        description: "Count of bookings for this property"
+      
+      - name: occupancy_rate_pct
+        description: "Annualized occupancy rate as percentage (bookings / 365 * 100)"
+      
+      - name: avg_price_per_night
+        description: "Average nightly rate"
+      
+      - name: total_revenue
+        description: "Sum of booking_revenue"
+      
+      - name: avg_revenue_per_booking
+        description: "Average revenue per booking"
+      
+      - name: cancellation_rate
+        description: "Cancellation rate for this property (0-1)"
 

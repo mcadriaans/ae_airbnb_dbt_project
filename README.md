@@ -89,16 +89,61 @@ airbnb_dbt/
 - Demonstrated **end‑to‑end analytics engineering workflow** from ingestion to insight.
 
 
-## 🚀 How to Run
-1. Clone the repository  
-2. Configure your Snowflake profile in `profiles.yml`  
-3. Run:
-   ```bash
-   dbt seed
-   dbt run
-   dbt test
+## 🚀 Getting Started
 
-  🙋‍♀️ Author: Created with 💜 by Michéle
+Follow these steps to run the project locally and reproduce the dbt models and Tableau dashboard.
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/<your-username>/airbnb_dbt.git
+cd airbnb_dbt
+
+### 2. Install Python & Dependencies
+This project uses Python 3.12+.
+
+Create a virtual environment and install dependencies:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate   # macOS/Linux
+.\.venv\Scripts\activate    # Windows
+
+pip install -r requirements.txt
+```
+Or, if you're using uv (recommended):
+```bash
+uv sync
+```
+### 3. Configure Your Snowflake Profile
+Edit your local ~/.dbt/profiles.yml:
+```YAML
+airbnb_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: <your_account>
+      user: <your_user>
+      password: <your_password>
+      role: <your_role>
+      database: AIRBNB
+      warehouse: <your_warehouse>
+      schema: DEV_BRONZE
+      threads: 4
+```
+### 4. Install dbt Packages
+```bash
+dbt deps
+```
+### 5. Run the Project
+Build everything (models + tests + snapshots):
+```bash
+dbt seed
+dbt run
+dbt test
+```
+
+🙋‍♀️ Author: Created with 💜 by Michéle
 
 
 

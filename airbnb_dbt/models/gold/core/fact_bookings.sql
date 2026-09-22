@@ -19,7 +19,7 @@ listings AS (
 ),
 dates AS (
     SELECT *
-    FROM {{ ref('dim_dates') }}
+    FROM {{ ref('dim_date') }}
 )
 
 
@@ -67,7 +67,7 @@ SELECT
 
     -- Derived Business Logic
     {{ calc_actual_revenue('b.booking_status', 'b.booking_revenue', 'b.cancellation_fee') }} AS actual_revenue,
-    {{ calc_gross_revenue_loss('b.booking_status', 'b.booking_revenue', 'b.cancellation_fee') }} AS gross_revenue_loss,
+    {{ calc_gross_revenue_loss('b.booking_status', 'b.booking_revenue') }} AS gross_revenue_loss,
     {{ calc_net_revenue_loss('b.booking_status', 'b.booking_revenue', 'b.cancellation_fee') }} AS net_revenue_loss,
 
     -- Boolean Flags for easier compuation

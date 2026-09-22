@@ -1,78 +1,447 @@
+
+# models/gold/core/core_schema.yml
+
 version: 2
 
 models:
+  - name: dim_date
+    description: |
+      Universal date dimension for time-based analysis.
+      Grain: One row per calendar day from 2008-08-01 to 2+ years beyond latest booking.
+      
+      Use this table to:
+      - Time-series analysis of bookings by month/quarter/year
+      - Identify weekends vs weekdays
+      - Join to fact_bookings on booking_date
+      
+    columns:
+      - name: date_key
+        description: "PK (Surrogate Key): Hash of date_day for stable joins"
+        tests:
+          - unique
+          - not_null
+      
+      - name: date_day
+        description: "Natural key: The actual calendar date (YYYY-MM-DD)"
+        tests:
+          - unique
+          - not_null
+      
+      - name: year_number
+        description: "The year (e.g., 2023)"
+      
+      - name: quarter_of_year
+        description: "Q1, Q2, Q3, or Q4"
+        tests:
+          - accepted_values:
+              values: ['Q1', 'Q2', 'Q3', 'Q4']
+      
+      - name: month_name
+        description: "Full month name (e.g., January)"
+        tests:
+          - accepted_values:
+              values: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      
+      - name: month_of_year
+        description: "Month number (1-12)"
+        tests:
+          - accepted_values:
+              values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+      
+      - name: day_of_week_name
+        description: "Day name (Monday, Tuesday, ..., Sunday)"
+        tests:
+          - accepted_values:
+              values: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+      
+      - name: day_of_week
+        description: "Day number (1=Monday, 7=Sunday)"
+        tests:
+          - accepted_values:
+              values: [1, 2, 3, 4, 5, 6, 7]
+      
+      - name: is_weekend
+        description: "Boolean flag: true if Saturday or Sunday"
+        tests:
+          - accepted_values:
+              values: [true, false]
+      
+      - name: loaded_at
+        description: "Timestamp when this row was loaded into warehouse"
+
   - name: dim_hosts
-    description: >
-      Dimension table containing information about Airbnb hosts, including their unique host ID, 
-      name, location, and other relevant attributes. This table serves as a reference for analyzing 
-      host-related metrics and trends across the platform.
+    description: |
+      Host profile dimension with pre-aggregated performance metrics.
+      Grain: One row per unique host (SCD1 - latest state only).
+      
+      Use this table to:
+      - Filter bookings by host characteristics (superhost, rating, tenure)
+      - Analyze host portfolio (single-listing vs multi-listing)
+      - Join to fact_bookings on host_key
+      
     columns:
       - name: host_key
-        description: "Surrogate key for the host dimension."
+        description: "PK (Surrogate Key): Hash of host_id for star schema joins"
         tests:
-          - not_null
           - unique
+          - not_null
+      
       - name: host_id
-        description: "Unique identifier for the host as provided by Airbnb."
+        description: "Natural key: Original host identifier from source"
         tests:
           - not_null
-          - unique
+      
       - name: host_name
-        description: "Name of the host."
+        description: "Display name of the host"
+      
       - name: host_since
-        description: "Date when the host joined Airbnb."
+        description: "Date host joined Airbnb"
+      
       - name: host_location
-        description: "Location of the host (e.g., city, country)."
+        description: "Self-reported location (city/country)"
+      
       - name: is_superhost
-        description: "Indicates whether the host is a Superhost (true/false)."
+        description: "Boolean: true if Airbnb Superhost"
+        tests:
+          - accepted_values:
+              values: [true, false]
+      
       - name: response_rate
-        description: "Host's response rate to booking inquiries (percentage)."
+        description: "Response rate as decimal (0.0-1.0)"
+        tests:
+          - dbt_utils.expression_is_between:
+              min: 0.0
+              max: 1.0
+              inclusive: true
+      
       - name: avg_host_rating
-        description: "Average rating received by the host from guests."
+        description: "Average guest rating (0-5 scale)"
+        tests:
+          - dbt_utils.expression_is_between:
+              min: 0.0
+              max: 5.0
+              inclusive: true
 
       - name: host_rating_category
-        description: >
-          Categorical classification of the host's average rating (e.g., Excellent, Good, Fair, Poor).
-          This helps in segmenting hosts based on their performance and guest satisfaction levels.
+        description: "Bucketed rating: Excellent (4.5+), Good (4.0-4.4), Average (3.0-3.9), Below Average (<3.0), No Reviews"
         tests:
-          - not_null
           - accepted_values:
-              values: ['Excellent', 'Good', 'Average', 'Below Average','No Reviews']
+              values: ['Excellent', 'Good', 'Average', 'Below Average', 'No Reviews']
+      
       - name: host_tenure_years
-        description: "Number of years the host has been active on Airbnb."
-        tests:
-          - not_null
-          - not_negative
+        description: "Years active on platform (calculated from host_since)"
+      
       - name: total_listings
-        description: "Total number of listings associated with the host."
-        tests:
-          - not_null
-          - not_negative
+        description: "Number of active listings owned by this host"
+      
       - name: host_portfolio_type
-        description: >
-          Classification of the host's listing portfolio.
-          This provides insights into the scale of the host's operations on the platform.
+        description: "Segment: Professional (5+), Multi-listing (2-4), Single-listing (1), No Active Listings (0)"
         tests:
-          - not_null
           - accepted_values:
-              values: ['No Active Listings','Single-listing Host', 'Multi-listing Host (2-4 Listings)', 'Professional (5+ Listings)']
-      - name: host_profile_created_at
-        description: "Timestamp indicating when the host's profile was created."
-      - name: data_last_refreshed_at 
-        description: "Timestamp indicating when the host dimension data was last refreshed."
-  
+              values: ['Professional', 'Multi-listing', 'Single-listing', 'No Active Listings']
+      
+      - name: loaded_at
+        description: "Timestamp when this row was last loaded"
+
   - name: dim_listings
-    description: >
-      Dimension table containing detailed information about Airbnb listings, including their unique listing ID, 
-      associated host, location, property type, and other relevant attributes. This table serves as a reference 
-      for analyzing listing-related metrics and trends across the platform.
+    description: |
+      Property dimension with enriched attributes and price tiers.
+      Grain: One row per unique listing (SCD1 - latest state only).
+      
+      Use this table to:
+      - Filter by property type, size, capacity, or price tier
+      - Analyze occupancy and revenue by property segment
+      - Join to fact_bookings on listing_key
+      
     columns:
       - name: listing_key
-        description: "Surrogate key for the listing dimension."
+        description: "PK (Surrogate Key): Hash of listing_id for star schema joins"
+        tests:
+          - unique
+          - not_null
+      
+      - name: host_key
+        description: "FK: Reference to dim_hosts"
+      
+      - name: location_key
+        description: "FK: Reference to dim_location"
+      
+      - name: listing_id
+        description: "Natural key: Original listing identifier"
         tests:
           - not_null
-          - unique
+      
+      - name: host_id
+        description: "Denormalized for convenience: Original host identifier"
+      
+      - name: property_type
+        description: "Type: Condo, Loft, Apartment, House, Boutique Hotel, etc."
+      
+      - name: city
+        description: "City where listing is located"
+      
+      - name: country
+        description: "Country where listing is located"
+      
+      - name: accommodates
+        description: "Number of guests the listing can accommodate"
+      
+      - name: bedrooms
+        description: "Number of bedrooms (0 = studio)"
+      
+      - name: bathrooms
+        description: "Number of bathrooms"
+      
+      - name: listing_size_category
+        description: "Bucketed by bedrooms: Studio, 1 Bedroom, Medium (2-3), Large (4+)"
+        tests:
+          - accepted_values:
+              values: ['Studio', '1 Bedroom', 'Medium (2-3)', 'Large (4+)']
+      
+      - name: capacity_type
+        description: "Bucketed by accommodates: Solo/Pair (1-2), Small Group (3-5), Large Group (6+)"
+        tests:
+          - accepted_values:
+              values: ['Solo/Pair', 'Small Group', 'Large Group']
+      
+      - name: price_per_night
+        description: "Nightly rental price in local currency"
+        tests:
+          - dbt_utils.expression_is_between:
+              min: 0.0
+              max: 10000.0
+              inclusive: true
+      
+      - name: price_per_guest
+        description: "Price divided by accommodates (efficiency metric)"
+        tests:
+          - dbt_utils.expression_is_between:
+              min: 0.0
+              max: 10000.0
+              inclusive: true
+      
+      - name: price_tier
+        description: "Bucketed: Budget (<$100), Mid-Range ($100-300), Luxury (>$300)"
+        tests:
+          - accepted_values:
+              values: ['Budget', 'Mid-Range', 'Luxury']
+      
+      - name: loaded_at
+        description: "Timestamp when this row was last loaded"
 
+  - name: dim_location
+    description: |
+      Geographic dimension enriching listings with coordinates and metadata.
+      Grain: One row per unique city/country combination.
+      
+      Use this table to:
+      - Geographic analysis (by city, country, capital status)
+      - Map-based visualizations (latitude/longitude)
+      - Join to dim_listings on city/country
+      
+    columns:
+      - name: location_key
+        description: "PK (Surrogate Key): Hash of city + country"
+        tests:
+          - unique
+          - not_null
+      
+      - name: city
+        description: "City name (INITCAP formatted)"
+      
+      - name: country
+        description: "Country name (INITCAP formatted)"
+      
+      - name: latitude
+        description: "Geographic latitude for mapping"
+        tests:
+          - dbt_utils.expression_is_between:
+              min: -90.0
+              max: 90.0
+              inclusive: true
+      
+      - name: longitude
+        description: "Geographic longitude for mapping"
+        tests:
+          - dbt_utils.expression_is_between:
+              min: -180.0
+              max: 180.0
+              inclusive: true
+      
+      - name: country_code_2
+        description: "ISO 3166-1 alpha-2 code (e.g., US, FR, GB)"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "length(country_code_2) = 2"
+      
+      - name: country_code_3
+        description: "ISO 3166-1 alpha-3 code (e.g., USA, FRA, GBR)"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "length(country_code_3) = 3"
+      
+      - name: state_province
+        description: "Administrative division / state / province"
+      
+      - name: capital_type
+        description: "National Capital, Provincial/State Capital, Administrative Capital, Non-capital, Unknown"
+        tests:
+          - accepted_values:
+              values: ['National Capital', 'Provincial/State Capital', 'Administrative Capital', 'Non-capital', 'Unknown']
+      - name: population
+        description: "City population from geographic reference data"
+        tests:
+          - dbt_utils.expression_is_between:
+              min: 0
+              max: 10000000
+              inclusive: true
+
+      - name: loaded_at
+        description: "Timestamp when this row was loaded"
+
+  - name: fact_bookings
+    description: |
+      Central fact table for Airbnb bookings with revenue measures and SCD2 history.
+      Grain: One row per booking version (SCD2 via dbt_scd_id).
+      
+      Each booking can have multiple rows if booking_status changed over time.
+      Use is_current_record = 1 to get latest version only.
+      
+      Use this table to:
+      - Analyze revenue (potential, actual, lost)
+      - Filter by booking status, lead time, property type, host rating
+      - Time-series analysis of bookings and revenue
+      - Calculate KPIs: cancellation rate, occupancy, ARR
+    tests:
+      - dbt_utils.uniquwe_combination_of_columns:
+          combination_of_columns:
+            - booking_id
+            - booking_version_id
+    columns:
+      - name: booking_key
+        description: "Surrogate key: Hash of booking_id (not the fact table PK)"
+      
+      - name: listing_key
+        description: "FK: Reference to dim_listings"
+        tests:
+          - relationships:
+              to: ref('dim_listings')
+              field: listing_key
+      
+      - name: host_key
+        description: "FK: Reference to dim_hosts"
+        tests:
+          - relationships:
+              to: ref('dim_hosts')
+              field: host_key
+      
+      - name: booking_date_key
+        description: "FK: Reference to dim_date on booking_date"
+        tests:
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
+      
+      - name: booking_id
+        description: "Natural key: Original booking identifier (UUID)"
+        tests:
+          - not_null
+      
+      - name: listing_id
+        description: "Natural key: Original listing identifier (denormalized)"
+        tests:
+          - not_null
+      
+      - name: host_id
+        description: "Natural key: Original host identifier (denormalized)"
+        tests:
+          - not_null
+      
+      - name: booking_version_id
+        description: "dbt_scd_id from snapshot: PK for this fact table (identifies booking version)"
+        tests:
+          - unique
+          - not_null
+      
+      - name: booking_date
+        description: "Date booking was made"
+      
+      - name: booking_year
+        description: "Year of booking"
+      
+      - name: booking_month
+        description: "Month name of booking"
+      
+      - name: stay_start_date
+        description: "Guest check-in date"
+      
+      - name: stay_end_date
+        description: "Guest check-out date"
+      
+      - name: lead_time_days
+        description: "Days between booking_date and stay_start_date"
+      
+      - name: booking_status
+        description: "Status: confirmed or cancelled"
+      
+      - name: property_type
+        description: "Denormalized from listing: Condo, Loft, Apartment, etc."
+      
+      - name: city
+        description: "Denormalized from location"
+      
+      - name: country
+        description: "Denormalized from location"
+      
+      - name: listing_size_category
+        description: "Denormalized from listing: Studio, 1 Bedroom, etc."
+      
+      - name: price_tier
+        description: "Denormalized from listing: Budget, Mid-Range, Luxury"
+      
+      - name: is_superhost
+        description: "Denormalized from host: Boolean"
+      
+      - name: host_rating_category
+        description: "Denormalized from host: Excellent, Good, Average, etc."
+      
+      - name: nights_booked
+        description: "Number of nights in the stay"
+      
+      - name: booking_amount
+        description: "Base booking amount (price per night × nights)"
+      
+      - name: cleaning_fee
+        description: "Cleaning fee charged"
+      
+      - name: service_fee
+        description: "Airbnb service fee"
+      
+      - name: cancellation_fee
+        description: "Fee charged if cancelled (host refund)"
+      
+      - name: booking_revenue
+        description: "Potential revenue = booking_amount + cleaning_fee + service_fee (if not cancelled)"
+      
+      - name: actual_revenue
+        description: "Revenue collected: booking_revenue if confirmed, cancellation_fee if cancelled"
+      
+      - name: gross_revenue_loss
+        description: "Revenue lost to cancellation: booking_revenue if cancelled, 0 if confirmed"
+      
+      - name: net_revenue_loss
+        description: "Net loss: gross_revenue_loss - cancellation_fee (what we actually lose)"
+      
+      - name: cancellation_flag
+        description: "Boolean: 1 if cancelled, 0 if confirmed (useful for SUM aggregations)"
+      
+      - name: confirmation_flag
+        description: "Boolean: 1 if confirmed, 0 if cancelled"
+      
+      - name: loaded_at
+        description: "Timestamp when this version was loaded to warehouse"
 
   
   

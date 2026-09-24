@@ -1,5 +1,5 @@
 #-- stg_airbnb__schema.yml:
-## Business Contract : Validates Value Sanity and Logical Consistency across Staging Models.
+
 
 version: 2
 
@@ -18,10 +18,10 @@ models:
     # CROSS-COLUMN tests
     tests:
       - dbt_utils.expression_is_true:
-          name: booking_date_not_in_future
-          expression: "booking_date >=  '{{ var('airbnb_launch_date') }}' AND booking_date <= CURRENT_DATE()"  
+          name: booking_date_after_launch
+          expression: "booking_date >= '{{ var('airbnb_launch_date') }}'"
       - dbt_utils.expression_is_true:
-          name: stay_start_date_not_in_past
+          name: stay_start_date_after_booking_date
           expression: "stay_start_date >= booking_date"
       - dbt_utils.expression_is_true:
           name: cancellation_fee_sanity
@@ -29,18 +29,24 @@ models:
       - dbt_utils.expression_is_true:
           name: stg_bookings_update_after_create
           expression: "source_updated_at >= source_created_at"
+          config:
+            severity: error
     
     columns:
       - name: booking_id
-        description: "PK: Unique booking identifier (UUID format)."
+        description: >
+          Business identifier for the  booking sourced from the bronze layer.
+          Standardized  through trimming and casting to VARCHAR to ensure consistent
+          joins across downstream models. This is the natural key for the booking.
         tests:
           - not_null:
               config:
                 severity: error
-      - name: booking_date
-        description: "Date when booking was made."
-
       - name: listing_id
+        description: >
+          Business identifier for the property associated with the booking.
+          Cast to integer and standardized for referential integrity checks
+          against the staging listings model. This is the natural key for the property.
         tests:
           - relationships:
               to: ref('stg_airbnb__listings')
@@ -48,16 +54,34 @@ models:
               description: "Ensures referential integrity between staging models."
               config:
                 severity: warn
-      - name: stay_start_date
-        description: "Guest check-in date."
-
       - name: booking_status
+        description: >
+          Booking lifecycle status. Normalized to lowercase values  to provide
+          consistent categorization for downstream analysis. Acceptable values are 'confirmed' and 'cancelled'.
         tests:
           - accepted_values:
               values: ['confirmed', 'cancelled']
 
+      - name: booking_date
+        description: >
+          Date the booking was created. Standardized to DATE format and validated to occur
+          no earlier than Airbnb's launch date and no later than the current date.
+        tests:
+          - not_in_future:
+              config:
+                severity: error
+    
+
+      - name: stay_start_date
+        description: >
+          Guest check-in date. Standardized to DATE format and validated to occur
+          on or after the booking date.
+
       - name: nights_booked
-        description: "Number of nights booked."
+        description: >
+          Number of nights included in the reservation. Cast to integer and 
+          validated against reasonable booking duration limits (1-730 nights). 
+          This ensures data integrity for revenue and occupancy calculations.
         tests:
           - dbt_utils.accepted_range:
               min_value: 1
@@ -65,7 +89,10 @@ models:
               inclusive: true
       
       - name: booking_amount
-        description:  "Base room price."
+        description:  >
+          Base booking value before additional fees. Cast to a fixed-precision monetary datatype
+          to support consistent financial calculations.
+          Validated to be non-negative and within a reasonable range for Airbnb bookings (1-100,000).
         tests:
           - dbt_utils.accepted_range:
               min_value: 1
@@ -73,29 +100,46 @@ models:
               inclusive: true
 
       - name: cleaning_fee
-        description: "Cleaning fee (if applicable)."
+        description: >
+          Cleaning fee (if applicable) charged for booking and stored as monetary value.
+          Null values are defaulted to zero to ensure consistent revenue calculations.
         tests:
           - not_negative
       
       - name: service_fee
-        description: "Service fee (if applicable)."
+        description: >
+          Airbnb's service fee associated with the booking and stored as monetary value.
+          Null values are defaulted to zero to ensure consistent revenue calculations.
         tests:
           - not_negative
 
       - name: cancellation_fee
-        description: "Cancellation fee (if applicable)."
+        description: >
+          Fee retained when a booking is canceled and stored as monetary value.
+          Null values are defaulted to zero to ensure consistent revenue calculations.
         tests:
           - not_negative
 
       - name: source_created_at
-        description: "When record was created in source system."
+        description: >
+          Original record creation timestamp from the source system.
+          Standardized to TIMESTAMP_LTZ and retained for auditability and lineage tracking.
+          Validated to ensure no future timestamps are present, which would indicate data quality issues.
         tests:
-          - not_in_future
+          - not_in_future:
+              config:
+                severity: error
     
       - name: source_updated_at
-        description: "When record was last updated in source system."
+        description: >
+          Most recent source-system modification timestamp.
+          Standardized to TIMESTAMP_LTZ and validated to occur on or after
+          the original creation timestamp. This ensures accurate SCD2 history tracking.
+          Validated to ensure no future timestamps are present, which would indicate data quality issues.
         tests:
-          - not_in_future
+          - not_in_future:
+              config:
+                severity: error
 
       
     # ---------------------------------------------------------
@@ -143,14 +187,24 @@ models:
             inclusive: true
 
     - name: source_created_at
-      description: "When record was created in source system."
+      description: >
+          Original record creation timestamp from the source system.
+          Standardized to TIMESTAMP_LTZ and retained for auditability and lineage tracking.
+          Validated to ensure no future timestamps are present, which would indicate data quality issues.
       tests:
-        - not_in_future
+          - not_in_future:
+              config:
+                severity: error
    
     - name: source_updated_at
-      description: "When record was last updated in source system."
+      description: >
+          When record was last updated in source system.
+          Standardized to TIMESTAMP_LTZ and retained for auditability and lineage tracking.
+          Validated to ensure no future timestamps are present, which would indicate data quality issues.
       tests:
-        - not_in_future
+        - not_in_future:
+            config:
+              severity: error
 
        
   # ---------------------------------------------------------
@@ -208,10 +262,22 @@ models:
                 max_value: 50000
 
       - name: source_created_at
+        description: >
+          Original record creation timestamp from the source system.
+          Standardized to TIMESTAMP_LTZ and retained for auditability and lineage tracking.
+          Validated to ensure no future timestamps are present, which would indicate data quality issues.
         tests:
-          - not_in_future
+          - not_in_future:
+              config:
+                severity: error
       
       - name: source_updated_at
+        description: >
+          When record was last updated in source system.
+          Standardized to TIMESTAMP_LTZ and retained for auditability and lineage tracking.
+          Validated to ensure no future timestamps are present, which would indicate data quality issues.
         tests:
-          - not_in_future
+          - not_in_future:
+              config:
+                severity: error
      

@@ -302,7 +302,7 @@ models:
         description: "Timestamp when this row was loaded"
 
   - name: fact_bookings
-    description: |
+    description: >
       Central fact table for Airbnb bookings with revenue measures and SCD2 history.
       Grain: One row per booking version (SCD2 via dbt_scd_id).
       
@@ -315,7 +315,7 @@ models:
       - Time-series analysis of bookings and revenue
       - Calculate KPIs: cancellation rate, occupancy, ARR
     tests:
-      - dbt_utils.uniquwe_combination_of_columns:
+      - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - booking_id
             - booking_version_id

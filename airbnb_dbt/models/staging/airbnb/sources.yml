@@ -29,85 +29,81 @@ sources:
               - not_null:
                   description: "Ensures every record is identifiable."
                   config:
-                    severity: error
-                
+                    severity: error   
           - name: listing_id
             description: "FK: Identifier for listing associated with the booking."
             tests:
               - not_null:
-                  description: "A booking cannot exist without a valid listing_id reference."
+                  description: >
+                    Error: a booking with no listing_id is unusable because it cannot be attributed
+                    to a property, priced, or joined to any dimension.
+                    This is the fact table so a row that fails this test carries no analytical value 
+                    at all.
                   config:
                     severity: error
               - relationships:
                   to: source('airbnb', 'bronze_listings')
                   field: listing_id
-                  description:  "Set to warn because late-arriving dimensions / source sync lag is common."
+                  description: >
+                    Warn, not Error : Verified via manual query that 0 bookings currently
+                    have an orphaned listing_id. Kept as a warn-level safeguard rather than removed,
+                    in case future data refresh introduces a mismatched booking/listing relationship.
                   config:
-                    severity: warn
-                  
+                    severity: warn       
           - name: booking_date
             description: "Date the booking was made."
             tests:
               - not_null:
                   config:
                     severity: warn
-
           - name: nights_booked
             description: "Number of nights booked for the stay."
             tests:
               - not_null:
                   config:
                     severity: warn
-
           - name: booking_amount
             description: "Base accommodation price."
             tests:
               - not_null:
                   config:
                     severity: warn 
-
           - name: cleaning_fee
             description: "Cleaning fee associated with the booking."
             tests:
               - not_null:
                   config:
                     severity: warn
-
           - name: service_fee
             description: "Service fee associated with the booking."
             tests:
               - not_null:
                   config:
                     severity: warn
-
           - name: cancellation_fee
             description: "Cancellation fee associated with the booking."
             tests:
               - not_null:
                   config:
                     severity: warn
-
           - name: booking_status
             description: "Status of the booking (e.g., confirmed, cancelled)."
             tests:
               - not_null:
                   config:
                     severity: warn  
-
           - name: stay_start_date
             description: "Start date of the stay."
             tests:
               - not_null:
                   config:
                     severity: warn              
-
           - name: created_at
             description: "Timestamp when the record was first created."
             tests:
               - not_null:
                   config:
                     severity: warn   
-
           - name: updated_at
             description: "Timestamp when the record was last updated."
             tests:
@@ -131,21 +127,18 @@ sources:
                   description: "Host records must have an identifier to be linked to properties."
                   config:
                     severity: error                                                      
-
           - name: host_name
             description: "Name of the host."
             tests:
               - not_null:
                   config:
                     severity: warn   
-
           - name: host_since
             description: "Date the host joined the Airbnb platform."
             tests:
               - not_null:
                   config:
                     severity: warn  
-
           - name: host_location
             description: "Host's primary geographic location."
             tests:
@@ -158,28 +151,24 @@ sources:
               - not_null:
                   config:
                     severity: warn    
-
           - name: response_rate
             description: "Percentage (0 to 100) of inquiries answered by the host."
             tests:
               - not_null:
                   config:
                     severity: warn   
-
           - name: avg_host_rating
             description: "Average star rating (0 to 5) across all host listings."
             tests:
               - not_null:
                   config:
                     severity: warn                
-    
           - name: created_at
             description: "Timestamp when the record was first created."
             tests:
               - not_null:
                   config:
                     severity: warn     
-
           - name: updated_at
             description: "Timestamp when the record was last updated."
             tests:
@@ -203,55 +192,55 @@ sources:
                   description:  "Listing records must have an identifier for transactional joins."
                   config:
                     severity: error              
-           
           - name: host_id
             description: "FK: Identifier for the host of the listing."
             tests:
               - not_null:
+                  description: >
+                    Warn not Error: a listing with no host_id still has usable attributes
+                    (city, property_type, price_per_night, etc.) and can be analyzed on its own.
+                    It just cannot be joined to a host profile. Lower severity than bronze_bookings.listing_id
+                    because the row is not rendered useless, only partially incomplete.
                   config:
                     severity: warn              
               - relationships:
                   to: source('airbnb', 'bronze_hosts')
                   field: host_id
-                  description: "WARN: Set to warn to handle host/listing sync lag."
+                  description: > 
+                    WARN: consistent with not_null severity. A listing without a 
+                    valid host reference is still analytically usable on its own.
                   config:
                     severity: warn
-
           - name: property_type
             description: "The type of property (e.g., Apartment, House, Loft)."
             tests:
               - not_null:
                   config:
                     severity: warn   
-
           - name: city
             description: "City where the property is located."
             tests:
               - not_null:
                   config:
                     severity: warn    
-
           - name: country
             description: "Country where the property is located."
             tests:
               - not_null:
                   config:
                     severity: warn  
-
           - name: accommodates
             description: "Maximum number of guests the property can hold."
             tests:
               - not_null:
                   config:
                     severity: warn  
-
           - name: bedrooms
             description: "Number of bedrooms in the property (0 for Studios)."
             tests:
               - not_null:
                   config:
                     severity: warn  
-
           - name: bathrooms
             description: "Number of bathrooms in the property."
             tests:
@@ -259,20 +248,17 @@ sources:
                   config:
                     severity: warn              
           - name: price_per_night
-
             description: "Base nightly stay price."
             tests:
               - not_null:
                   config:
                     severity: warn              
-              
           - name: created_at
             description: "Timestamp when the record was first created."
             tests:
               - not_null:
                   config:
-                    severity: warn    
-                              
+                    severity: warn                  
           - name: updated_at
             description: "Timestamp when the record was last updated."
             tests:

@@ -12,13 +12,7 @@
     )
 }}
 
-WITH last_run AS (
-    SELECT 
-        COALESCE(MAX(loaded_at), '1900-01-01'::timestamp_ltz) AS last_loaded_at
-    FROM {{ this }}
-),
-
-silver_hosts_enriched AS (
+WITH silver_hosts_enriched AS (
     SELECT 
         -- Keys
         host_id,
@@ -52,8 +46,8 @@ silver_hosts_enriched AS (
 
     {% if is_incremental() %}
         WHERE source_updated_at >= (
-          SELECT DATEADD(day, -7, last_loaded_at)  -- Buffer of 7 days to catch late-arriving updates
-          FROM last_run
+          SELECT DATEADD(day, -7, COALESCE(MAX(loaded_at), '1900-01-01'::timestamp_ltz))
+          FROM {{ this}}
       )
     {% endif %}
 )

@@ -14,8 +14,7 @@ snapshots:
         - Bronze (source): booking_id is PK (one row per booking)
         - Snapshot (this): dbt_scd_id is PK (one row per booking VERSION)
 
-    
-
+  
         TECHNICAL APPROACH:
         - snapshot uses strategy='timestamp' with 'updated_at' field
         - When a booking_status changes, snapshot automatically:
@@ -34,22 +33,21 @@ snapshots:
           name: snapshot_valid_to_after_from
           description: "Technical Check: Records cannot end before they begin."
           expression: "dbt_valid_to >= dbt_valid_from OR dbt_valid_to IS NULL"
-    
-      - dbt_utils.expression_is_true:
-          name: snapshot_unique_current_record
-          description: > 
-           Technical Check: Each booking_id must have exactly one 'active' version.
-           This catches 'flapping' or overlapping SCD2 records.
-          expression: "sum(case when dbt_valid_to is null then 1 else 0 end) over (partition by booking_id) = 1"
-          config:
-            severity: error
-       
-
+  
     columns:
       - name: booking_id
         description: "Natural Key: Original booking identifier from source system (UUID)."
         tests:
-          - not_null
+          - not_null:
+              config:
+                severity: error
+          - unique:
+              name: snapshot_unique_current_record
+              description: >
+                Technical Check: Each booking_id can only have exactly one active version.
+                This test checks that there are no duplicates with the same booking_id and dbt_valid_to IS NULL.
+              config:
+                where: "dbt_valid_to IS NULL"
       - name: source_updated_at
         description: "The source timestamp used by the snapshot strategy to detect changes."
 

@@ -3,6 +3,12 @@
 -- Description: Central fact table for Airbnb bookings. Contains all financial measures, 
 --              denormalized attributes for filtering, and surrogate keys for star schema joins.
 
+--                dim_dates
+--                   |
+--                   |
+--                   |
+--   dim_hosts --- fact_bookings --- dim_listings
+
 {{ config(materialized='table') }}
 
 WITH bookings AS (
@@ -19,14 +25,14 @@ listings AS (
 ),
 dates AS (
     SELECT *
-    FROM {{ ref('dim_date') }}
+    FROM {{ ref('dim_dates') }}
 )
 
 
 
 SELECT 
     -- Surrogate keys for Star Schema Joins
-    {{ dbt_utils.generate_surrogate_key(['b.booking_id']) }} AS booking_key, 
+    {{ dbt_utils.generate_surrogate_key(['b.booking_id', 'b.dbt_scd_id']) }} AS booking_key, 
     l.listing_key, 
     h.host_key,
     d.date_key AS booking_date_key,
@@ -36,6 +42,7 @@ SELECT
     b.listing_id,
     h.host_id,
     b.dbt_scd_id AS booking_version_id,
+    b.is_current_record,
 
     -- Temporal Attributes 
     b.booking_date,

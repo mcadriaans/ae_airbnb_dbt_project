@@ -1,16 +1,6 @@
 -- staging/airbnb/stg_airbnb__bookings.sql : 
 -- Standardizes raw booking data, handles optional NULLs, and filters out incomplete records.
 
-{% set mandatory_columns = [
-    'booking_id',
-    'booking_date',
-    'booking_status',
-    'listing_id',
-    'stay_start_date',
-    'nights_booked',
-    'booking_amount'
-]%}
-
 WITH source AS (
     SELECT 
         booking_id,
@@ -32,7 +22,7 @@ WITH source AS (
 standardized AS (
     SELECT
        -- Natural Keys & Status
-        CAST(TRIM(booking_id) AS UUID) AS booking_id,
+        CAST(TRIM(booking_id) AS VARCHAR) AS booking_id,
         CAST(listing_id AS INT) AS listing_id,
         CAST(LOWER(TRIM(booking_status)) AS VARCHAR) booking_status,
 
@@ -54,11 +44,6 @@ standardized AS (
         CAST(updated_at AS timestamp_ltz) AS source_updated_at
 
     FROM source
-    -- Data Integrity: Filter out records missing mandatory business logic keys or metrics.
-    WHERE 
-     {% for col in mandatory_columns -%}
-        {{ col }} IS NOT NULL {% if not loop.last %} AND {% endif %}
-     {%- endfor %}
 )
 
 SELECT * FROM standardized

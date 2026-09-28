@@ -37,7 +37,8 @@ models:
         description: >
           Business identifier for the  booking sourced from the bronze layer.
           Standardized  through trimming and casting to VARCHAR to ensure consistent
-          joins across downstream models. This is the natural key for the booking.
+          joins across downstream models. This is the natural and primary key for the booking.
+          Uniqueness is enforced at the bronze layer.
         tests:
           - not_null:
               config:
@@ -46,8 +47,15 @@ models:
         description: >
           Business identifier for the property associated with the booking.
           Cast to integer and standardized for referential integrity checks
-          against the staging listings model. This is the natural key for the property.
+          against the staging listings model. This is the natural keyfor the property.
+          Foreign key to stg_airbnb__listings.listing_id.
         tests:
+          - not_null:
+              description: >
+                Error: Without this test an orphaned/unusable booking row
+                would pass through silently instead of being flagged.
+              config:
+                severity: error
           - relationships:
               to: ref('stg_airbnb__listings')
               field: listing_id
@@ -59,67 +67,98 @@ models:
           Booking lifecycle status. Normalized to lowercase values  to provide
           consistent categorization for downstream analysis. Acceptable values are 'confirmed' and 'cancelled'.
         tests:
+          - not_null:
+              description: >
+                Error: booking_status drives downstream classification and revenue logic
+                (e.g. distinguishing completed bookings from cancellations). A missing value
+                would make the row impossible to categorize correctly. Declared explicitly 
+                rather than relying on accepted_values alone, since NULL handling in accepted_values
+                style checks isn't guaranteed to behave consistently.
+              config:
+                severity: error
           - accepted_values:
               values: ['confirmed', 'cancelled']
-
+              config:
+                severity: error
       - name: booking_date
         description: >
           Date the booking was created. Standardized to DATE format and validated to occur
           no earlier than Airbnb's launch date and no later than the current date.
         tests:
+          - not_null:
+              description: >
+                Error: required for the booking_date_after_launch and stay_start_date_after_booking_date
+                expression tests to reliably catch bad data. A NULL comparison in SQL evaluates as unknown,
+                not false , so those tests cannot detect a missing booking_date on their own.
+              config:
+                severity: error
           - not_in_future:
               config:
                 severity: error
-    
-
       - name: stay_start_date
         description: >
           Guest check-in date. Standardized to DATE format and validated to occur
           on or after the booking date.
-
+        tests:
+          - not_null:
+              description: >
+                Error: required for stay_start_date_after_booking_date to reliably catch
+                bad data. A NULL comparison in SQL evaluates as unknown, not false, 
+                so this test cannot detect a missing stay_start_date on its own.
+              config:
+                severity: error
       - name: nights_booked
         description: >
           Number of nights included in the reservation. Cast to integer and 
           validated against reasonable booking duration limits (1-730 nights). 
           This ensures data integrity for revenue and occupancy calculations.
         tests:
+          - not_null:
+              description: >
+                Error: nights_booked is a required input for revenue and occupancy
+                calculations. A missing value would make those calculations impossible or 
+                silently wrong (e.g. treated as zero nights).
+              config:
+                severity: error
           - dbt_utils.accepted_range:
               min_value: 1
               max_value: 730  
               inclusive: true
-      
       - name: booking_amount
         description:  >
           Base booking value before additional fees. Cast to a fixed-precision monetary datatype
           to support consistent financial calculations.
           Validated to be non-negative and within a reasonable range for Airbnb bookings (1-100,000).
         tests:
+          - not_null:
+              description: >
+                Error: booking_amount is the core revenue figure for this fact table.
+                A missing value would break revenue totals or silently distort them if
+                treated as zero in downstream computations.
+              config:
+                severity: error
           - dbt_utils.accepted_range:
               min_value: 1
               max_value: 100000
               inclusive: true
-
       - name: cleaning_fee
         description: >
           Cleaning fee (if applicable) charged for booking and stored as monetary value.
           Null values are defaulted to zero to ensure consistent revenue calculations.
         tests:
-          - not_negative
-      
+          - not_negative    
       - name: service_fee
         description: >
           Airbnb's service fee associated with the booking and stored as monetary value.
           Null values are defaulted to zero to ensure consistent revenue calculations.
         tests:
           - not_negative
-
       - name: cancellation_fee
         description: >
           Fee retained when a booking is canceled and stored as monetary value.
           Null values are defaulted to zero to ensure consistent revenue calculations.
         tests:
           - not_negative
-
       - name: source_created_at
         description: >
           Original record creation timestamp from the source system.
@@ -129,7 +168,6 @@ models:
           - not_in_future:
               config:
                 severity: error
-    
       - name: source_updated_at
         description: >
           Most recent source-system modification timestamp.
@@ -146,7 +184,8 @@ models:
     # 2. HOSTS STAGING
     # ---------------------------------------------------------
   - name: stg_airbnb__hosts  
-    description: "Standardized host profiles. Handles response rate normalization and superhost booleans."      
+    description: > 
+      Standardized host profiles. Handles response rate normalization and superhost booleans.     
 
     # CROSS-COLUMN tests
     tests:
@@ -158,34 +197,80 @@ models:
           expression: "source_updated_at >= source_created_at"
     columns:
     - name: host_id
-      description: "PK: Unique booking identifier (UUID format)."
+      description: >
+        Business identifier for the host, sourced from the bronze layer.
+        Cast to integer to ensure consistent joins across downstream models.
+        This is the natural and primary key for the host. Uniqueness is enforced at the bronze layer.
       tests:
         - not_null:
             config:
               severity: error
+    - name: host_name
+      description: >
+        Host's display name. Standardized via TRIM and INITCAP to ensure
+        consistent formatting for reporting and display.
+      tests:
+        - not_null:
+            description: >
+              Warn : host name is used for display/reporting purposes only. A missing 
+              value does not prevent joins, ratings, or performance calculations. The 
+              host record remains fully usable for analysis, just incomplete for name-based 
+              reporting. Consistent with the warn severity already applied at the bronze layer.
+            config:
+              severity: warn
     - name: host_since
-      description: "Date the host joined the Airbnb platform."
-
+      description: >
+          Date the host joined the Airbnb platform. Standardized to DATE format
+          and validated to occur on or after Airbnb's launch date.
+      tests:
+        - not_null:
+            description: >
+              Warn : host since is required for stg_hosts_since_after_launch 
+              to reliably catch bad data (a NULL comparison in SQL evaluates as unknown,
+              not false, so that expression test cannot detect a missing host_since on
+              its own). Set to warn rather than error because a missing host_since doesn't
+              make the host row unusable; joins, ratings and revenue attribution are unaffected.
+              It only limits tenure-based analysis (e.g. cohort-by-join-date reporting).
+            config:
+              severity: warn
+    - name: host_location
+      description: >
+        Host's primary geographic location. Standardized via TRIM and INITCAP (title case)
+        for consistent formatting across the dataset.  
+      # No not_null here: bronze already tests not_null (warn) on host_location,
+      # and staging only trims and title-cases it, so it adds no new null risk.
     - name: is_superhost
-      description: "Standardized boolean flag. NULLs from source are defaulted to false."
+      description: >
+        Superhost status flag. NULL values from the source are defaulted to false via
+        COALESCE, so every row has a definitive boolean value.
       tests:
         - accepted_values:
-              values: [true, false] 
-
+              values: [true, false]
+              config:
+                severity: warn
     - name: response_rate
+      description: >
+        Percentage of inquiries answered by the host, converted from a 0-100
+        source scale to a 0-1 decimal via the safe_divide macro, rounded to 2
+        decimal places.
       tests:
         - dbt_utils.accepted_range:
             min_value: 0
             max_value: 1
             inclusive: true
-
+            config:
+              severity: warn
     - name: avg_host_rating
+      description: >
+        Average star rating across all of the host's listings. Cast to a
+        fixed-precision decimal for consistent downstream calculations.
       tests:
         - dbt_utils.accepted_range:
             min_value: 0
             max_value: 5
             inclusive: true
-
+            config:
+              severity: warn
     - name: source_created_at
       description: >
           Original record creation timestamp from the source system.
@@ -195,7 +280,6 @@ models:
           - not_in_future:
               config:
                 severity: error
-   
     - name: source_updated_at
       description: >
           When record was last updated in source system.
@@ -211,7 +295,10 @@ models:
   # 3. LISTINGS STAGING
   # ---------------------------------------------------------
   - name: stg_airbnb__listings
-    description: "Standardized property inventory. "
+    description: >
+      Standardized property inventory. Casts IDs and metrics to consistent
+      types and trims and title cases text fields. Acts as a join anchor
+      for bookings and hosts.
 
     # CROSS-COLUMN tests
     tests:
@@ -220,47 +307,118 @@ models:
           expression: "source_updated_at >= source_created_at"
     columns: 
       - name: listing_id
-        description: "PK: Unique booking identifier (UUID format)."
+        description: >
+          Natural and primary key for the listing, sourced from the bronze layer.
+          Cast to integer to ensure consistent joins across downstream models.
+          Uniqueness is enforced at the bronze layer.
         tests:
           - not_null:
               config:
                 severity: error
-
       - name: host_id
+        description: >
+          Business identifier for the host, who owns the listing.
+          Cast to integer so it joins cleanly to the staging hosts model.
+          Foreign key to stg_airbnb__hosts.host_id.
         tests:
+          - not_null:
+              description: >
+                Warn : A lisiting wiht no host_id is still usable on its own.
+                Only host-level rollups are affected. Consistent with the warn 
+                severity in bronze.
+              config:
+                severity: warn
           - relationships:
               to: ref('stg_airbnb__hosts')
               field: host_id
+              description: >
+                Warn : Verified via manual query that 0 lisitings currently have 
+                an orphaned host_id. Kept as a safeguard in case a future data
+                refresh introduces a mismatch.
               config:
                 severity: warn
-
+      - name: property_type
+        description: >
+          Type of property (e.g. House, Condo, Loft, Boutique Hotel or Apartment). 
+          Standardized via TRIM and INITCAP so the same type is always spelled
+          the same way.
+        # No not_null here: bronze already tests not_null (warn) on property_type,
+        # and staging only trims and title-cases it, so it adds no new null risk.
+        tests:
+          - accepted_values:
+              values: ['House', 'Condo', Loft, Boutique Hotel, Apartment]
+              config:
+                severity: warn
+      - name: city
+        description: >
+          City where the property is located. Standardized via TRIM and INITCAP
+          for consistent grouping and reporting.
+        # No tests here: bronze already tests not_null (warn) on city; the list of cities is too long
+        # and open-ended for accepted_values.
+      - name: country
+        description: >
+          Country where the property is located. Standardized via TRIM and INITCAP 
+          for consistent grouping and reporting.
+        # No tests here: bronze already tests not_null (warn) on country; the list of countries is too long
+        # and open-ended for accepted_values.
       - name: accommodates
+        description: >
+          Maximum number of guests the property can hold. Cast to integer
+          and validated to be between 1 and 30.
+        # No not_null here: bronze already tests not_null (warn) on accommodates,
+        # and staging only casts it, so it adds no new null risk.
         tests:
           - dbt_utils.accepted_range:
               min_value: 1
               max_value: 30
               inclusive: true
-
+              config:
+                severity: warn
       - name: bedrooms
+        description: >
+          Number of bedrooms. Cast to integer and validated to be between 0 and 20. 
+          Zero is valid and represents a studio.
+        # No not_null here: bronze already tests not_null (warn) on bedrooms,
+        # and staging only casts it, so it adds no new null risk.
         tests:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 20
               inclusive: true
-
+              config:
+                severity: warn
       - name: bathrooms
+        description: >
+          Number of bathrooms. Cast to a fixed-precision decimal so half
+          bathrooms (e.g. 1.5) are kept. Validated to be between 0.5 and 10.
+        # No not_null here: bronze already tests not_null (warn) on bathrooms,
+        # and staging only casts it, so it adds no new null risk.
         tests:
           - dbt_utils.accepted_range:
               min_value: 0.5
               max_value: 10
               inclusive: true
-
+              config:
+                severity: warn
       - name: price_per_night
+        description: >
+          Base nightly price of the listing. Cast to a fixed-precision monetary
+          decimal for consistent financial calculations. Validated to be between
+          1 and 50,000.
         tests: 
+           - not_null:
+                description: >
+                  Warn: price_per_night is a listing attribute used for pricing
+                  analysis. Revenue comes from booking_amount, so a missing price
+                  does not break revenue totals.
+                config:
+                  severity: warn
            - dbt_utils.accepted_range:
                 min_value: 1
                 max_value: 50000
-
+                inclusive: true
+                config:
+                  severity: warn
       - name: source_created_at
         description: >
           Original record creation timestamp from the source system.
@@ -269,8 +427,7 @@ models:
         tests:
           - not_in_future:
               config:
-                severity: error
-      
+                severity: error     
       - name: source_updated_at
         description: >
           When record was last updated in source system.

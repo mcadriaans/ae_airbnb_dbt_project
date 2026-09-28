@@ -2,7 +2,7 @@
 -- and prepares it for further transformation in the silver layer. It includes data type conversions, trimming of string fields, 
 -- and basic formatting to ensure consistency and readiness for downstream processing.
 
-{% set mandatory_columns = ['host_id', 'host_name', 'host_since'] %}
+
 
 WITH source AS (
     SELECT 
@@ -36,10 +36,6 @@ standardized AS (
         CAST(created_at AS timestamp_ltz) AS source_created_at,
         CAST(updated_at AS timestamp_ltz) AS source_updated_at
     FROM source
-    WHERE
-        {% for col in mandatory_columns -%}
-            {{ col }} IS NOT NULL {% if not loop.last %} AND {% endif %}
-        {%- endfor %}
 )
 
 SELECT * FROM standardized

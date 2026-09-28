@@ -1,7 +1,6 @@
 --stg_airbnb__listings.sql 
 -- -- Standardizes property inventory data and prepares Star Schema join anchors.
 
-{% set mandatory_columns = ['listing_id', 'host_id', 'price_per_night'] %}
 
 WITH source AS (
     SELECT 
@@ -28,7 +27,20 @@ standardized AS (
         -- Dimensions
         CAST(INITCAP(TRIM(property_type)) AS VARCHAR) AS property_type,
         CAST(INITCAP(TRIM(city)) AS VARCHAR) AS city,
-        CAST(INITCAP(TRIM(country)) AS VARCHAR) AS country,
+        CAST(
+                CASE UPPER(TRIM(country))
+                    -- United States
+                    WHEN 'USA'                      THEN 'United States'
+                    WHEN 'US'                       THEN 'United States'
+                    WHEN 'UNITED STATES'            THEN 'United States'
+                    WHEN 'UNITED STATES OF AMERICA' THEN 'United States'
+
+                    -- United Kingdom
+                    WHEN 'UK'              THEN 'United Kingdom'
+                    WHEN 'UNITED KINGDOM'  THEN 'United Kingdom'
+                ELSE INITCAP(TRIM(country)) 
+            END AS VARCHAR
+        ) AS country,
 
         -- Metrics
         CAST(accommodates AS INT) AS accommodates,
@@ -41,10 +53,6 @@ standardized AS (
         CAST(updated_at AS timestamp_ltz) AS source_updated_at
 
     FROM source
-    WHERE 
-        {% for col in mandatory_columns -%}
-            {{ col }} IS NOT NULL {% if not loop.last %} AND {% endif %}
-        {%- endfor %}
 )
 
 SELECT * FROM standardized

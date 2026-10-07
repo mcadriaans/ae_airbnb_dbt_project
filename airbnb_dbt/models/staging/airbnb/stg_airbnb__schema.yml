@@ -47,7 +47,7 @@ models:
         description: >
           Business identifier for the property associated with the booking.
           Cast to integer and standardized for referential integrity checks
-          against the staging listings model. This is the natural keyfor the property.
+          against the staging listings model. This is the natural key for the property.
           Foreign key to stg_airbnb__listings.listing_id.
         tests:
           - not_null:
@@ -323,7 +323,7 @@ models:
         tests:
           - not_null:
               description: >
-                Warn : A lisiting wiht no host_id is still usable on its own.
+                Warn : A listing wiht no host_id is still usable on its own.
                 Only host-level rollups are affected. Consistent with the warn 
                 severity in bronze.
               config:
@@ -332,7 +332,7 @@ models:
               to: ref('stg_airbnb__hosts')
               field: host_id
               description: >
-                Warn : Verified via manual query that 0 lisitings currently have 
+                Warn : Verified via manual query that 0 listings currently have 
                 an orphaned host_id. Kept as a safeguard in case a future data
                 refresh introduces a mismatch.
               config:
@@ -346,7 +346,7 @@ models:
         # and staging only trims and title-cases it, so it adds no new null risk.
         tests:
           - accepted_values:
-              values: ['House', 'Condo', Loft, Boutique Hotel, Apartment]
+              values: ['House', 'Condo', 'Loft', 'Boutique Hotel', 'Apartment']
               config:
                 severity: warn
       - name: city

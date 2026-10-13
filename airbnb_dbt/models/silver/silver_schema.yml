@@ -57,23 +57,27 @@ models:
         - dbt_utils.expression_is_true:
             name: silver_bookings_stay_end_logic
             description: "Ensures stay_end_date calculation is accurate."
-            expression: "stay_end_date = DATEADD(day, nights_booked, stay_start_date)"
+            arguments:
+                expression: "stay_end_date = DATEADD(day, nights_booked, stay_start_date)"
 
         - dbt_utils.expression_is_true:
             name: silver_bookings_revenue_sum_logic
             description: "Ensures the revenue macro sum matches the components."
-            expression: "booking_revenue = (booking_amount + cleaning_fee + service_fee)"
+            arguments:
+                expression: "booking_revenue = (booking_amount + cleaning_fee + service_fee)"
 
         - dbt_utils.expression_is_true:
             name: silver_bookings_cancellation_limit
             description: "Ensures cancellation fees do not exceed expected revenue."
-            expression: "cancellation_fee <= booking_revenue"
+            arguments:
+                expression: "cancellation_fee <= booking_revenue"
 
         #  SCD2 TECHNICAL 
         - dbt_utils.expression_is_true:
             name: silver_bookings_is_current_sync
             description: "Ensures is_current_record flag is perfectly synced with dbt_valid_to logic."
-            expression: "(is_current_record = 1 AND dbt_valid_to IS NULL) OR (is_current_record = 0 AND dbt_valid_to IS NOT NULL)"
+            arguments:
+                expression: "(is_current_record = 1 AND dbt_valid_to IS NULL) OR (is_current_record = 0 AND dbt_valid_to IS NOT NULL)"
 
     columns:
       - name: lead_time_days
@@ -118,20 +122,22 @@ models:
     - dbt_utils.expression_is_true: 
         name: host_rating_tier_consistency
         description: "Ensures host_rating_category CASE logic matches avg_host_rating."
-        expression: >
-            (avg_host_rating >= 4.5 AND host_rating_category = 'Excellent') OR 
-            (avg_host_rating < 3.0  AND host_rating_category = 'Below Average') OR 
-            (avg_host_rating IS NULL AND host_rating_category = 'No Reviews') OR 
-            (avg_host_rating >= 3.0 AND avg_host_rating < 4.5)
+        arguments:
+            expression: >
+                (avg_host_rating >= 4.5 AND host_rating_category = 'Excellent') OR 
+                (avg_host_rating < 3.0  AND host_rating_category = 'Below Average') OR 
+                (avg_host_rating IS NULL AND host_rating_category = 'No Reviews') OR 
+                (avg_host_rating >= 3.0 AND avg_host_rating < 4.5)
    
     columns:
     - name: host_tenure_years
       description: "Enrichment: Calculated years since host_since."
       tests:
         - dbt_utils.accepted_range:
-            min_value: 0
-            max_value: 30
-            inclusive: true
+            arguments:
+              min_value: 0
+              max_value: 30
+              inclusive: true
 
   # ---------------------------------------------------------
   # 3. SILVER LISTINGS (SCD1 Dimension)
@@ -164,27 +170,31 @@ models:
       - dbt_utils.expression_is_true:
           name: listing_size_logic_consistency
           description: "Validates bedroom-to-category mapping."
-          expression: >
-            (bedrooms = 0 AND listing_size_category = 'Studio') OR
-            (bedrooms = 1 AND listing_size_category = '1 Bedroom') OR
-            (bedrooms BETWEEN 2 AND 3 AND listing_size_category = 'Medium (2-3 Bedrooms)') OR
-            (bedrooms >= 4 AND listing_size_category = 'Large (4+ Bedrooms)')
+          arguments:
+            expression: >
+               (bedrooms = 0 AND listing_size_category = 'Studio') OR
+               (bedrooms = 1 AND listing_size_category = '1 Bedroom') OR
+               (bedrooms BETWEEN 2 AND 3 AND listing_size_category = 'Medium (2-3 Bedrooms)') OR
+               (bedrooms >= 4 AND listing_size_category = 'Large (4+ Bedrooms)')
 
       - dbt_utils.expression_is_true:
           name: listing_price_tier_consistency
           description: "Validates price-per-night to tier mapping."
-          expression: >
-            (price_per_night < 100 AND price_tier = 'Budget') OR
-            (price_per_night BETWEEN 100 AND 300 AND price_tier = 'Mid-Range') OR
-            (price_per_night > 300 AND price_tier = 'Luxury')
-    
+          arguments:
+            expression: >
+              (price_per_night < 100 AND price_tier = 'Budget') OR
+              (price_per_night BETWEEN 100 AND 300 AND price_tier = 'Mid-Range') OR
+              (price_per_night > 300 AND price_tier = 'Luxury')
     columns:
       - name: host_id
         description: "FK: Link to silver_hosts."
         tests:
           - relationships:
-              to: ref('silver_hosts')
-              field: host_id
+              arguments:
+                to: ref('silver_hosts')
+                field: host_id
+              config:
+                severity: error
       - name: price_per_guest
         description: "Enrichment: Efficiency metric (Price / Accommodates)."
         tests:

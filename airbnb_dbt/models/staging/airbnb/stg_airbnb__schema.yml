@@ -19,16 +19,20 @@ models:
     tests:
       - dbt_utils.expression_is_true:
           name: booking_date_after_launch
-          expression: "booking_date >= '{{ var('airbnb_launch_date') }}'"
+          arguments:
+            expression: "booking_date >= '{{ var('airbnb_launch_date') }}'"
       - dbt_utils.expression_is_true:
           name: stay_start_date_after_booking_date
-          expression: "stay_start_date >= booking_date"
+          arguments:
+            expression: "stay_start_date >= booking_date"
       - dbt_utils.expression_is_true:
           name: cancellation_fee_sanity
-          expression: "cancellation_fee <= booking_amount"
+          arguments:
+            expression: "cancellation_fee <= booking_amount"
       - dbt_utils.expression_is_true:
           name: stg_bookings_update_after_create
-          expression: "source_updated_at >= source_created_at"
+          arguments:
+            expression: "source_updated_at >= source_created_at"
           config:
             severity: error
     
@@ -57,9 +61,10 @@ models:
               config:
                 severity: error
           - relationships:
-              to: ref('stg_airbnb__listings')
-              field: listing_id
               description: "Ensures referential integrity between staging models."
+              arguments:
+                to: ref('stg_airbnb__listings')
+                field: listing_id
               config:
                 severity: warn
       - name: booking_status
@@ -77,7 +82,8 @@ models:
               config:
                 severity: error
           - accepted_values:
-              values: ['confirmed', 'cancelled']
+              arguments:
+                values: ['confirmed', 'cancelled']
               config:
                 severity: error
       - name: booking_date
@@ -121,9 +127,12 @@ models:
               config:
                 severity: error
           - dbt_utils.accepted_range:
-              min_value: 1
-              max_value: 730  
-              inclusive: true
+              arguments:
+                min_value: 1
+                max_value: 730  
+                inclusive: true
+              config:
+                severity: error
       - name: booking_amount
         description:  >
           Base booking value before additional fees. Cast to a fixed-precision monetary datatype
@@ -138,9 +147,12 @@ models:
               config:
                 severity: error
           - dbt_utils.accepted_range:
-              min_value: 1
-              max_value: 100000
-              inclusive: true
+              arguments:
+                min_value: 1
+                max_value: 100000
+                inclusive: true
+              config:
+                severity: error
       - name: cleaning_fee
         description: >
           Cleaning fee (if applicable) charged for booking and stored as monetary value.
@@ -191,10 +203,12 @@ models:
     tests:
       - dbt_utils.expression_is_true:
           name: stg_hosts_since_after_launch 
-          expression: "host_since >= '{{ var('airbnb_launch_date') }}'"
+          arguments:
+            expression: "host_since >= '{{ var('airbnb_launch_date') }}'"
       - dbt_utils.expression_is_true:
           name: stg_hosts_update_after_create
-          expression: "source_updated_at >= source_created_at"
+          arguments:
+            expression: "source_updated_at >= source_created_at"
     columns:
     - name: host_id
       description: >
@@ -245,8 +259,9 @@ models:
         COALESCE, so every row has a definitive boolean value.
       tests:
         - accepted_values:
+            arguments:
               values: [true, false]
-              config:
+            config:
                 severity: warn
     - name: response_rate
       description: >
@@ -255,9 +270,10 @@ models:
         decimal places.
       tests:
         - dbt_utils.accepted_range:
-            min_value: 0
-            max_value: 1
-            inclusive: true
+            arguments:
+              min_value: 0
+              max_value: 1
+              inclusive: true
             config:
               severity: warn
     - name: avg_host_rating
@@ -266,9 +282,10 @@ models:
         fixed-precision decimal for consistent downstream calculations.
       tests:
         - dbt_utils.accepted_range:
-            min_value: 0
-            max_value: 5
-            inclusive: true
+            arguments:
+              min_value: 0
+              max_value: 5
+              inclusive: true
             config:
               severity: warn
     - name: source_created_at
@@ -304,7 +321,8 @@ models:
     tests:
       - dbt_utils.expression_is_true:
           name: stg_listings_update_after_create
-          expression: "source_updated_at >= source_created_at"
+          arguments:
+            expression: "source_updated_at >= source_created_at"
     columns: 
       - name: listing_id
         description: >
@@ -329,12 +347,13 @@ models:
               config:
                 severity: warn
           - relationships:
-              to: ref('stg_airbnb__hosts')
-              field: host_id
               description: >
                 Warn : Verified via manual query that 0 listings currently have 
                 an orphaned host_id. Kept as a safeguard in case a future data
                 refresh introduces a mismatch.
+              arguments:
+                to: ref('stg_airbnb__hosts')
+                field: host_id
               config:
                 severity: warn
       - name: property_type
@@ -346,7 +365,8 @@ models:
         # and staging only trims and title-cases it, so it adds no new null risk.
         tests:
           - accepted_values:
-              values: ['House', 'Condo', 'Loft', 'Boutique Hotel', 'Apartment']
+              arguments:
+                values: ['House', 'Condo', 'Loft', 'Boutique Hotel', 'Apartment']
               config:
                 severity: warn
       - name: city
@@ -369,9 +389,10 @@ models:
         # and staging only casts it, so it adds no new null risk.
         tests:
           - dbt_utils.accepted_range:
-              min_value: 1
-              max_value: 30
-              inclusive: true
+              arguments:
+                min_value: 1
+                max_value: 30
+                inclusive: true
               config:
                 severity: warn
       - name: bedrooms
@@ -382,9 +403,10 @@ models:
         # and staging only casts it, so it adds no new null risk.
         tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 20
-              inclusive: true
+              arguments:
+                min_value: 0
+                max_value: 20
+                inclusive: true
               config:
                 severity: warn
       - name: bathrooms
@@ -395,9 +417,10 @@ models:
         # and staging only casts it, so it adds no new null risk.
         tests:
           - dbt_utils.accepted_range:
-              min_value: 0.5
-              max_value: 10
-              inclusive: true
+              arguments:
+                min_value: 0.5
+                max_value: 10
+                inclusive: true
               config:
                 severity: warn
       - name: price_per_night
@@ -414,10 +437,11 @@ models:
                 config:
                   severity: warn
            - dbt_utils.accepted_range:
-                min_value: 1
-                max_value: 50000
-                inclusive: true
-                config:
+               arguments:
+                 min_value: 1
+                 max_value: 50000
+                 inclusive: true
+               config:
                   severity: warn
       - name: source_created_at
         description: >

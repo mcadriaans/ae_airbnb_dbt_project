@@ -33,8 +33,8 @@ standardized AS (
         CAST(avg_host_rating AS DECIMAL(18,2)) AS avg_host_rating,
 
         -- Metadata tracking
-        CAST(created_at AS timestamp_ltz) AS created_at,
-        CAST(updated_at AS timestamp_ltz) AS updated_at
+        CAST(created_at AS timestamp_ltz) AS source_created_at,
+        CAST(updated_at AS timestamp_ltz) AS source_updated_at
     FROM source
 )
 

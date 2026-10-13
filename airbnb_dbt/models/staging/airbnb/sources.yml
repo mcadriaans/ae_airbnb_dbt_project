@@ -42,12 +42,13 @@ sources:
                   config:
                     severity: error
               - relationships:
-                  to: source('airbnb', 'bronze_listings')
-                  field: listing_id
                   description: >
                     Warn, not Error : Verified via manual query that 0 bookings currently
                     have an orphaned listing_id. Kept as a warn-level safeguard rather than removed,
                     in case future data refresh introduces a mismatched booking/listing relationship.
+                  arguments:
+                    to: source('airbnb', 'bronze_listings')
+                    field: listing_id
                   config:
                     severity: warn       
           - name: booking_date
@@ -204,11 +205,12 @@ sources:
                   config:
                     severity: warn              
               - relationships:
-                  to: source('airbnb', 'bronze_hosts')
-                  field: host_id
                   description: > 
                     WARN: consistent with not_null severity. A listing without a 
                     valid host reference is still analytically usable on its own.
+                  arguments:
+                    to: source('airbnb', 'bronze_hosts')
+                    field: host_id
                   config:
                     severity: warn
           - name: property_type

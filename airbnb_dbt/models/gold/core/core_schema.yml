@@ -34,37 +34,43 @@ models:
         description: "Q1, Q2, Q3, or Q4"
         tests:
           - accepted_values:
-              values: ['Q1', 'Q2', 'Q3', 'Q4']
+              arguments:
+                values: ['Q1', 'Q2', 'Q3', 'Q4']
       
       - name: month_name
         description: "Full month name (e.g., January)"
         tests:
           - accepted_values:
-              values: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+              arguments:
+                values: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
       
       - name: month_of_year
         description: "Month number (1-12)"
         tests:
           - accepted_values:
-              values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+              arguments:
+                values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
       
       - name: day_of_week_name
         description: "Day name (Monday, Tuesday, ..., Sunday)"
         tests:
           - accepted_values:
-              values: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+              arguments:
+                values: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
       
       - name: day_of_week
         description: "Day number (1=Monday, 7=Sunday)"
         tests:
           - accepted_values:
-              values: [1, 2, 3, 4, 5, 6, 7]
+              arguments:
+                values: [1, 2, 3, 4, 5, 6, 7]
       
       - name: is_weekend
         description: "Boolean flag: true if Saturday or Sunday"
         tests:
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       
       - name: loaded_at
         description: "Timestamp when this row was loaded into warehouse"
@@ -104,29 +110,33 @@ models:
         description: "Boolean: true if Airbnb Superhost"
         tests:
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       
       - name: response_rate
         description: "Response rate as decimal (0.0-1.0)"
         tests:
           - dbt_utils.expression_is_between:
-              min: 0.0
-              max: 1.0
-              inclusive: true
+              arguments:
+                min: 0.0
+                max: 1.0
+                inclusive: true
       
       - name: avg_host_rating
         description: "Average guest rating (0-5 scale)"
         tests:
           - dbt_utils.expression_is_between:
-              min: 0.0
-              max: 5.0
-              inclusive: true
+              arguments:
+                min: 0.0
+                max: 5.0
+                inclusive: true
 
       - name: host_rating_category
         description: "Bucketed rating: Excellent (4.5+), Good (4.0-4.4), Average (3.0-3.9), Below Average (<3.0), No Reviews"
         tests:
           - accepted_values:
-              values: ['Excellent', 'Good', 'Average', 'Below Average', 'No Reviews']
+              arguments:
+                values: ['Excellent', 'Good', 'Average', 'Below Average', 'No Reviews']
       
       - name: host_tenure_years
         description: "Years active on platform (calculated from host_since)"
@@ -138,7 +148,8 @@ models:
         description: "Segment: Professional (5+), Multi-listing (2-4), Single-listing (1), No Active Listings (0)"
         tests:
           - accepted_values:
-              values: ['Professional', 'Multi-listing', 'Single-listing', 'No Active Listings']
+              arguments:
+                values: ['Professional', 'Multi-listing', 'Single-listing', 'No Active Listings']
       
       - name: loaded_at
         description: "Timestamp when this row was last loaded"
@@ -196,35 +207,40 @@ models:
         description: "Bucketed by bedrooms: Studio, 1 Bedroom, Medium (2-3), Large (4+)"
         tests:
           - accepted_values:
-              values: ['Studio', '1 Bedroom', 'Medium (2-3)', 'Large (4+)']
+              arguments:
+                values: ['Studio', '1 Bedroom', 'Medium (2-3)', 'Large (4+)']
       
       - name: capacity_type
         description: "Bucketed by accommodates: Solo/Pair (1-2), Small Group (3-5), Large Group (6+)"
         tests:
           - accepted_values:
-              values: ['Solo/Pair', 'Small Group', 'Large Group']
+              arguments:
+                values: ['Solo/Pair', 'Small Group', 'Large Group']
       
       - name: price_per_night
         description: "Nightly rental price in local currency"
         tests:
           - dbt_utils.expression_is_between:
-              min: 0.0
-              max: 10000.0
-              inclusive: true
+              arguments:
+                min: 0.0
+                max: 10000.0
+                inclusive: true
       
       - name: price_per_guest
         description: "Price divided by accommodates (efficiency metric)"
         tests:
           - dbt_utils.expression_is_between:
-              min: 0.0
-              max: 10000.0
-              inclusive: true
+              arguments:
+                min: 0.0
+                max: 10000.0
+                inclusive: true
       
       - name: price_tier
         description: "Bucketed: Budget (<$100), Mid-Range ($100-300), Luxury (>$300)"
         tests:
           - accepted_values:
-              values: ['Budget', 'Mid-Range', 'Luxury']
+              arguments:
+                values: ['Budget', 'Mid-Range', 'Luxury']
       
       - name: loaded_at
         description: "Timestamp when this row was last loaded"
@@ -256,16 +272,18 @@ models:
         description: "Geographic latitude for mapping"
         tests:
           - dbt_utils.expression_is_between:
-              min: -90.0
-              max: 90.0
-              inclusive: true
+              arguments:
+                min: -90.0
+                max: 90.0
+                inclusive: true
       
       - name: longitude
         description: "Geographic longitude for mapping"
         tests:
           - dbt_utils.expression_is_between:
-              min: -180.0
-              max: 180.0
+              arguments:
+                min: -180.0
+                max: 180.0
               inclusive: true
       
       - name: country_code_2
@@ -273,14 +291,16 @@ models:
         tests:
           - not_null
           - dbt_utils.expression_is_true:
-              expression: "length(country_code_2) = 2"
+              arguments:
+                expression: "length(country_code_2) = 2"
       
       - name: country_code_3
         description: "ISO 3166-1 alpha-3 code (e.g., USA, FRA, GBR)"
         tests:
           - not_null
           - dbt_utils.expression_is_true:
-              expression: "length(country_code_3) = 3"
+              arguments:
+                expression: "length(country_code_3) = 3"
       
       - name: state_province
         description: "Administrative division / state / province"
@@ -289,14 +309,16 @@ models:
         description: "National Capital, Provincial/State Capital, Administrative Capital, Non-capital, Unknown"
         tests:
           - accepted_values:
-              values: ['National Capital', 'Provincial/State Capital', 'Administrative Capital', 'Non-capital', 'Unknown']
+              arguments:
+                values: ['National Capital', 'Provincial/State Capital', 'Administrative Capital', 'Non-capital', 'Unknown']
       - name: population
         description: "City population from geographic reference data"
         tests:
           - dbt_utils.expression_is_between:
-              min: 0
-              max: 10000000
-              inclusive: true
+              arguments:
+                min: 0
+                max: 10000000
+                inclusive: true
 
       - name: loaded_at
         description: "Timestamp when this row was loaded"
@@ -316,9 +338,10 @@ models:
       - Calculate KPIs: cancellation rate, occupancy, ARR
     tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - booking_id
-            - booking_version_id
+          arguments:
+            combination_of_columns:
+              - booking_id
+              - booking_version_id
     columns:
       - name: booking_key
         description: "Surrogate key: Hash of booking_id (not the fact table PK)"
@@ -327,22 +350,25 @@ models:
         description: "FK: Reference to dim_listings"
         tests:
           - relationships:
-              to: ref('dim_listings')
-              field: listing_key
+              arguments:
+                to: ref('dim_listings')
+                field: listing_key
       
       - name: host_key
         description: "FK: Reference to dim_hosts"
         tests:
           - relationships:
-              to: ref('dim_hosts')
-              field: host_key
+              arguments:
+                to: ref('dim_hosts')
+                field: host_key
       
       - name: booking_date_key
         description: "FK: Reference to dim_date on booking_date"
         tests:
           - relationships:
-              to: ref('dim_date')
-              field: date_key
+              arguments:
+                to: ref('dim_date')
+                field: date_key
       
       - name: booking_id
         description: "Natural key: Original booking identifier (UUID)"

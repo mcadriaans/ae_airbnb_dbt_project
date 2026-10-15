@@ -1,23 +1,60 @@
--- models/silver/silver_listings.sql
+-- models/silver/silver_listings.sql : Enriched listing dimensions with SCD2 history
 
--- SCD1: One row per listing (just latest state)
--- When listing data changes: OVERWRITE old row, don't track history
--- Input: stg_airbnb__listings
--- Output: Enriched listing dimensions with price tiers and capacity metrics
-
+-- Input: listings_snapshot (SCD2 tracking listing changes)
+-- Output: Enriched listing dimensions, all versions preserved
+--> 'merge': implies versioning
 
 {{
     config(
         materialized='incremental',
-        unique_key='listing_id',
-        incremental_strategy='delete+insert',
+        unique_key='dbt_scd_id',
+        incremental_strategy='merge',
         on_schema_change='sync_all_columns'
     )
 }}
 
-WITH silver_listings_enriched AS (
+WITH listings_snapshot_data AS (
     SELECT 
         -- Keys
+        listing_id,
+        host_id,
+        -- Dimensions
+        property_type,
+        city,
+        country,
+
+        -- Metrics
+        accommodates,
+        bedrooms,
+        bathrooms,
+        price_per_night,
+
+        -- Metadata for tracking
+        source_created_at,
+        source_updated_at,
+
+        -- Snapshot Metadata (SCD2)
+        dbt_scd_id,
+        dbt_updated_at,
+        dbt_valid_from,
+        dbt_valid_to
+    FROM {{ ref('listings_snapshot') }}
+    {% if is_incremental() %}
+        -- Only grab snapshot rows that are NEW to silver
+        WHERE dbt_updated_at >= (
+          SELECT COALESCE(MAX(dbt_updated_at), '1900-01-01'::timestamp_ltz)
+          FROM {{ this }}
+      )
+     OR dbt_valid_to >= (
+          SELECT COALESCE(MAX(dbt_updated_at), '1900-01-01'::timestamp_ltz)
+          FROM {{ this }}
+      ) 
+    {% endif %}
+),
+silver_listings_enriched AS (
+    SELECT
+        -- Identifiers
+        dbt_scd_id,   -- Primary Key: Identifies this specific version of the host record
         listing_id,
         host_id,
 
@@ -44,7 +81,7 @@ WITH silver_listings_enriched AS (
             WHEN price_per_night BETWEEN 100 AND 300 THEN 'Mid-Range'
             ELSE 'Luxury'
         END AS price_tier,
-        
+  
         -- Metrics
         accommodates,
         bedrooms,
@@ -53,19 +90,17 @@ WITH silver_listings_enriched AS (
         --- Efficiency metric: Price per possible guest
         {{ safe_divide('price_per_night', 'accommodates', decimals=2) }} AS price_per_guest,
 
+        -- SCD2 Logic
+        dbt_valid_from, 
+        dbt_valid_to,
+        CASE WHEN dbt_valid_to IS NULL THEN 1 ELSE 0 END AS is_current_record,
 
-        -- Metadata for tracking
+        -- Fully Traceability Audit  
         source_created_at,
         source_updated_at,
-        CAST(current_timestamp() AS timestamp_ltz) AS loaded_at
-    FROM {{ ref('stg_airbnb__listings') }}
-    {% if is_incremental() %}
-        WHERE source_updated_at >= (
-          SELECT DATEADD(day, -7, COALESCE(MAX(loaded_at), '1900-01-01'::timestamp_ltz))
-          FROM {{ this }}
-      )
-    {% endif %}
+        dbt_updated_at,
+        CAST(current_timestamp() AS timestamp_ltz) AS  silver_loaded_at  -- Timestamp when this record was loaded into the silver layer
+    FROM listings_snapshot_data
 )
-
 
 SELECT * FROM silver_listings_enriched

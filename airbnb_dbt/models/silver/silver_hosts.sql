@@ -1,21 +1,55 @@
--- models/silver/silver_hosts.sql
--- SCD1: One row per host (just latest state)
--- When host data changes: OVERWRITE old row, don't track history
+-- models/silver/silver_hosts.sql : Enriched host dimensions with SCD2 history
 
---> 'delete+insert' :   One row per host. Old state completely replaced.
+-- Input: hosts_snapshot (SCD2 tracking host changes)
+-- Output: Enriched host dimensions, all versions preserved
+
+--> 'merge': implies versioning
 {{
     config(
         materialized='incremental',
-        unique_key='host_id',
-        incremental_strategy='delete+insert', 
+        unique_key='dbt_scd_id',
+        incremental_strategy='merge', 
         on_schema_change='sync_all_columns'
     )
 }}
-
-WITH silver_hosts_enriched AS (
+WITH hosts_snapshot_data AS (
     SELECT 
         -- Keys
         host_id,
+
+        -- Dimensions
+        host_name,
+        host_location,
+        is_superhost,
+
+        -- Dates & Metrics
+        host_since,
+        response_rate,
+        avg_host_rating,
+        
+        -- Source Metadata for tracking
+        source_created_at,
+        source_updated_at,
+        
+        -- Snapshot Metadata (SCD2)
+        dbt_scd_id,
+        dbt_updated_at,
+        dbt_valid_from, 
+        dbt_valid_to
+    FROM {{ ref('hosts_snapshot') }}
+    {% if is_incremental() %}
+      -- Only grab snapshot rows that are NEW to silver  
+      WHERE dbt_updated_at >= (
+          SELECT COALESCE(MAX(dbt_updated_at), '1900-01-01'::timestamp_ltz)
+          FROM {{ this }}
+      )
+    {% endif %}
+),
+silver_hosts_enriched AS (
+    SELECT
+        -- Identifiers
+        dbt_scd_id,   -- Primary Key: Identifies this specific version of the host record
+        host_id,      -- Original ID from source system (UUID)
 
         -- Dimensions
         host_name,
@@ -29,29 +63,26 @@ WITH silver_hosts_enriched AS (
             WHEN avg_host_rating IS NULL THEN 'No Reviews'
             ELSE 'Below Average'
         END AS VARCHAR) AS host_rating_category,
-
+        
         -- Dates & Metrics
-         host_since,
+        host_since,
         --- Calculate host tenure in years
         CAST((DATEDIFF('day', host_since, CURRENT_DATE) / 365.25) AS DECIMAL(18,2)) AS host_tenure_years,
         response_rate,
         avg_host_rating,
-        
-        
-        -- Metadata for tracking
+
+        -- SCD2 Logic
+        dbt_valid_from, 
+        dbt_valid_to,
+        CASE WHEN dbt_valid_to IS NULL THEN 1 ELSE 0 END AS is_current_record,
+
+        -- Full traceability audit
         source_created_at,
         source_updated_at,
-        CAST(current_timestamp() AS timestamp_ltz) AS loaded_at
-    FROM {{ ref('stg_airbnb__hosts') }}
-
-    {% if is_incremental() %}
-        WHERE source_updated_at >= (
-          SELECT DATEADD(day, -7, COALESCE(MAX(loaded_at), '1900-01-01'::timestamp_ltz))
-          FROM {{ this}}
-      )
-    {% endif %}
+        dbt_updated_at,
+        CAST(current_timestamp() AS timestamp_ltz) AS  silver_loaded_at  -- Timestamp when this record was loaded into the silver layer
+    FROM hosts_snapshot_data
 )
-
 SELECT * FROM silver_hosts_enriched
 
 

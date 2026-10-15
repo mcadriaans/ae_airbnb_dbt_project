@@ -1,4 +1,5 @@
--- gold/core/dim_listings.sql
+-- models/gold/core/dim_listings.sql:
+
 -- Grain: One row per unique Airbnb listing (property).
 -- Description: Dimension table for properties. Links to dim_hosts and dim_location.
 
@@ -19,6 +20,8 @@ WITH listings AS (
         price_per_guest,
         price_tier
     FROM {{ ref('silver_listings') }}
+    -- Filter out historical versions of listings, keeping only the most recent version for each listing_id
+    WHERE is_current_record = 1
 ),
 
 hosts AS (
@@ -42,7 +45,7 @@ SELECT
 
     -- Foreign Keys (References to other dimension tables)
     h.host_key,
-    loc.location_key,
+    {{ dbt_utils.generate_surrogate_key(['l.city', 'l.country']) }} AS location_key,
 
     -- Natural keys 
     l.listing_id,
@@ -64,7 +67,7 @@ SELECT
     l.price_tier,
 
     -- Metadata 
-    CAST(CURRENT_TIMESTAMP() AS timestamp_ltz) AS loaded_at
+    CAST(CURRENT_TIMESTAMP() AS timestamp_ltz) AS core_loaded_at
 FROM listings AS l
 LEFT JOIN hosts AS h
     ON l.host_id = h.host_id

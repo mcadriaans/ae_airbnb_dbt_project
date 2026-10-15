@@ -1,5 +1,9 @@
 
--- gold/core/dim_date.sql:
+-- models/gold/core/dim_dates.sql:
+
+-- This model creates a date dimension table for use in the gold layer of the Airbnb data warehouse.
+
+-- 1. CONFIG SECTION
 {% set date_query %}
 SELECT 
     -- Use your airbnb_launch_date variable for the start!
@@ -34,10 +38,12 @@ WITH date_dimension AS (
 
 
 SELECT 
-     -- Surrogate key
+     -- Primary Surrogate key
     {{ dbt_utils.generate_surrogate_key(['date_day']) }} AS date_key,
+
      -- The Natural Key 
     date_day,
+
     -- Descriptive Attributes
     year_number,
     quarter_of_year,
@@ -45,12 +51,15 @@ SELECT
     month_of_year,
     day_of_week_name,
     day_of_week,
+
+    -- Derived Attributes
     CASE
         WHEN day_of_week_name IN ('Saturday', 'Sunday') THEN true
         ELSE false
     END AS is_weekend,
-    -- Metadata
-    CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_LTZ) AS loaded_at
+
+    -- Audit Metadata
+    CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_LTZ) AS core_loaded_at
 FROM date_dimension 
 
 

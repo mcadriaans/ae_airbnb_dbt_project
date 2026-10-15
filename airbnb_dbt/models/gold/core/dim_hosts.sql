@@ -1,15 +1,20 @@
--- gold/core/dim_hosts.sql
+-- models/gold/core/dim_hosts.sql:
+
 -- Grain: One row per unique host.
 -- Description: Dimension table containing host profile attributes and aggregated portfolio metrics.
 
 WITH hosts AS (
     SELECT *
     FROM {{ ref('silver_hosts') }}
+    -- Filter out historical versions of hosts, keeping only the most recent version for each host_id
+    WHERE is_current_record = 1
 ),
 
 listings AS (
     SELECT host_id
     FROM {{ ref('silver_listings') }}
+    -- Filter out historical versions of listings, keeping only the most recent version for each listing_id
+    WHERE is_current_record = 1
 ),
 
 host_listings_metrics AS (
@@ -50,7 +55,7 @@ SELECT
     COALESCE(m.host_portfolio_type,'No Active Listings') AS host_portfolio_type,
 
     -- Metadata 
-   CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_LTZ) AS loaded_at
+   CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_LTZ) AS core_loaded_at
 
 FROM hosts h
 LEFT JOIN host_listings_metrics m

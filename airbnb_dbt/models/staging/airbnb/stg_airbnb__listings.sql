@@ -29,15 +29,14 @@ standardized AS (
         CAST(INITCAP(TRIM(city)) AS VARCHAR) AS city,
         CAST(
                 CASE UPPER(TRIM(country))
-                    -- United States
-                    WHEN 'USA'                      THEN 'United States'
-                    WHEN 'US'                       THEN 'United States'
-                    WHEN 'UNITED STATES'            THEN 'United States'
-                    WHEN 'UNITED STATES OF AMERICA' THEN 'United States'
-
-                    -- United Kingdom
-                    WHEN 'UK'              THEN 'United Kingdom'
-                    WHEN 'UNITED KINGDOM'  THEN 'United Kingdom'
+                    WHEN 'UNITED STATES OF AMERICA' THEN 'United States of America'
+                    WHEN 'UNITED KINGDOM' THEN 'United Kingdom'
+                    WHEN 'U.S.A.' THEN 'United States of America'
+                    WHEN 'U.K.' THEN 'United Kingdom'
+                    WHEN 'USA' THEN 'United States of America'
+                    WHEN 'UK' THEN 'United Kingdom'
+                    WHEN 'US' THEN 'United States of America'
+                    WHEN 'UNITED STATES' THEN 'United States of America'
                 ELSE INITCAP(TRIM(country)) 
             END AS VARCHAR
         ) AS country,

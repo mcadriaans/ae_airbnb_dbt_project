@@ -1,6 +1,7 @@
 -- models/gold/core/dim_hosts.sql:
 
 -- Grain: One row per unique host.
+-- SCD: Type 1 (current state only) with SCD2 history preserved in silver layer.
 -- Description: Dimension table containing host profile attributes and aggregated portfolio metrics.
 
 WITH hosts AS (

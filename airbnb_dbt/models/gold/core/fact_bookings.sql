@@ -1,10 +1,11 @@
 -- models/gold/core/fact_bookings.sql
 
 -- Layer: Gold Core (Conformed Enterprise Star Schema)
--- Grain: One row per booking version mutation (SCD2).
+-- Grain: One row per booking (current state only) with SCD2 history preserved in silver layer.
+-- History; Previous versions of bookings are preserved in the silver layer,
+--          and exposed in the fact_bookings_status_history
 -- Description: This is the main booking table for your business reports. It saves the 
---              entire life story of every booking, tracking status updates over time. 
---              It plugs directly into your conformed date, host, and listing tables 
+--              current state of every booking and plugs directly into your conformed date, host, and listing tables 
 --              so you can easily build dashboard charts for sales and cancellations.
 
 --                dim_dates
@@ -18,6 +19,7 @@
 WITH bookings AS (
     SELECT *
     FROM {{ ref('silver_bookings') }}
+    WHERE is_current_record = 1
 ),
 hosts AS (
     SELECT *
@@ -32,11 +34,9 @@ dates AS (
     FROM {{ ref('dim_dates') }}
 )
 
-
-
 SELECT 
     -- Primary Surrogate Key for Star Schema Joins 
-    {{ dbt_utils.generate_surrogate_key(['b.booking_id', 'b.dbt_scd_id']) }} AS booking_key, 
+    {{ dbt_utils.generate_surrogate_key(['b.booking_id']) }} AS booking_key, 
 
     -- Star schema foreign keys for joining to dimension tables
     l.listing_key, 

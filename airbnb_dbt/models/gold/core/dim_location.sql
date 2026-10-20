@@ -1,5 +1,6 @@
 -- models/gold/core/dim_location.sql
 -- Grain: One row per unique City and Country combination.
+-- SCD: Type 1 (current state only) with SCD2 history preserved in silver layer.
 -- Description: Geographic dimension table that enriches Airbnb listing locations with
 --              coordinates,population data, and administrative metadata 
 --              (e.g., capital city status).

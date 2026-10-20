@@ -1,6 +1,29 @@
-#-- stg_airbnb__schema.yml:
+#-- models/staging/airbnb/stg_airbnb__schema.yml:
 
-
+# ======================================================================================
+## STAGING LAYER: Standardization & Data Validity
+## ======================================================================================
+## This schema audits the cleaning performed in the Staging layer, the first place where
+## raw bronze data is standardized (casing, trimming, type casts, null defaults) and
+## checked against business rules, before the snapshot (SCD2) layer tracks history.
+##
+## STRATEGY: Non-Redundant Testing
+## 1. Physical contract integrity (primary keys, uniqueness, mandatory source fields,
+##    system timestamps) is owned by Bronze and is not repeated here.
+## 2. Staging tests focus on:
+##    - Standardization Results (e.g., accepted_values after LOWER/TRIM/INITCAP)
+##    - Value Validity (e.g., accepted_range on amounts, nights, ratings; not_in_future)
+##    - Cross-Column Logic (e.g., stay_start_date >= booking_date,
+##      cancellation_fee <= booking_amount, source_updated_at >= source_created_at)
+##    - Referential Integrity between staging models (bookings -> listings -> hosts)
+## 3. A not_null test is added here only when staging introduces a new null risk for the
+##    column, or when a cross-column test depends on it. A NULL comparison in SQL evaluates
+##    to unknown, not false, so the expression test would silently pass without it.
+##
+## SEVERITY:
+##    error = the row is analytically unusable without a valid value (revenue, status, dates)
+##    warn  = the row is incomplete but still usable (descriptive or display attributes)
+## ======================================================================================
 version: 2
 
 models:
@@ -11,31 +34,39 @@ models:
     description: >
       STAGING: Standardized booking data.
       Logic: Lowercase IDs/Status, Cast Types, and COALESCE null metrics
-      This layer enforces 'Business Sanity' before data hits the Silver history tracking.
-    config:
-      materialized: view
-    
+      This layer enforces 'Business Sanity' before the snapshot (SCD2) layer.
+
     # CROSS-COLUMN tests
     tests:
-      - dbt_utils.expression_is_true:
-          name: booking_date_after_launch
-          arguments:
-            expression: "booking_date >= '{{ var('airbnb_launch_date') }}'"
-      - dbt_utils.expression_is_true:
-          name: stay_start_date_after_booking_date
-          arguments:
-            expression: "stay_start_date >= booking_date"
-      - dbt_utils.expression_is_true:
-          name: cancellation_fee_sanity
-          arguments:
-            expression: "cancellation_fee <= booking_amount"
-      - dbt_utils.expression_is_true:
-          name: stg_bookings_update_after_create
-          arguments:
-            expression: "source_updated_at >= source_created_at"
-          config:
-            severity: error
-    
+        - dbt_utils.expression_is_true:
+            name: booking_date_after_launch
+            description: "Ensures booking date after launch."
+            arguments:
+              expression: "booking_date >= '{{ var('airbnb_launch_date') }}'"
+            config:
+              severity: error
+
+        - dbt_utils.expression_is_true:
+            name: stay_start_date_after_booking_date
+            arguments:
+              expression: "stay_start_date >= booking_date"
+            config:
+              severity: error
+
+        - dbt_utils.expression_is_true:
+            name: cancellation_fee_sanity
+            arguments:
+              expression: "cancellation_fee <= booking_amount"
+            config:
+              severity: error
+
+        - dbt_utils.expression_is_true:
+            name: stg_bookings_update_after_create
+            arguments:
+              expression: "source_updated_at >= source_created_at"
+            config:
+              severity: error
+      
     columns:
       - name: booking_id
         description: >
@@ -158,19 +189,25 @@ models:
           Cleaning fee (if applicable) charged for booking and stored as monetary value.
           Null values are defaulted to zero to ensure consistent revenue calculations.
         tests:
-          - not_negative    
+          - not_negative:
+              config:
+                severity: error    
       - name: service_fee
         description: >
           Airbnb's service fee associated with the booking and stored as monetary value.
           Null values are defaulted to zero to ensure consistent revenue calculations.
         tests:
-          - not_negative
+          - not_negative:
+              config:
+                severity: error
       - name: cancellation_fee
         description: >
           Fee retained when a booking is canceled and stored as monetary value.
           Null values are defaulted to zero to ensure consistent revenue calculations.
         tests:
-          - not_negative
+          - not_negative:
+              config:
+                severity: error
       - name: source_created_at
         description: >
           Original record creation timestamp from the source system.
@@ -196,8 +233,9 @@ models:
     # 2. HOSTS STAGING
     # ---------------------------------------------------------
   - name: stg_airbnb__hosts  
-    description: > 
-      Standardized host profiles. Handles response rate normalization and superhost booleans.     
+    description: >
+       STAGING: Standardized host profiles. 
+       Handles response rate normalization and superhost booleans.     
 
     # CROSS-COLUMN tests
     tests:
@@ -210,102 +248,102 @@ models:
           arguments:
             expression: "source_updated_at >= source_created_at"
     columns:
-    - name: host_id
-      description: >
-        Business identifier for the host, sourced from the bronze layer.
-        Cast to integer to ensure consistent joins across downstream models.
-        This is the natural and primary key for the host. Uniqueness is enforced at the bronze layer.
-      tests:
-        - not_null:
-            config:
-              severity: error
-    - name: host_name
-      description: >
-        Host's display name. Standardized via TRIM and INITCAP to ensure
-        consistent formatting for reporting and display.
-      tests:
-        - not_null:
-            description: >
-              Warn : host name is used for display/reporting purposes only. A missing 
-              value does not prevent joins, ratings, or performance calculations. The 
-              host record remains fully usable for analysis, just incomplete for name-based 
-              reporting. Consistent with the warn severity already applied at the bronze layer.
-            config:
-              severity: warn
-    - name: host_since
-      description: >
+      - name: host_id
+        description: >
+          Business identifier for the host, sourced from the bronze layer.
+          Cast to integer to ensure consistent joins across downstream models.
+          This is the natural and primary key for the host. Uniqueness is enforced at the bronze layer.
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: host_name
+        description: >
+          Host's display name. Standardized via TRIM and INITCAP to ensure
+          consistent formatting for reporting and display.
+        tests:
+          - not_null:
+              description: >
+                Warn : host name is used for display/reporting purposes only. A missing 
+                value does not prevent joins, ratings, or performance calculations. The 
+                host record remains fully usable for analysis, just incomplete for name-based 
+                reporting. Consistent with the warn severity already applied at the bronze layer.
+                config:
+                severity: warn
+      - name: host_since
+        description: >
           Date the host joined the Airbnb platform. Standardized to DATE format
           and validated to occur on or after Airbnb's launch date.
-      tests:
-        - not_null:
-            description: >
-              Warn : host since is required for stg_hosts_since_after_launch 
-              to reliably catch bad data (a NULL comparison in SQL evaluates as unknown,
-              not false, so that expression test cannot detect a missing host_since on
-              its own). Set to warn rather than error because a missing host_since doesn't
-              make the host row unusable; joins, ratings and revenue attribution are unaffected.
-              It only limits tenure-based analysis (e.g. cohort-by-join-date reporting).
-            config:
-              severity: warn
-    - name: host_location
-      description: >
-        Host's primary geographic location. Standardized via TRIM and INITCAP (title case)
-        for consistent formatting across the dataset.  
+        tests:
+          - not_null:
+              description: >
+                Warn : host since is required for stg_hosts_since_after_launch 
+                to reliably catch bad data (a NULL comparison in SQL evaluates as unknown,
+                not false, so that expression test cannot detect a missing host_since on
+                its own). Set to warn rather than error because a missing host_since doesn't
+                make the host row unusable; joins, ratings and revenue attribution are unaffected.
+                It only limits tenure-based analysis (e.g. cohort-by-join-date reporting).
+              config:
+                severity: warn
+      - name: host_location
+        description: >
+          Host's primary geographic location. Standardized via TRIM and INITCAP (title case)
+          for consistent formatting across the dataset.  
       # No not_null here: bronze already tests not_null (warn) on host_location,
       # and staging only trims and title-cases it, so it adds no new null risk.
-    - name: is_superhost
-      description: >
-        Superhost status flag. NULL values from the source are defaulted to false via
-        COALESCE, so every row has a definitive boolean value.
-      tests:
-        - accepted_values:
-            arguments:
-              values: [true, false]
-            config:
+      - name: is_superhost
+        description: >
+          Superhost status flag. NULL values from the source are defaulted to false via
+          COALESCE, so every row has a definitive boolean value.
+        tests:
+          - accepted_values:
+              arguments:
+                values: [true, false]
+              config:
                 severity: warn
-    - name: response_rate
-      description: >
-        Percentage of inquiries answered by the host, converted from a 0-100
-        source scale to a 0-1 decimal via the safe_divide macro, rounded to 2
-        decimal places.
-      tests:
-        - dbt_utils.accepted_range:
-            arguments:
-              min_value: 0
-              max_value: 1
-              inclusive: true
-            config:
-              severity: warn
-    - name: avg_host_rating
-      description: >
-        Average star rating across all of the host's listings. Cast to a
-        fixed-precision decimal for consistent downstream calculations.
-      tests:
-        - dbt_utils.accepted_range:
-            arguments:
-              min_value: 0
-              max_value: 5
-              inclusive: true
-            config:
-              severity: warn
-    - name: source_created_at
-      description: >
+      - name: response_rate
+        description: >
+          Percentage of inquiries answered by the host, converted from a 0-100
+          source scale to a 0-1 decimal via the safe_divide macro, rounded to 2
+          decimal places.
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+                inclusive: true
+              config:
+                severity: warn
+      - name: avg_host_rating
+        description: >
+          Average star rating across all of the host's listings. Cast to a
+          fixed-precision decimal for consistent downstream calculations.
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5
+                inclusive: true
+              config:
+                severity: warn
+      - name: source_created_at
+        description: >
           Original record creation timestamp from the source system.
           Standardized to TIMESTAMP_LTZ and retained for auditability and lineage tracking.
           Validated to ensure no future timestamps are present, which would indicate data quality issues.
-      tests:
+        tests:
           - not_in_future:
               config:
                 severity: error
-    - name: source_updated_at
-      description: >
+      - name: source_updated_at
+        description: >
           When record was last updated in source system.
           Standardized to TIMESTAMP_LTZ and retained for auditability and lineage tracking.
           Validated to ensure no future timestamps are present, which would indicate data quality issues.
-      tests:
-        - not_in_future:
-            config:
-              severity: error
+        tests:
+          - not_in_future:
+              config:
+                severity: error
 
        
   # ---------------------------------------------------------
@@ -313,7 +351,7 @@ models:
   # ---------------------------------------------------------
   - name: stg_airbnb__listings
     description: >
-      Standardized property inventory. Casts IDs and metrics to consistent
+      STAGING: Standardized property inventory. Casts IDs and metrics to consistent
       types and trims and title cases text fields. Acts as a join anchor
       for bookings and hosts.
 
@@ -442,7 +480,7 @@ models:
                  max_value: 50000
                  inclusive: true
                config:
-                  severity: warn
+                severity: warn
       - name: source_created_at
         description: >
           Original record creation timestamp from the source system.

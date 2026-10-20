@@ -45,10 +45,7 @@ WITH listings_snapshot_data AS (
           SELECT COALESCE(MAX(dbt_updated_at), '1900-01-01'::timestamp_ltz)
           FROM {{ this }}
       )
-     OR dbt_valid_to >= (
-          SELECT COALESCE(MAX(dbt_updated_at), '1900-01-01'::timestamp_ltz)
-          FROM {{ this }}
-      ) 
+   
     {% endif %}
 ),
 silver_listings_enriched AS (

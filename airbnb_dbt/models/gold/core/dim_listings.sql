@@ -1,6 +1,7 @@
 -- models/gold/core/dim_listings.sql:
 
 -- Grain: One row per unique Airbnb listing (property).
+-- SCD: Type 1 (current state only) with SCD2 history preserved in silver layer.
 -- Description: Dimension table for properties. Links to dim_hosts and dim_location.
 
 

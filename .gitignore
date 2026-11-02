@@ -13,3 +13,6 @@ logs/
 # OS files
 .DS_Store
 Thumbs.db
+
+# word docs
+*.docx

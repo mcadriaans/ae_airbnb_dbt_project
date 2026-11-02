@@ -1,10 +1,11 @@
-## models/silver/silver_schema.yml : 
+
+## models/silver/silver_schema.yml
 
 ## ======================================================================================
 ## SILVER LAYER: Enrichment & Business Logic Validation
 ## ======================================================================================
 ## This schema audits the "Value-Add" transformations performed in the Silver layer.
-## 
+##
 ## STRATEGY: Non-Redundant Testing
 ## 1. Structural Integrity (Nulls/PKs) was verified in Staging/Snapshots.
 ## 2. Silver Tests focus on:
@@ -16,110 +17,138 @@
 version: 2
 
 models:
-    # ---------------------------------------------------------
-    # 1. SILVER BOOKINGS (SCD2 Facts)
-    # ---------------------------------------------------------
+
+  # ---------------------------------------------------------
+  # 1. SILVER BOOKINGS (SCD2 Facts)
+  # ---------------------------------------------------------
   - name: silver_bookings
     description: >
-      SILVER: Enriched booking facts with SCD2 history
-      INPUT: bookings_snapshot (SCD2 tracking booking status changes)
-      OUTPUT: Facts enriched with business logic + all history preserved
+      SILVER: Enriched booking facts with SCD2 history.
+      INPUT: bookings_snapshot (SCD2 tracking booking status changes).
+      OUTPUT: Facts enriched with business logic + all history preserved.
 
       WHAT IT DOES:
-      1. Lead time: days between booking_date and stay_start_date
-        → Insight: How far in advance are people booking?
+      1. Lead time: days between booking_date and stay_start_date.
+         Insight: How far in advance are people booking?
 
-      2. Stay end date: stay_start_date + nights_booked
-        → Required for stay duration analysis
+      2. Stay end date: stay_start_date + nights_booked.
+         Required for stay duration analysis.
 
-      3. Booking revenue: booking_amount + cleaning_fee + service_fee
-        → Total expected revenue from each booking
+      3. Booking revenue: booking_amount + cleaning_fee + service_fee.
+         Total expected revenue from each booking.
 
-      4. History: All SCD2 fields preserved
-        → Enables "when did booking status change?" analysis
+      4. History: All SCD2 fields preserved.
+         Enables "when did booking status change?" analysis.
 
       INCREMENTAL STRATEGY:
-      - Merge strategy: processes new versions, doesn't duplicate
-      - Only processes new snapshot versions: WHERE dbt_updated_at >= max(dbt_updated_at)
-      - Preserves all history: 
-        - New version created when any source field changes
-        - Latest version has dbt_valid_to = NULL, is_current_record = 1
-        - GRAIN: One row per booking_id version (SCD2)
-     
+      - Merge strategy using dbt_scd_id as the unique key.
+      - Reads all snapshot versions to capture changes to both
+        new versions and existing versions.
+      - Updates existing records when snapshot attributes change.
+      - Inserts new snapshot versions without duplicating records.
+      - Preserves all SCD2 history.
+      - GRAIN: One row per booking_id per snapshot version.
+
       FOR ANALYSTS:
-      - Get latest state: WHERE is_current_record = 1
-      - Get full history: ORDER BY booking_id, dbt_valid_from
-      - Find state on specific date: WHERE booking_date <= 'YYYY-MM-DD' AND (dbt_valid_to IS NULL OR dbt_valid_to > 'YYYY-MM-DD')
+      - Get latest state: WHERE is_current_record = 1.
+      - Get full history: ORDER BY booking_id, dbt_valid_from.
+      - Find state on a specific date:
+        WHERE dbt_valid_from <= 'YYYY-MM-DD'
+        AND (dbt_valid_to IS NULL OR dbt_valid_to > 'YYYY-MM-DD').
 
     tests:
-        #  CROSS-COLUMN LOGIC: Verify Calculations and SCD2 Synchronization
-        - dbt_utils.expression_is_true:
-            name: silver_bookings_validity_order
-            arguments: 
-              expression: >
-                dbt_valid_to IS NULL
-                OR dbt_valid_to > dbt_valid_from
-            config:
-              severity: error
-        - dbt_utils.expression_is_true:
-            name: silver_bookings_stay_end_logic
-            description: "Ensures stay_end_date calculation is accurate."
-            arguments:
-                expression: "stay_end_date = DATEADD(day, nights_booked, stay_start_date)"
-            config:
-                severity: error
 
-        - dbt_utils.expression_is_true:
-            name: silver_bookings_revenue_sum_logic
-            description: "Ensures the revenue macro sum matches the components."
-            arguments:
-                expression: "booking_revenue = (booking_amount + cleaning_fee + service_fee)"
-            config:
-                severity: error
+      # CROSS-COLUMN LOGIC: Calculations and SCD2 Synchronization
 
-        - dbt_utils.expression_is_true:
-            name: silver_bookings_cancellation_limit
-            description: "Ensures cancellation fees do not exceed expected revenue."
-            arguments:
-                expression: "cancellation_fee <= booking_revenue"
-            config:
-                severity: error
+      - dbt_utils.expression_is_true:
+          name: silver_bookings_validity_order
+          arguments:
+            expression: >
+              dbt_valid_to IS NULL
+              OR dbt_valid_to > dbt_valid_from
+          config:
+            severity: error
 
-        - dbt_utils.expression_is_true:
-            name: silver_bookings_is_current_sync
-            description: "Ensures is_current_record flag is perfectly synced with dbt_valid_to logic."
-            arguments:
-                expression: "(is_current_record = 1 AND dbt_valid_to IS NULL) OR (is_current_record = 0 AND dbt_valid_to IS NOT NULL)"
-            config:
-                severity: error
+      - dbt_utils.expression_is_true:
+          name: silver_bookings_stay_end_logic
+          description: "Ensures stay_end_date calculation is accurate."
+          arguments:
+            expression: >
+              stay_end_date = DATEADD(day, nights_booked, stay_start_date)
+          config:
+            severity: error
+
+      - dbt_utils.expression_is_true:
+          name: silver_bookings_revenue_sum_logic
+          description: "Ensures the revenue macro sum matches the components."
+          arguments:
+            expression: >
+              booking_revenue = (booking_amount + cleaning_fee + service_fee)
+          config:
+            severity: error
+
+      - dbt_utils.expression_is_true:
+          name: silver_bookings_cancellation_limit
+          description: "Ensures cancellation fees do not exceed expected revenue."
+          arguments:
+            expression: >
+              cancellation_fee <= booking_revenue
+          config:
+            severity: error
+
+      - dbt_utils.expression_is_true:
+          name: silver_bookings_is_current_sync
+          description: "Ensures is_current_record is synchronized with dbt_valid_to."
+          arguments:
+            expression: >
+              (is_current_record = 1 AND dbt_valid_to IS NULL)
+              OR
+              (is_current_record = 0 AND dbt_valid_to IS NOT NULL)
+          config:
+            severity: error
+
     columns:
+
+      - name: dbt_scd_id
+        description: "Technical unique identifier for each SCD2 snapshot version."
+        tests:
+          - not_null:
+              config:
+                severity: error
+          - unique:
+              config:
+                severity: error
+
       - name: booking_id
-        description: "Natural source identifier. Part of the compound history grain. Each booking_id can have multiple versions over time."
+        description: >
+          Natural source identifier. Each booking_id can have multiple
+          versions over time. Only one current version is allowed.
         tests:
           - unique:
               name: silver_bookings_booking_id_current_record_unique
               description: >
-                Technical Check: Each booking_id can only have exactly 1 current record (is_current_record = 1) at any given time.
-                If this test fails, don't look at the snapshot/SCD2 logic. The snapshot logic didn't break. 
-                Instead, look at how the Silver layer is filtering and feeding data incrementally. 
-                It is accidentally passing through duplicate rows for the same booking.
+                Ensures each booking_id has only one current record
+                (is_current_record = 1) at any given time.
               config:
                 where: "is_current_record = 1"
                 severity: error
+
       - name: stay_end_date
         description: "Enrichment: Stay end date."
         tests:
           - not_null:
               config:
                 severity: warn
+
       - name: lead_time_days
         description: "Enrichment: Days between booking and check-in."
-        tests: 
-          - not_negative: # Calculated in Silver, so we test it here.
+        tests:
+          - not_negative:
               config:
                 severity: warn
+
       - name: booking_revenue
-        description: "Enrichment: Total gross revenue (base + fees)."
+        description: "Enrichment: Total gross revenue (base amount + fees)."
         tests:
           - not_null:
               config:
@@ -128,218 +157,290 @@ models:
               config:
                 severity: error
 
+
   # ---------------------------------------------------------
   # 2. SILVER HOSTS (SCD2 Dimension)
-  # ---------------------------------------------------------   
+  # ---------------------------------------------------------
   - name: silver_hosts
     description: >
-      SILVER: Enriched host dimensions with SCD2 history
-      INPUT: hosts_snapshot (SCD2 tracking host status changes)
-      OUTPUT: Dimensions enriched with business logic + all history preserved
+      SILVER: Enriched host dimensions with SCD2 history.
+      INPUT: hosts_snapshot (SCD2 tracking host changes).
+      OUTPUT: Dimensions enriched with business logic + all history preserved.
 
       WHAT IT DOES:
-      1. Normalization: Standardizes host names and locations(logic handled in staging).
-      2. Host Tenure: Computes 'host_tenure_years' based on 'hosts_since'.
-        -> Insight: How long has the host been part of the platform?
-      3. Rating Categorization: Bins 'avg_host_rating' into business friendly labels (Excellent, Good, etc.).
-        -> Insight : Quick filtering for high-performing hosts.
-      4. Boolean Standardizing: Ensures 'is_superhost' is a clean boolean (true/false).
+      1. Normalization: Standardizes host names and locations.
+         Logic handled in staging.
+      2. Host Tenure: Computes host_tenure_years based on host_since.
+         Insight: How long has the host been part of the platform?
+      3. Rating Categorization: Bins avg_host_rating into business-friendly
+         labels (Excellent, Good, Average, Below Average, No Reviews).
+         Insight: Quick filtering for high-performing hosts.
+      4. Superhost Status: Carries the is_superhost status from the source.
 
       INCREMENTAL STRATEGY:
-          - Merge strategy: processes new versions, doesn't duplicate
-          - Only processes new snapshot versions: WHERE dbt_updated_at >= max(dbt_updated_at)
-          - Preserves all history: 
-            - New version created when any source field changes
-            - Latest version has dbt_valid_to = NULL, is_current_record = 1
-            - GRAIN: One row per host_id version (SCD2)
-     
+      - Merge strategy using dbt_scd_id as the unique key.
+      - Reads all snapshot versions to capture changes to both
+        new versions and existing versions.
+      - Updates existing records when snapshot attributes change.
+      - Inserts new snapshot versions without duplicating records.
+      - Preserves all SCD2 history.
+      - GRAIN: One row per host_id per snapshot version.
+
       FOR ANALYSTS:
-      - Get latest state: WHERE is_current_record = 1
-      - Get full history: ORDER BY host_id, dbt_valid_from
-      - Find state on specific date: WHERE dbt_valid_from <= 'YYYY-MM-DD' AND (dbt_valid_to IS NULL OR dbt_valid_to > 'YYYY-MM-DD')
+      - Get latest state: WHERE is_current_record = 1.
+      - Get full history: ORDER BY host_id, dbt_valid_from.
+      - Find state on a specific date:
+        WHERE dbt_valid_from <= 'YYYY-MM-DD'
+        AND (dbt_valid_to IS NULL OR dbt_valid_to > 'YYYY-MM-DD').
 
     tests:
-    # CROSS-COLUMN LOGIC
-    - dbt_utils.expression_is_true:
-        name: silver_hosts_validity_order
-        arguments: 
-          expression: >
-            dbt_valid_to IS NULL
-            OR dbt_valid_to > dbt_valid_from
-        config:
-          severity: error
-    - dbt_utils.expression_is_true: 
-        name: host_rating_tier_consistency
-        description: >-
-          Ensures host_rating_category CASE logic matches avg_host_rating.
-          Because this is an internal pipeline logic failure rather than a dirty source data issue, 
-          the model must fail fast so developers can patch the underlying SQL code immediately.
-        arguments:
+
+      # CROSS-COLUMN LOGIC
+
+      - dbt_utils.expression_is_true:
+          name: silver_hosts_validity_order
+          arguments:
             expression: >
-                (avg_host_rating >= 4.5 AND host_rating_category = 'Excellent') OR 
-                (avg_host_rating >= 4.0 AND avg_host_rating < 4.5 AND host_rating_category = 'Good') OR 
-                (avg_host_rating >= 3.0 AND avg_host_rating < 4.0 AND host_rating_category = 'Average') OR 
-                (avg_host_rating IS NULL AND host_rating_category = 'No Reviews') OR
-                (avg_host_rating < 3.0 AND host_rating_category = 'Below Average')
-        config:
+              dbt_valid_to IS NULL
+              OR dbt_valid_to > dbt_valid_from
+          config:
             severity: error
-            
-    - dbt_utils.expression_is_true:
-            name: silver_hosts_is_current_sync
-            description: > 
-              Ensures is_current_record flag is perfectly synced with dbt_valid_to logic.
-              This is a structural test for your SCD2 history logic. 
-              If is_current_record = 1 while dbt_valid_to contains an expiration timestamp (or vice versa), 
-              your history tracking is fundamentally broken.
-              Just like your bookings table, this test catches microsecond incremental window processing overlap
-              bugs in your Silver model merge step. Having more than one active record (is_current_record = 1)
-              for a single host_id breaks standard reporting filters.
-            arguments:
-                expression: "(is_current_record = 1 AND dbt_valid_to IS NULL) OR (is_current_record = 0 AND dbt_valid_to IS NOT NULL)"
-            config:
-                severity: error
-   
+
+      - dbt_utils.expression_is_true:
+          name: host_rating_tier_consistency
+          description: >
+            Ensures host_rating_category CASE logic matches avg_host_rating.
+            This is an internal pipeline logic check. The model should fail
+            if the calculated category does not match the source rating.
+          arguments:
+            expression: >
+              (avg_host_rating >= 4.5 AND host_rating_category = 'Excellent')
+              OR
+              (avg_host_rating >= 4.0 AND avg_host_rating < 4.5
+               AND host_rating_category = 'Good')
+              OR
+              (avg_host_rating >= 3.0 AND avg_host_rating < 4.0
+               AND host_rating_category = 'Average')
+              OR
+              (avg_host_rating IS NULL AND host_rating_category = 'No Reviews')
+              OR
+              (avg_host_rating < 3.0 AND host_rating_category = 'Below Average')
+          config:
+            severity: error
+
+      - dbt_utils.expression_is_true:
+          name: silver_hosts_is_current_sync
+          description: >
+            Ensures is_current_record is synchronized with dbt_valid_to.
+            A current record must have no expiration timestamp, while
+            an expired record must have an expiration timestamp.
+          arguments:
+            expression: >
+              (is_current_record = 1 AND dbt_valid_to IS NULL)
+              OR
+              (is_current_record = 0 AND dbt_valid_to IS NOT NULL)
+          config:
+            severity: error
+
     columns:
-    - name: host_id
-      description: "Natural source identifier. Part of the compound history grain. Each host_id can have multiple versions over time."
-      tests:
-        - unique:
-            name: silver_hosts_host_id_current_record_unique
-            description: >
-              Technical Check: Each host_id can only have exactly 1 current record (is_current_record = 1) 
-              at any given time.
-              If this test fails, don't look at the snapshot/SCD2 logic. The snapshot logic didn't break. 
-              Instead, look at how the Silver layer is filtering and feeding data incrementally. 
-              It is accidentally passing through duplicate rows for the same host.
-            config:
-              where: "is_current_record = 1"
-              severity: error
-    - name: host_tenure_years
-      description: >
-        Enrichment: Calculated years since host_since.
-        Host tenure depends entirely on the source column host_since. 
-        If a user inputs a typo in the source system (e.g., entering a date far in the past
-        or a future placeholder), the computed tenure will break past your boundaries.
-        A profile data anomaly like a bad registration year is an operational cleanup task for 
-        the source team. It should never block your entire data pipeline from updating or delay 
-        downstream financial reporting. Setting it to warn logs the error for data stewardship 
-        remediation while letting clean records pass through.
-      tests:
-        - dbt_utils.accepted_range:
-            arguments:
-              min_value: 0
-              max_value: 30
-              inclusive: true
-            config:
-              severity: warn
+
+      - name: dbt_scd_id
+        description: "Technical unique identifier for each SCD2 snapshot version."
+        tests:
+          - not_null:
+              config:
+                severity: error
+          - unique:
+              config:
+                severity: error
+
+      - name: host_id
+        description: >
+          Natural source identifier. Each host_id can have multiple
+          versions over time. Only one current version is allowed.
+        tests:
+          - unique:
+              name: silver_hosts_host_id_current_record_unique
+              description: >
+                Ensures each host_id has only one current record
+                (is_current_record = 1) at any given time.
+              config:
+                where: "is_current_record = 1"
+                severity: error
+
+      - name: host_tenure_years
+        description: >
+          Enrichment: Calculated years since host_since.
+          Host tenure depends on the source column host_since.
+          A future or implausibly old host registration date may indicate
+          a source data anomaly. This test warns developers without
+          blocking the pipeline.
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 30
+                inclusive: true
+              config:
+                severity: warn
+
 
   # ---------------------------------------------------------
   # 3. SILVER LISTINGS (SCD2 Dimension)
   # ---------------------------------------------------------
   - name: silver_listings
     description: >
-      SILVER: Enriched listing dimensions with SCD2 history
-      INPUT:  listings_snapshot (SCD2 tracking listing status changes)
-      OUTPUT: Dimensions enriched with business logic + all history preserved
+      SILVER: Enriched listing dimensions with SCD2 history.
+      INPUT: listings_snapshot (SCD2 tracking listing changes).
+      OUTPUT: Dimensions enriched with business logic + all history preserved.
 
       WHAT IT DOES:
-      1. Normalization: Standardizes listing names and locations(logic handled in staging).
-      2. Listing size categorization: Bins listings into size categories based on number of bedrooms.
-        -> Insight: Quick filtering for small vs. large listings.
-      3. Capacity type categorization: Bins listings into capacity categories based on number of accommodates.
-        -> Insight : Quick filtering for small vs. large groups.
-      4. Price tier categorization: Bins listings into price tiers based on price_per_night.
-        -> Insight : Quick filtering for budget vs. luxury listings.
-      5. Price per guest: Computes price_per_guest as price_per_night / accommodates.
-        -> Insight : Efficiency metric for comparing listings of different sizes.
+      1. Listing size categorization: Bins listings into size categories
+         based on number of bedrooms.
+         Insight: Quick filtering for small vs. large listings.
+      2. Capacity type categorization: Bins listings into capacity categories
+         based on number of accommodates.
+         Insight: Quick filtering for small vs. large groups.
+      3. Price tier categorization: Bins listings into price tiers
+         based on price_per_night.
+         Insight: Quick filtering for budget vs. luxury listings.
+      4. Price per guest: Computes price_per_guest as
+         price_per_night / accommodates.
+         Insight: Efficiency metric for comparing listings of different sizes.
 
       INCREMENTAL STRATEGY:
-          - Merge strategy: processes new versions, doesn't duplicate
-          - Only processes new snapshot versions: WHERE dbt_updated_at >= max(dbt_updated_at)
-          - Preserves all history: 
-            - New version created when any source field changes
-            - Latest version has dbt_valid_to = NULL, is_current_record = 1
-            - GRAIN: One row per listing_id version (SCD2)
-     
+      - Merge strategy using dbt_scd_id as the unique key.
+      - Reads all snapshot versions to capture changes to both
+        new versions and existing versions.
+      - Updates existing records when snapshot attributes change.
+      - Inserts new snapshot versions without duplicating records.
+      - Preserves all SCD2 history.
+      - GRAIN: One row per listing_id per snapshot version.
+
       FOR ANALYSTS:
-      - Get latest state: WHERE is_current_record = 1
-      - Get full history: ORDER BY listing_id, dbt_valid_from
-      - Find state on specific date: WHERE dbt_valid_from <= 'YYYY-MM-DD' AND (dbt_valid_to IS NULL OR dbt_valid_to > 'YYYY-MM-DD')
+      - Get latest state: WHERE is_current_record = 1.
+      - Get full history: ORDER BY listing_id, dbt_valid_from.
+      - Find state on a specific date:
+        WHERE dbt_valid_from <= 'YYYY-MM-DD'
+        AND (dbt_valid_to IS NULL OR dbt_valid_to > 'YYYY-MM-DD').
 
     tests:
+
       # CROSS-COLUMN LOGIC
+
       - dbt_utils.expression_is_true:
-          name: silver_bookings_validity_order
-          arguments: 
+          name: silver_listings_validity_order
+          arguments:
             expression: >
               dbt_valid_to IS NULL
               OR dbt_valid_to > dbt_valid_from
           config:
             severity: error
+
       - dbt_utils.expression_is_true:
           name: listing_size_logic_consistency
           description: >
-            Validates that the listing_size_category is consistent with the number of bedrooms.
-            This is a business logic test to ensure that the categorization logic in the Silver layer is correct.
+            Validates that listing_size_category is consistent
+            with the number of bedrooms.
           arguments:
             expression: >
-               (bedrooms = 0 AND listing_size_category = 'Studio') OR
-               (bedrooms = 1 AND listing_size_category = '1 Bedroom') OR
-               (bedrooms BETWEEN 2 AND 3 AND listing_size_category = 'Medium (2-3 Bedrooms)') OR
-               (bedrooms >= 4 AND listing_size_category = 'Large (4+ Bedrooms)')
+              (bedrooms IS NULL AND listing_size_category = 'Unknown')
+              OR
+              (bedrooms = 0 AND listing_size_category = 'Studio')
+              OR
+              (bedrooms = 1 AND listing_size_category = '1 Bedroom')
+              OR
+              (bedrooms BETWEEN 2 AND 3
+               AND listing_size_category = 'Medium (2-3 Bedrooms)')
+              OR
+              (bedrooms >= 4
+               AND listing_size_category = 'Large (4+ Bedrooms)')
+          config:
+            severity: error
+
+      - dbt_utils.expression_is_true:
+          name: listing_capacity_type_consistency
+          description: >
+            Checks that capacity_type matches the accommodates value.
+          arguments:
+            expression: >
+              (accommodates IS NULL AND capacity_type = 'Unknown')
+              OR
+              (accommodates = 1 AND capacity_type = 'Solo')
+              OR
+              (accommodates = 2 AND capacity_type = 'Pair')
+              OR
+              (accommodates BETWEEN 3 AND 5
+               AND capacity_type = 'Small Group (3-5)')
+              OR
+              (accommodates BETWEEN 6 AND 10
+               AND capacity_type = 'Medium Group (6-10)')
+              OR
+              (accommodates >= 11
+               AND capacity_type = 'Large Group (11+)')
           config:
             severity: error
 
       - dbt_utils.expression_is_true:
           name: listing_price_tier_consistency
           description: >
-            Validates that the price_tier is consistent with the price_per_night.
-            This is a business logic test to ensure that the categorization logic in the Silver layer is correct.
+            Validates that price_tier is consistent with price_per_night.
           arguments:
             expression: >
-              (price_per_night < 100 AND price_tier = 'Budget') OR
-              (price_per_night BETWEEN 100 AND 300 AND price_tier = 'Mid-Range') OR
+              (price_per_night IS NULL AND price_tier = 'Unknown')
+              OR
+              (price_per_night < 100 AND price_tier = 'Budget')
+              OR
+              (price_per_night BETWEEN 100 AND 300
+               AND price_tier = 'Mid-Range')
+              OR
               (price_per_night > 300 AND price_tier = 'Luxury')
           config:
             severity: error
 
       - dbt_utils.expression_is_true:
-              name: price_per_guest_sanity_check
-              description: >
-                Checks that price per guest does not exceed the nightly price
-                when the listing has a positive capacity and a non-negative nightly price.
-                Since the staging layer guarantees that accommodates is an integer greater than or equal to 1, 
-                price_per_guest can never physically exceed the total price per night.
-                If this test fails, it points to a database engine calculation fault or an arithmetic corruption. 
-                It requires a hard stop to prevent mathematically impossible configurations from polluting downstream marts.
-              arguments:
-                expression: "price_per_guest <= price_per_night"
-              config:
-                where: "accomodates > 0 AND price_per_night >= 0"
-                severity: error
-
+          name: price_per_guest_sanity_check
+          description: >
+            Checks that price per guest does not exceed the nightly price
+            when the listing has a positive capacity and a non-negative
+            nightly price.
+          arguments:
+            expression: >
+              price_per_guest <= price_per_night
+          config:
+            where: "accommodates > 0 AND price_per_night >= 0"
+            severity: error
 
     columns:
+
+      - name: dbt_scd_id
+        description: "Technical unique identifier for each SCD2 snapshot version."
+        tests:
+          - not_null:
+              config:
+                severity: error
+          - unique:
+              config:
+                severity: error
+
       - name: listing_id
-        description: "Natural source identifier. Part of the compound history grain. Each listing_id can have multiple versions over time."
+        description: >
+          Natural source identifier. Each listing_id can have multiple
+          versions over time. Only one current version is allowed.
         tests:
           - unique:
               name: silver_listings_listing_id_current_record_unique
               description: >
-                Technical Check: Each listing_id can only have exactly 1 current record (is_current_record = 1) 
-                at any given time.
-                If this test fails, don't look at the snapshot/SCD2 logic. The snapshot logic didn't break. 
-                Instead, look at how the Silver layer is filtering and feeding data incrementally. 
-                It is accidentally passing through duplicate rows for the same listing.
+                Ensures each listing_id has only one current record
+                (is_current_record = 1) at any given time.
               config:
                 where: "is_current_record = 1"
                 severity: error
 
       - name: host_id
         description: >
-          Foreign key to silver_hosts. Ensures referential integrity between listings and hosts.
-          This warning flags missing host info for engineering to clean up later, but it lets the 
-          data keep moving so your company dashboards don't freeze up.
+          Foreign key to silver_hosts. Checks referential integrity
+          between listings and hosts.
         tests:
           - relationships:
               arguments:
@@ -347,14 +448,12 @@ models:
                 field: host_id
               config:
                 severity: warn
+
       - name: price_per_guest
         description: >
-          Enrichment: Efficiency metric (Price / Accommodates).
-          This is a core performance metric. Because price_per_night and accommodates are already checked for nulls and zero values
-          in staging, a null or negative value here means the calculation engine completely failed (e.g., the safe_divide macro 
-          broke or encountered a null type mutation).
-          Corrupted inventory pricing introduces heavy downstream risk for yield analytics. 
-          The model fails immediately so engineers can look at the engine calculation.
+          Enrichment: Efficiency metric (price_per_night / accommodates).
+          A null or negative result may indicate a problem with the
+          safe_divide calculation or unexpected source data.
         tests:
           - not_null:
               config:
@@ -362,4 +461,3 @@ models:
           - not_negative:
               config:
                 severity: error
- 

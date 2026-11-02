@@ -3,7 +3,8 @@
 -- Input: hosts_snapshot (SCD2 tracking host changes)
 -- Output: Enriched host dimensions, all versions preserved
 
---> 'merge': implies versioning
+--> 'merge' updates existing versions and inserts new versions.
+-- SCD Type 2 history is managed by the upstream snapshot.
 {{
     config(
         materialized='incremental',
@@ -37,14 +38,6 @@ WITH hosts_snapshot_data AS (
         dbt_valid_from, 
         dbt_valid_to
     FROM {{ ref('hosts_snapshot') }}
-    {% if is_incremental() %}
-      -- Only grab snapshot rows that are NEW to silver  
-      WHERE dbt_updated_at >= (
-          SELECT COALESCE(MAX(dbt_updated_at), '1900-01-01'::timestamp_ltz)
-          FROM {{ this }}
-      )
- 
-    {% endif %}
 ),
 silver_hosts_enriched AS (
     SELECT
@@ -67,7 +60,7 @@ silver_hosts_enriched AS (
         
         -- Dates & Metrics
         host_since,
-        --- Calculate host tenure in years
+        --- Calculate host tenure in years : the number of years a host has been on Airbnb as of today
         CAST((DATEDIFF('day', host_since, CURRENT_DATE) / 365.25) AS DECIMAL(18,2)) AS host_tenure_years,
         response_rate,
         avg_host_rating,
@@ -80,11 +73,32 @@ silver_hosts_enriched AS (
         -- Full traceability audit
         source_created_at,
         source_updated_at,
-        dbt_updated_at,
-        CAST(current_timestamp() AS timestamp_ltz) AS  silver_loaded_at  -- Timestamp when this record was loaded into the silver layer
+        dbt_updated_at
     FROM hosts_snapshot_data
+),
+existing_silver AS (
+    {% if is_incremental() %}
+        SELECT 
+            dbt_scd_id,
+            silver_loaded_at
+        FROM {{ this }}
+    {% else %}
+        SELECT 
+            NULL AS dbt_scd_id,
+            NULL::TIMESTAMP_LTZ AS silver_loaded_at
+        WHERE 1 = 0
+    {% endif %}
 )
-SELECT * FROM silver_hosts_enriched
+SELECT 
+    silver_hosts_enriched.*,
+
+    COALESCE(
+        existing_silver.silver_loaded_at,
+        CAST(current_timestamp() AS timestamp_ltz)
+    ) AS silver_loaded_at
+FROM silver_hosts_enriched
+LEFT JOIN existing_silver
+    ON silver_hosts_enriched.dbt_scd_id = existing_silver.dbt_scd_id
 
 
 

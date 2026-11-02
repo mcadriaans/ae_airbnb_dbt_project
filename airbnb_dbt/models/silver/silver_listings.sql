@@ -2,7 +2,9 @@
 
 -- Input: listings_snapshot (SCD2 tracking listing changes)
 -- Output: Enriched listing dimensions, all versions preserved
---> 'merge': implies versioning
+
+--> 'merge' updates existing versions and inserts new versions.
+-- SCD Type 2 history is managed by the upstream snapshot.
 
 {{
     config(
@@ -39,19 +41,11 @@ WITH listings_snapshot_data AS (
         dbt_valid_from,
         dbt_valid_to
     FROM {{ ref('listings_snapshot') }}
-    {% if is_incremental() %}
-        -- Only grab snapshot rows that are NEW to silver
-        WHERE dbt_updated_at >= (
-          SELECT COALESCE(MAX(dbt_updated_at), '1900-01-01'::timestamp_ltz)
-          FROM {{ this }}
-      )
-   
-    {% endif %}
 ),
 silver_listings_enriched AS (
     SELECT
         -- Identifiers
-        dbt_scd_id,   -- Primary Key: Identifies this specific version of the host record
+        dbt_scd_id,   -- Primary Key: Identifies this specific version of the listing record
         listing_id,
         host_id,
 
@@ -61,7 +55,7 @@ silver_listings_enriched AS (
         country,
         --- Listing size category based on number of bedrooms
         CASE
-            WHEN bedroom IS NULL THEN 'Unknown'
+            WHEN bedrooms IS NULL THEN 'Unknown'
             WHEN bedrooms = 0 THEN 'Studio'
             WHEN bedrooms = 1 THEN '1 Bedroom'
             WHEN bedrooms BETWEEN 2 AND 3 THEN 'Medium (2-3 Bedrooms)'
@@ -69,12 +63,16 @@ silver_listings_enriched AS (
         END AS listing_size_category,
         --- Capacity type classification
         CASE
-            WHEN accommodates >= 6 THEN 'Large Group (6+)'
-            WHEN accommodates >= 3 THEN 'Small Group (3-5)'
-            ELSE 'Solo/Pair'
+            WHEN accommodates IS NULL THEN 'Unknown'
+            WHEN accommodates = 1 THEN 'Solo'
+            WHEN accommodates = 2 THEN 'Pair'
+            WHEN accommodates BETWEEN 3 AND 5 THEN 'Small Group (3-5)'
+            WHEN accommodates BETWEEN 6 AND 10 THEN 'Medium Group (6-10)'
+            ELSE 'Large Group (11+)'
         END AS capacity_type,
         --- Price tier categorization based on price per night
         CASE
+            WHEN price_per_night IS NULL THEN 'Unknown'
             WHEN price_per_night < 100 THEN 'Budget'
             WHEN price_per_night BETWEEN 100 AND 300 THEN 'Mid-Range'
             ELSE 'Luxury'
@@ -96,9 +94,29 @@ silver_listings_enriched AS (
         -- Fully Traceability Audit  
         source_created_at,
         source_updated_at,
-        dbt_updated_at,
-        CAST(current_timestamp() AS timestamp_ltz) AS  silver_loaded_at  -- Timestamp when this record was loaded into the silver layer
+        dbt_updated_at
     FROM listings_snapshot_data
+),
+existing_silver AS (
+    {% if is_incremental() %}
+        SELECT 
+            dbt_scd_id,
+            silver_loaded_at
+        FROM {{ this }}
+    {% else %}
+        SELECT 
+            NULL AS dbt_scd_id,
+            NULL::TIMESTAMP_LTZ AS silver_loaded_at
+        WHERE 1 = 0
+    {% endif %}
 )
 
-SELECT * FROM silver_listings_enriched
+SELECT 
+    silver_listings_enriched.*,
+    COALESCE(
+        existing_silver.silver_loaded_at,
+        CAST(current_timestamp() AS timestamp_ltz)
+    ) AS silver_loaded_at
+FROM silver_listings_enriched
+LEFT JOIN existing_silver
+    ON silver_listings_enriched.dbt_scd_id = existing_silver.dbt_scd_id

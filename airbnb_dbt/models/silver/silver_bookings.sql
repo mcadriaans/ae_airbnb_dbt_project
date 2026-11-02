@@ -4,7 +4,8 @@
 -- Input: bookings_snapshot (SCD2 tracking booking changes)
 -- Output: Facts enriched with calculations, all versions preserved
 
---> 'merge': implies versioning
+--> 'merge' updates existing versions and inserts new versions.
+-- SCD Type 2 history is managed by the upstream snapshot.
 {{
     config(
         materialized='incremental',
@@ -83,15 +84,29 @@ silver_bookings_enriched AS (
          -- Fully Traceability Audit  
         source_created_at,
         source_updated_at,
-        dbt_updated_at,
-        CAST(current_timestamp() AS timestamp_ltz) AS silver_loaded_at   -- tracking when this record hits the silver layer
+        dbt_updated_at
     FROM booking_snapshot_data 
+),
+existing_silver AS (
+    {% if is_incremental() %}
+        SELECT 
+            dbt_scd_id,
+            silver_loaded_at
+        FROM {{ this }}
+    {% else %}
+        SELECT 
+            NULL AS dbt_scd_id,
+            NULL::TIMESTAMP_LTZ AS silver_loaded_at
+        WHERE 1 = 0
+    {% endif %}
 )
 SELECT 
     silver_bookings_enriched.*,
 
     COALESCE(
-        existing.silver_loaded_at,
-        silver_bookings_enriched.silver_loaded_at
-    ) AS original_silver_loaded_at
+        existing_silver.silver_loaded_at,
+        CAST(current_timestamp() AS timestamp_ltz)
+    ) AS silver_loaded_at
 FROM silver_bookings_enriched
+LEFT JOIN existing_silver
+    ON silver_bookings_enriched.dbt_scd_id = existing_silver.dbt_scd_id

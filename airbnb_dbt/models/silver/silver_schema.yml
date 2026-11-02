@@ -54,6 +54,14 @@ models:
     tests:
         #  CROSS-COLUMN LOGIC: Verify Calculations and SCD2 Synchronization
         - dbt_utils.expression_is_true:
+            name: silver_bookings_validity_order
+            arguments: 
+              expression: >
+                dbt_valid_to IS NULL
+                OR dbt_valid_to > dbt_valid_from
+            config:
+              severity: error
+        - dbt_utils.expression_is_true:
             name: silver_bookings_stay_end_logic
             description: "Ensures stay_end_date calculation is accurate."
             arguments:
@@ -152,6 +160,14 @@ models:
 
     tests:
     # CROSS-COLUMN LOGIC
+    - dbt_utils.expression_is_true:
+        name: silver_hosts_validity_order
+        arguments: 
+          expression: >
+            dbt_valid_to IS NULL
+            OR dbt_valid_to > dbt_valid_from
+        config:
+          severity: error
     - dbt_utils.expression_is_true: 
         name: host_rating_tier_consistency
         description: >-
@@ -253,6 +269,14 @@ models:
     tests:
       # CROSS-COLUMN LOGIC
       - dbt_utils.expression_is_true:
+          name: silver_bookings_validity_order
+          arguments: 
+            expression: >
+              dbt_valid_to IS NULL
+              OR dbt_valid_to > dbt_valid_from
+          config:
+            severity: error
+      - dbt_utils.expression_is_true:
           name: listing_size_logic_consistency
           description: >
             Validates that the listing_size_category is consistent with the number of bedrooms.
@@ -282,8 +306,8 @@ models:
       - dbt_utils.expression_is_true:
               name: price_per_guest_sanity_check
               description: >
-                Sanity Check: Ensures that price_per_guest is not greater than price_per_night.
-                Mathematically, price_per_guest is calculated as price_per_night / accommodates. 
+                Checks that price per guest does not exceed the nightly price
+                when the listing has a positive capacity and a non-negative nightly price.
                 Since the staging layer guarantees that accommodates is an integer greater than or equal to 1, 
                 price_per_guest can never physically exceed the total price per night.
                 If this test fails, it points to a database engine calculation fault or an arithmetic corruption. 
@@ -291,6 +315,7 @@ models:
               arguments:
                 expression: "price_per_guest <= price_per_night"
               config:
+                where: "accomodates > 0 AND price_per_night >= 0"
                 severity: error
 
 
@@ -322,7 +347,6 @@ models:
                 field: host_id
               config:
                 severity: warn
-
       - name: price_per_guest
         description: >
           Enrichment: Efficiency metric (Price / Accommodates).

@@ -43,16 +43,7 @@ WITH booking_snapshot_data AS (
         dbt_valid_to
 
     FROM {{ ref('bookings_snapshot') }}
-    {% if is_incremental() %}
-      -- Only grab snapshot rows that are NEW to silver  
-      WHERE dbt_updated_at >= (
-          SELECT COALESCE(MAX(dbt_updated_at), '1900-01-01'::timestamp_ltz)
-          FROM {{ this }}
-      )
-    
-    {% endif %}
 ),
-
 silver_bookings_enriched AS (
     SELECT
         -- Identifiers
@@ -96,4 +87,11 @@ silver_bookings_enriched AS (
         CAST(current_timestamp() AS timestamp_ltz) AS silver_loaded_at   -- tracking when this record hits the silver layer
     FROM booking_snapshot_data 
 )
-SELECT * FROM silver_bookings_enriched
+SELECT 
+    silver_bookings_enriched.*,
+
+    COALESCE(
+        existing.silver_loaded_at,
+        silver_bookings_enriched.silver_loaded_at
+    ) AS original_silver_loaded_at
+FROM silver_bookings_enriched

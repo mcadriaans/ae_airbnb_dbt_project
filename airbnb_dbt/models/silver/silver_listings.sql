@@ -61,6 +61,7 @@ silver_listings_enriched AS (
         country,
         --- Listing size category based on number of bedrooms
         CASE
+            WHEN bedroom IS NULL THEN 'Unknown'
             WHEN bedrooms = 0 THEN 'Studio'
             WHEN bedrooms = 1 THEN '1 Bedroom'
             WHEN bedrooms BETWEEN 2 AND 3 THEN 'Medium (2-3 Bedrooms)'

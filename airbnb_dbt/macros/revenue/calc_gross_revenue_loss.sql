@@ -5,7 +5,7 @@
 
 {% macro calc_gross_revenue_loss(booking_status, booking_revenue) %}
         CASE
-        WHEN booking_status = 'cancelled' 
+        WHEN {{ booking_status }} = 'cancelled' 
             THEN {{ booking_revenue }} 
         ELSE 0
     END

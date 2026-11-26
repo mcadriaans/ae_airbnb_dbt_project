@@ -60,8 +60,10 @@ silver_hosts_enriched AS (
         
         -- Dates & Metrics
         host_since,
-        --- Calculate host tenure in years : the number of years a host has been on Airbnb as of today
-        CAST((DATEDIFF('day', host_since, CURRENT_DATE) / 365.25) AS DECIMAL(18,2)) AS host_tenure_years,
+        --- Calculate host tenure based on when host version became valid
+        CAST((DATEDIFF('day', host_since, dbt_valid_from) / 365.25) 
+              AS DECIMAL(18,2)
+        ) AS host_tenure_years,
         response_rate,
         avg_host_rating,
 

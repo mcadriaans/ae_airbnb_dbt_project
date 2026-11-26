@@ -1,11 +1,34 @@
 
 # models/gold/core/core_schema.yml
 
+## ======================================================================================
+## GOLD CORE LAYER: Star Schema Integrity (Keys, Joins & Grain)
+## ======================================================================================
+## This schema audits what the Gold layer newly creates: surrogate keys, the joins
+## between the fact and its dimensions, and columns that are first calculated here.
+##
+## STRATEGY: Non-Redundant Testing
+## 1. Physical integrity (natural keys, mandatory fields) was verified in Bronze/Staging.
+## 2. Value validity (ranges, enums on cleaned columns) was verified in Staging.
+## 3. Business logic enrichments (rating tiers, price tiers, size buckets, lead time,
+##    booking revenue) were verified in Silver/Enriched and are NOT repeated here.
+## 4. Gold layer tests focus on the new surrogate keys, the joins between fact and dimensions,
+##    and the new calculated columns (booking revenue, cancellation flags, etc.):
+##   - Grain: a unique surrogate key proves one row per entitity. It also catches join fan-out; a join
+##     that produces duplicate rows per entity).
+##   - Join Integrity: every foreign key gets BOTH not_null and relationships, because relationships 
+##     ignores NULL keys. A LEFT JOIN with no match leaves a NULL key that relationships alone would
+##     never flag.
+##   - Gold-Born Columns: columns first created here (portfolio type, flags, revenue measures) are tested 
+##     here, because no upstream layer has seen them.
+##   - Reconciliation: measures must add up (e.g. actual = potential - net loss). 
+## ======================================================================================
+
 version: 2
 
 models:
-  - name: dim_date
-    description: |
+  - name: dim_dates
+    description: >
       Universal date dimension for time-based analysis.
       Grain: One row per calendar day from 2008-08-01 to 2+ years beyond latest booking.
       
@@ -29,6 +52,8 @@ models:
       
       - name: year_number
         description: "The year (e.g., 2023)"
+        tests:
+          - not_null
       
       - name: quarter_of_year
         description: "Q1, Q2, Q3, or Q4"
@@ -56,7 +81,14 @@ models:
         tests:
           - accepted_values:
               arguments:
-                values: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+                values: 
+                  - 'Monday'
+                  - 'Tuesday'
+                  - 'Wednesday'
+                  - 'Thursday'
+                  - 'Friday'
+                  - 'Saturday'
+                  - 'Sunday'
       
       - name: day_of_week
         description: "Day number (1=Monday, 7=Sunday)"
@@ -68,11 +100,12 @@ models:
       - name: is_weekend
         description: "Boolean flag: true if Saturday or Sunday"
         tests:
+          - not_null
           - accepted_values:
               arguments:
                 values: [true, false]
       
-      - name: loaded_at
+      - name: core_loaded_at
         description: "Timestamp when this row was loaded into warehouse"
 
   - name: dim_hosts
@@ -136,8 +169,12 @@ models:
         tests:
           - accepted_values:
               arguments:
-                values: ['Excellent', 'Good', 'Average', 'Below Average', 'No Reviews']
-      
+                values:
+                  - 'Excellent'
+                  - 'Good'
+                  - 'Average'
+                  - 'Below Average'
+                  - 'No Reviews'
       - name: host_tenure_years
         description: "Years active on platform (calculated from host_since)"
       
@@ -151,11 +188,11 @@ models:
               arguments:
                 values: ['Professional', 'Multi-listing', 'Single-listing', 'No Active Listings']
       
-      - name: loaded_at
+      - name: core_loaded_at
         description: "Timestamp when this row was last loaded"
 
   - name: dim_listings
-    description: |
+    description: >
       Property dimension with enriched attributes and price tiers.
       Grain: One row per unique listing (SCD1 - latest state only).
       
@@ -173,9 +210,19 @@ models:
       
       - name: host_key
         description: "FK: Reference to dim_hosts"
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_hosts')
+                field: host_key
       
       - name: location_key
         description: "FK: Reference to dim_location"
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_location')
+                field: location_key
       
       - name: listing_id
         description: "Natural key: Original listing identifier"
@@ -184,19 +231,25 @@ models:
       
       - name: host_id
         description: "Denormalized for convenience: Original host identifier"
+        tests:
+          - not_null
       
       - name: property_type
         description: "Type: Condo, Loft, Apartment, House, Boutique Hotel, etc."
       
       - name: city
         description: "City where listing is located"
+        tests:
+          - not_null
       
       - name: country
         description: "Country where listing is located"
+        tests:
+          - not_null
       
       - name: accommodates
         description: "Number of guests the listing can accommodate"
-      
+        
       - name: bedrooms
         description: "Number of bedrooms (0 = studio)"
       
@@ -208,15 +261,25 @@ models:
         tests:
           - accepted_values:
               arguments:
-                values: ['Studio', '1 Bedroom', 'Medium (2-3)', 'Large (4+)']
+                values: 
+                  - 'Unknown'
+                  - 'Studio'
+                  - '1 Bedroom'
+                  - 'Medium (2-3 Bedrooms)'
+                  - 'Large (4+ Bedrooms)'
       
       - name: capacity_type
-        description: "Bucketed by accommodates: Solo/Pair (1-2), Small Group (3-5), Large Group (6+)"
+        description: "Bucketed by accommodates: Unknown, Solo, Pair, Small Group (3-5), Medium Group (6-10), Large Group (11+)"
         tests:
           - accepted_values:
               arguments:
-                values: ['Solo/Pair', 'Small Group', 'Large Group']
-      
+                values: 
+                  - 'Unknown'
+                  - 'Solo'
+                  - 'Pair'
+                  - 'Small Group (3-5)'
+                  - 'Medium Group (6-10)'
+                  - 'Large Group (11+)'
       - name: price_per_night
         description: "Nightly rental price in local currency"
         tests:
@@ -236,13 +299,17 @@ models:
                 inclusive: true
       
       - name: price_tier
-        description: "Bucketed: Budget (<$100), Mid-Range ($100-300), Luxury (>$300)"
+        description: "Bucketed: Unknown, Budget (<$100), Mid-Range ($100-300), Luxury (>$300)"
         tests:
           - accepted_values:
               arguments:
-                values: ['Budget', 'Mid-Range', 'Luxury']
+                values: 
+                  - 'Unknown'
+                  - 'Budget'
+                  - 'Mid-Range'
+                  - 'Luxury'
       
-      - name: loaded_at
+      - name: core_loaded_at
         description: "Timestamp when this row was last loaded"
 
   - name: dim_location
@@ -310,7 +377,12 @@ models:
         tests:
           - accepted_values:
               arguments:
-                values: ['National Capital', 'Provincial/State Capital', 'Administrative Capital', 'Non-capital', 'Unknown']
+                values: 
+                  - 'National Capital'
+                  - 'Provincial/State Capital'
+                  - 'Administrative Capital'
+                  - 'Non-capital'
+                  - 'Unknown'
       - name: population
         description: "City population from geographic reference data"
         tests:
@@ -336,12 +408,7 @@ models:
       - Filter by booking status, lead time, property type, host rating
       - Time-series analysis of bookings and revenue
       - Calculate KPIs: cancellation rate, occupancy, ARR
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          arguments:
-            combination_of_columns:
-              - booking_id
-              - booking_version_id
+
     columns:
       - name: booking_key
         description: "Surrogate key: Hash of booking_id (not the fact table PK)"
@@ -349,6 +416,7 @@ models:
       - name: listing_key
         description: "FK: Reference to dim_listings"
         tests:
+          - not_null
           - relationships:
               arguments:
                 to: ref('dim_listings')
@@ -357,17 +425,19 @@ models:
       - name: host_key
         description: "FK: Reference to dim_hosts"
         tests:
+          - not_null
           - relationships:
               arguments:
                 to: ref('dim_hosts')
                 field: host_key
       
       - name: booking_date_key
-        description: "FK: Reference to dim_date on booking_date"
+        description: "FK: Reference to dim_dates on booking_date"
         tests:
+          - not_null
           - relationships:
               arguments:
-                to: ref('dim_date')
+                to: ref('dim_dates')
                 field: date_key
       
       - name: booking_id
@@ -462,11 +532,21 @@ models:
       
       - name: cancellation_flag
         description: "Boolean: 1 if cancelled, 0 if confirmed (useful for SUM aggregations)"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
       
       - name: confirmation_flag
         description: "Boolean: 1 if confirmed, 0 if cancelled"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
       
-      - name: loaded_at
+      - name: core_loaded_at
         description: "Timestamp when this version was loaded to warehouse"
 
   

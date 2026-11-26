@@ -444,7 +444,7 @@ models:
                 max_value: 30
                 inclusive: true
               config:
-                severity: warn
+                severity: error
 
       - name: bedrooms
         description: >

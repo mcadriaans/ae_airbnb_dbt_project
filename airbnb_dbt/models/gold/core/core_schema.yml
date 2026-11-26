@@ -182,13 +182,21 @@ models:
         description: "Number of active listings owned by this host"
       
       - name: host_portfolio_type
-        description: "Segment: Professional (5+), Multi-listing (2-4), Single-listing (1), No Active Listings (0)"
+        description: >
+          Host portfolio segment based on the number of listings currently
+          associated with the host. Categorizes hosts as Professional (5 or
+          more listings), Multi-listing (2–4 listings), Single-listing (1
+          listing), or No Active Listings (0 listings). Useful for comparing
+          host activity and understanding the distribution of listings
+          across different host portfolio sizes.
         tests:
           - accepted_values:
               arguments:
-                values: ['Professional', 'Multi-listing', 'Single-listing', 'No Active Listings']
-      
-      - name: core_loaded_at
+                values: 
+                  - 'Professional (5+ Listings)'
+                  - 'Multi-listing Host (2-4 Listings)'
+                  - 'Single-listing Host'
+                  - 'No Active Listings (0)'
         description: "Timestamp when this row was last loaded"
 
   - name: dim_listings

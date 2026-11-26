@@ -25,7 +25,8 @@ host_listings_metrics AS (
         CASE
             WHEN COUNT(*) >= 5 THEN 'Professional (5+ Listings)'
             WHEN COUNT(*) BETWEEN 2 AND 4 THEN 'Multi-listing Host (2-4 Listings)'
-            ELSE 'Single-listing Host'
+            WHEN COUNT(*) = 1 THEN 'Single-listing Host'
+            ELSE 'No Active Listings (0)'
         END AS host_portfolio_type
     FROM listings
     GROUP BY host_id
@@ -53,7 +54,7 @@ SELECT
 
     -- Aggregated listing metrics
     COALESCE(m.total_listings, 0) AS total_listings,
-    COALESCE(m.host_portfolio_type,'No Active Listings') AS host_portfolio_type,
+    COALESCE(m.host_portfolio_type, 'No Active Listings (0)') AS host_portfolio_type,
 
     -- Metadata 
    CAST(CURRENT_TIMESTAMP() AS TIMESTAMP_LTZ) AS core_loaded_at

@@ -46,7 +46,7 @@ SELECT
 
     -- Foreign Keys (References to other dimension tables)
     h.host_key,
-    {{ dbt_utils.generate_surrogate_key(['l.city', 'l.country']) }} AS location_key,
+    loc.location_key,
 
     -- Natural keys 
     l.listing_id,

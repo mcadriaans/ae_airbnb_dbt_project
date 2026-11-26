@@ -197,8 +197,9 @@ models:
                   - 'Multi-listing Host (2-4 Listings)'
                   - 'Single-listing Host'
                   - 'No Active Listings (0)'
+      - name: core_loaded_at
         description: "Timestamp when this row was last loaded"
-
+  
   - name: dim_listings
     description: >
       Property dimension with enriched attributes and price tiers.
@@ -219,6 +220,7 @@ models:
       - name: host_key
         description: "FK: Reference to dim_hosts"
         tests:
+          - not_null
           - relationships:
               arguments:
                 to: ref('dim_hosts')
@@ -227,6 +229,7 @@ models:
       - name: location_key
         description: "FK: Reference to dim_location"
         tests:
+          - not_null
           - relationships:
               arguments:
                 to: ref('dim_location')
@@ -405,21 +408,23 @@ models:
 
   - name: fact_bookings
     description: >
-      Central fact table for Airbnb bookings with revenue measures and SCD2 history.
-      Grain: One row per booking version (SCD2 via dbt_scd_id).
+      Central fact table for Airbnb bookings with revenue measures.
+      Grain: One row per booking version, representing its current version.
       
-      Each booking can have multiple rows if booking_status changed over time.
-      Use is_current_record = 1 to get latest version only.
+      Historical booking versions are preserved in fact_bookings_status_history.
       
       Use this table to:
-      - Analyze revenue (potential, actual, lost)
-      - Filter by booking status, lead time, property type, host rating
+      - Analyze potential, actual and lost revenue
+      - Filter by booking status, lead time, property type, host rating etc.
       - Time-series analysis of bookings and revenue
-      - Calculate KPIs: cancellation rate, occupancy, ARR
+      - Calculate cancellation and revenue KPIs (e.g., cancellation rate, revenue loss)
 
     columns:
       - name: booking_key
         description: "Surrogate key: Hash of booking_id (not the fact table PK)"
+        tests:
+          - unique
+          - not_null
       
       - name: listing_key
         description: "FK: Reference to dim_listings"
@@ -447,7 +452,25 @@ models:
               arguments:
                 to: ref('dim_dates')
                 field: date_key
+     
+      - name: stay_start_date_key
+        description: "FK: Reference to dim_dates on stay_start_date"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_dates')
+                field: date_key
       
+      - name: stay_end_date_key
+        description: "FK: Reference to dim_dates on stay_end_date"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_dates')
+                field: date_key
+
       - name: booking_id
         description: "Natural key: Original booking identifier (UUID)"
         tests:

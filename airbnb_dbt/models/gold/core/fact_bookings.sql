@@ -1,13 +1,33 @@
 -- models/gold/core/fact_bookings.sql
 
 -- Layer: Gold Core (Conformed Enterprise Star Schema)
--- Grain: One row per booking (current state only) with SCD2 history preserved in silver layer.
--- History; Previous versions of bookings are preserved in the silver layer,
---          and exposed in the fact_bookings_status_history
--- Description: This is the main booking table for your business reports. It saves the 
---              current state of every booking and plugs directly into your conformed date, host, and listing tables 
---              so you can easily build dashboard charts for sales and cancellations.
-
+-- Grain: One row per booking, representing the most recent version 
+--        of each booking.
+--
+-- History:
+-- Historical booking versions are preserved in the silver layer (silver_bookings).
+-- The fact_booking_status_history model captures the historical evolution of 
+-- booking statuses for analysis.
+--
+-- Description:
+-- This fact table provides a consolidated view of current Airbnb bookings,
+-- combining booking information with relevant attributes from the conformed
+-- date, host and listing dimensions.
+--
+-- Each row represents the latest recorded version of a booking, providing
+-- a consistent foundation analysing booking activity, revenue, cancellations and property 
+-- performance.
+--
+-- Revenue measures distinguish between potential revenue (if not cancelled), 
+-- actual revenue (after cancellations) and revenue loss due to cancellations, 
+-- supporting financial analysis and business decision-making.
+--
+-- Analytical purpose:
+-- Supports analysis of booking volumes, revenue performance,
+-- cancellations, booking trends, lead times and property-level performance.
+--
+-- Star Schema Relationships:
+--
 --                dim_dates
 --                   |
 --                   |
